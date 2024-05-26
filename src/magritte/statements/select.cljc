@@ -37,18 +37,19 @@
 (defn format-select [expr]
   ;; {:select {:fields [:*] :from [:person]}}
   ;; -> "SELECT * from person;"
-  (let [select-expr (:select expr)
-        fields (get select-expr :fields)
-        from (get select-expr :from)
-        from-only (get select-expr :from-only)]
-    (str "SELECT "
-         (if (= fields [:*])
-           "*"
-           (rename-fields fields))
-         (if from-only
-           (str " FROM ONLY "  (name from-only))
-           (str " FROM " (utils/to-str-items from)))
-         ";")))
+  (let [fields (get expr :select)
+        from (get expr :from)
+        from-only (get expr :from-only)
+        select-value (get expr :select-value)]
+    (str
+     (if select-value
+       (str "SELECT VALUE " (name select-value))
+       (str "SELECT " (if (= fields [:*]) "*" (rename-fields fields))))
+     " FROM "
+     (if from-only
+       (str "ONLY " (name from-only))
+       (utils/to-str-items from))
+     ";")))
 
 (comment
   (rename-fields [:name :address :email])
