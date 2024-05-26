@@ -6,3 +6,4 @@ A Clojure/Script library for building SurrealQL queries.
 
 René **Magritte** = A Belgian **Surreal**ist Artist. 
 
+
