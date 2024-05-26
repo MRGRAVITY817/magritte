@@ -37,3 +37,33 @@
 - [ ] THROW
 - [ ] UPDATE
 - [ ] USE
+
+## Functions
+
+- [ ] Array functions
+- [ ] Count function
+- [ ] Crypto functions
+- [ ] Duration functions
+- [ ] Encoding functions
+- [ ] Geo functions
+- [ ] HTTP functions
+- [ ] Math functions
+- [ ] Meta functions
+- [ ] Machine learning functions
+- [ ] Object functions
+- [ ] Parse functions
+- [ ] Rand functions
+- [ ] Scripting functions
+    - [ ] Arguments
+    - [ ] Built-in functions
+    - [ ] Function context
+    - [ ] Type conversion
+    - [ ] SurrealQL functions
+- [ ] Search functions
+- [ ] Session functions
+- [ ] Sleep function
+- [ ] String functions
+- [ ] Time functions
+- [ ] Type functions
+- [ ] Vector functions
+
