@@ -2,9 +2,26 @@
   (:require [magritte.utils :as utils]
             [clojure.string :as str]))
 
+(defn- get-field-name
+  "Get correct field name.
+   
+   Example: 
+   
+   ```
+    (get-field-name :username) ;; => \"username\"
+    (get-field-name {:array :username
+                     :index 12}) ;; => \"username[12]\"
+   ```
+  "
+  [field]
+  (let [{:keys [array index]} field]
+    (if (and array index)
+      (str (name array) "[" index "]")
+      (name field))))
+
 (defn- rename-field [field]
   (if (vector? field)
-    (str (name (first field)) " AS " (name (second field)))
+    (str (get-field-name (first field)) " AS " (name (second field)))
     (name field)))
 
 (defn- rename-fields [fields]
@@ -52,5 +69,14 @@
      ";")))
 
 (comment
-  (rename-fields [:name :address :email])
-  (rename-fields [[:name :username] :address]))
+  (defn- check-array [field]
+    (let [{:keys [array index]} field]
+      (if (and array index)
+        (str (name array) "[" index "]")
+        (name field))))
+
+  (check-array {:array :hello.world
+                :index 12})
+  (check-array :hello))
+
+
