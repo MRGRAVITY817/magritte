@@ -1,0 +1,39 @@
+# Statements
+
+- [ ] BEGIN
+- [ ] BREAK
+- [ ] CANCEL
+- [ ] COMMIT
+- [ ] CONTINUE
+- [ ] CREATE
+- [ ] DEFINE
+    - [ ] DEFINE ANALYZER
+    - [ ] DEFINE DATABASE
+    - [ ] DEFINE EVENT
+    - [ ] DEFINE FIELD
+    - [ ] DEFINE FUNCTION
+    - [ ] DEFINE INDEX
+    - [ ] DEFINE NAMESPACE
+    - [ ] DEFINE PARAM
+    - [ ] DEFINE SCOPE
+    - [ ] DEFINE TABLE
+    - [ ] DEFINE TOKEN
+    - [ ] DEFINE USER
+- [ ] DELETE
+- [ ] FOR
+- [ ] IF ELSE
+- [ ] INFO
+- [ ] INSERT
+- [ ] KILL
+- [ ] LET
+- [ ] LIVE
+- [ ] RELATE
+- [ ] REBUILD
+- [ ] REMOVE
+- [ ] RETURN
+- [ ] SELECT
+- [ ] SHOW
+- [ ] SLEEP
+- [ ] THROW
+- [ ] UPDATE
+- [ ] USE
