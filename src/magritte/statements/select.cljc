@@ -1,5 +1,16 @@
 (ns magritte.statements.select
-  (:require [magritte.utils :as utils]))
+  (:require [magritte.utils :as utils]
+            [clojure.string :as str]))
+
+(defn- rename-field [field]
+  (if (vector? field)
+    (str (name (first field)) " AS " (name (second field)))
+    (name field)))
+
+(defn- rename-fields [fields]
+  (->> fields
+       (map rename-field)
+       (str/join ", ")))
 
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
@@ -28,13 +39,17 @@
   ;; -> "SELECT * from person;"
   (let [select-expr (:select expr)
         fields (get select-expr :fields)
-        from (get select-expr :from)]
+        from (get select-expr :from)
+        from-only (get select-expr :from-only)]
     (str "SELECT "
-         (utils/to-str-items fields)
-         " FROM "
-         (utils/to-str-items from)
+         (if (= fields [:*])
+           "*"
+           (rename-fields fields))
+         (if from-only
+           (str " FROM ONLY "  (name from-only))
+           (str " FROM " (utils/to-str-items from)))
          ";")))
 
 (comment
-  ;; ADD test
-  )
+  (rename-fields [:name :address :email])
+  (rename-fields [[:name :username] :address]))
