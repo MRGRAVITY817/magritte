@@ -1,6 +1,7 @@
 (ns magritte.statements.select-test
   (:require [clojure.test :refer [deftest is testing]]
-            [magritte.statements.select :refer [format-select]]))
+            [magritte.statements.select :refer [format-select]]
+            [magritte.functions.array-functions :refer [array-fn]]))
 
 (deftest format-select-test
   (testing "select all fields from a table"
@@ -49,8 +50,6 @@
     (is (= "SELECT address.coordinates AS coordinates FROM person;"
            (format-select {:select [[:address.coordinates :coordinates]]
                            :from   [:person]}))))
-; -- Select one item from an array
-; SELECT address.coordinates[0] AS latitude FROM person;
   (testing "select one item from an array"
     (is (= "SELECT address.coordinates[0] AS latitude FROM person;"
            (format-select {:select [[{:array :address.coordinates
@@ -59,11 +58,10 @@
 ;
 ; -- Select unique values from an array
 ; SELECT array::distinct(tags) FROM article;
-  ; (testing "select unique values from an array"
-  ;   (is (= "SELECT array::distinct(tags) FROM article;"
-  ;          (format-select {:select [{:array :^distint
-  ;                                    :fields [:tags]}]
-  ;                          :from   [:article]}))))
+  (testing "select unique values from an array"
+    (is (= "SELECT array::distinct(tags) FROM article;"
+           (format-select {:select [(array-fn :distinct [:tags])]
+                           :from   [:article]}))))
 ; -- Select unique values from a nested array across an entire table
 ; SELECT array::group(tags) AS tags FROM article GROUP ALL;
 ;

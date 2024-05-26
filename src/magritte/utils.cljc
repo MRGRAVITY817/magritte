@@ -8,6 +8,7 @@
   "Converts an argument to a string representation suitable for use in a SurrealQL query."
   [arg]
   (cond
-    (string? arg) (str "\"" arg "\"")
+    (string? arg) (str "'" arg "'")
     (vector? arg) (str "[" (str/join ", " (map to-valid-str arg)) "]")
+    (nil? arg) "NONE"
     :else arg))
