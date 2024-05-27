@@ -13,3 +13,15 @@
     (nil? arg) "null"
     (= :none arg) "NONE"
     :else arg))
+
+(defn kebab->snake_name
+  "Converts kebab item to a snake_case string."
+  [kw]
+  (->> kw
+       name
+       (#(str/replace % #"-" "_"))))
+
+(comment
+  (map kebab->snake_name
+      ; ("camelCase" "snake_case" "kebab_case" "snake_case" "kebab_case" "camel_case")
+       [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case]))

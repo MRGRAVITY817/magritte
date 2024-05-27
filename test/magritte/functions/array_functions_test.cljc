@@ -22,18 +22,18 @@
            (array-fn :append [1 2 3 4] 5))))
   (testing "array::boolean_and"
     (is (= "array::boolean_and(['true', 'false', 1, 1], ['true', 'true', 0, 'true'])"
-           (array-fn :boolean_and ["true" "false" 1 1] ["true" "true" 0 "true"])))
+           (array-fn :boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))
     (is (= "array::boolean_and([true, true], [false])"
-           (array-fn :boolean_and [true true] [false]))))
+           (array-fn :boolean-and [true true] [false]))))
   (testing "array::boolean_or"
     (is (= "array::boolean_or([false, true, false, true], [false, false, true, true])"
-           (array-fn :boolean_or [false true false true] [false false true true]))))
+           (array-fn :boolean-or [false true false true] [false false true true]))))
   (testing "array::boolean_xor"
     (is (= "array::boolean_xor([false, true, false, true], [false, false, true, true])"
-           (array-fn :boolean_xor [false true false true] [false false true true]))))
+           (array-fn :boolean-xor [false true false true] [false false true true]))))
   (testing "array::boolean_not"
     (is (= "array::boolean_not([false, true, 0, 1])"
-           (array-fn :boolean_not [false true 0 1]))))
+           (array-fn :boolean-not [false true 0 1]))))
   (testing "array::combine"
     (is (= "array::combine([1, 2], [2, 3])"
            (array-fn :combine [1 2] [2 3]))))
@@ -57,10 +57,10 @@
            (array-fn :flatten [[1 2] [3 4] "SurrealDB" [5 6 [7 8]]]))))
   (testing "array::find_index"
     (is (= "array::find_index(['a', 'b', 'c', 'b', 'a'], 'b')"
-           (array-fn :find_index ["a" "b" "c" "b" "a"] "b"))))
+           (array-fn :find-index ["a" "b" "c" "b" "a"] "b"))))
   (testing "array::filter_index"
     (is (= "array::filter_index(['a', 'b', 'c', 'b', 'a'], 'b')"
-           (array-fn :filter_index ["a" "b" "c" "b" "a"] "b"))))
+           (array-fn :filter-index ["a" "b" "c" "b" "a"] "b"))))
   (testing "array::first"
     (is (= "array::first(['s', 'u', 'r', 'r', 'e', 'a', 'l'])"
            (array-fn :first ["s" "u" "r" "r" "e" "a" "l"]))))
@@ -82,9 +82,9 @@
   (testing "array::len"
     (is (= "array::len([1, 2, 1, null, 'something', 3, 3, 4, 0])"
            (array-fn :len [1 2 1 nil "something" 3 3 4 0]))))
-;   (testing "array::logical_and"
-;     (is (= "array::logical_and([true, false, true, false], [true, true, false, false])"
-;            (array-fn :logical_and [true false true false] [true true false false]))))
+  (testing "array::logical_and"
+    (is (= "array::logical_and([true, false, true, false], [true, true, false, false])"
+           (array-fn :logical-and [true false true false] [true true false false]))))
 ;   (testing "array::logical_or"
 ;     (is (= "array::logical_or([true, false, true, false], [true, true, false, false])"
 ;            (array-fn :logical_or [true false true false] [true true false false]))))

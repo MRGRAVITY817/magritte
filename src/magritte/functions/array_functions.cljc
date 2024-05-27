@@ -17,18 +17,18 @@
    :any [vector?] ; Checks whether any array value is truthy
    :at  [vector? integer?] ; Returns value for X index, or in reverse for a negative index
    :append [vector? any?] ; Appends an item to the end of an array
-   :boolean_and [vector? vector?] ; Perform the AND bitwise operations on two arrays
-   :boolean_or [vector? vector?] ; Perform the OR bitwise operations on two arrays
-   :boolean_xor [vector? vector?] ; Perform the XOR bitwise operations on two arrays
-   :boolean_not [vector?] ; Perform the NOT bitwise operations on an array
+   :boolean-and [vector? vector?] ; Perform the AND bitwise operations on two arrays
+   :boolean-or [vector? vector?] ; Perform the OR bitwise operations on two arrays
+   :boolean-xor [vector? vector?] ; Perform the XOR bitwise operations on two arrays
+   :boolean-not [vector?] ; Perform the NOT bitwise operations on an array
    :combine [vector? vector?] ; Combines all values from two arrays together
    :complement [vector? vector?] ; Returns the complement of two arrays
    :clump [vector? integer?] ; Returns the original array split into multiple arrays of X size
    :concat [vector? vector?] ; Returns the merged values from two arrays
    :difference [vector? vector?] ; Returns the difference between two arrays
    :distinct [vector?] ; Returns the unique items in an array
-   :find_index [vector? any?] ; Returns the index of the first occurrence of X value
-   :filter_index [vector? any?] ; Find the indexes of all occurrences of all matching X value
+   :find-index [vector? any?] ; Returns the index of the first occurrence of X value
+   :filter-index [vector? any?] ; Find the indexes of all occurrences of all matching X value
    :first [vector?] ; Returns the first item in an array
    :flatten [vector?] ; Flattens multiple arrays into a single array
    :group [vector?] ; Flattens and returns the unique items in an array
@@ -37,9 +37,9 @@
    :join [vector? string?] ; Returns concatenated value of an array with a string in between.
    :last [vector?] ; Returns the last item in an array
    :len [vector?] ; Returns the length of an array
-   :logical_and [vector? vector?] ; Performs the AND logical operations on two arrays
-   :logical_or [vector? vector?] ; Performs the OR logical operations on two arrays
-   :logical_xor [vector? vector?] ; Performs the XOR logical operations on two arrays
+   :logical-and [vector? vector?] ; Performs the AND logical operations on two arrays
+   :logical-or [vector? vector?] ; Performs the OR logical operations on two arrays
+   :logical-xor [vector? vector?] ; Performs the XOR logical operations on two arrays
    :max [vector?] ; Returns the maximum item in an array
    :matches [vector? any?] ; Returns an array of booleans
    :min [vector?] ; Returns the minimum item in an array
@@ -50,8 +50,8 @@
    :reverse [vector?] ; Reverses the sorting order of an array
    :sort [vector?] ; Sorts the values in an array in ascending or descending order
    :slice [vector? integer? integer?] ; Returns a slice of an array
-   :sort_asc [vector?] ; Sorts the values in an array in ascending order
-   :sort_desc [vector?] ; Sorts the values in an array in descending order
+   :sort-asc [vector?] ; Sorts the values in an array in ascending order
+   :sort-desc [vector?] ; Sorts the values in an array in descending order
    :transpose [vector? vector?] ; Performs 2d array transposition on two arrays
    :union [vector? vector?]}) ; Returns the unique merged values from two arrays
 
@@ -59,7 +59,7 @@
   (let [validator (get array-functions function)]
     (if validator
       (if (args-valid? validator args)
-        (str "array::" (name function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
+        (str "array::" (utils/kebab->snake_name function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
         (throw (ex-info (str "Invalid arguments for array function: " function) {})))
       (throw (ex-info (str "Unknown array function: " function) {})))))
 
