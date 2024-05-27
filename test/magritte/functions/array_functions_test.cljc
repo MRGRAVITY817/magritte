@@ -8,10 +8,10 @@
            (array-fn :add ["one" "two"] "three"))))
   (testing "array::all"
     (is (= "array::all([1, 2, 3, NONE, 'SurrealDB', 5])"
-           (array-fn :all [1 2 3 nil "SurrealDB" 5]))))
+           (array-fn :all [1 2 3 :none "SurrealDB" 5]))))
   (testing "array::any"
     (is (= "array::any([1, 2, 3, NONE, 'SurrealDB', 5])"
-           (array-fn :any [1 2 3 nil "SurrealDB" 5]))))
+           (array-fn :any [1 2 3 :none "SurrealDB" 5]))))
   (testing "array::at"
     (is (= "array::at(['s', 'u', 'r', 'r', 'e', 'a', 'l'], 2)"
            (array-fn :at ["s" "u" "r" "r" "e" "a" "l"] 2)))
@@ -70,18 +70,18 @@
   (testing "array::insert"
     (is (= "array::insert([1, 2, 3, 4], 5, 2)"
            (array-fn :insert [1 2 3 4] 5 2))))
-;   (testing "array::intersect"
-;     (is (= "array::intersect([1,2,3,4], [3,4,5,6])"
-;            (array-fn :intersect [1 2 3 4] [3 4 5 6]))))
-;   (testing "array::join"
-;     (is (= "array::join(['again', 'again', 'again'], ' and ')"
-;            (array-fn :join ["again" "again" "again"] " and "))))
-;   (testing "array::last"
-;     (is (= "array::last([ 's', 'u', 'r', 'r', 'e', 'a', 'l' ])"
-;            (array-fn :last ["s" "u" "r" "r" "e" "a" "l"]))))
-;   (testing "array::len"
-;     (is (= "array::len([ 1, 2, 1, null, 'something', 3, 3, 4, 0 ])"
-;            (array-fn :len [1 2 1 nil "something" 3 3 4 0]))))
+  (testing "array::intersect"
+    (is (= "array::intersect([1, 2, 3, 4], [3, 4, 5, 6])"
+           (array-fn :intersect [1 2 3 4] [3 4 5 6]))))
+  (testing "array::join"
+    (is (= "array::join(['again', 'again', 'again'], ' and ')"
+           (array-fn :join ["again" "again" "again"] " and "))))
+  (testing "array::last"
+    (is (= "array::last(['s', 'u', 'r', 'r', 'e', 'a', 'l'])"
+           (array-fn :last ["s" "u" "r" "r" "e" "a" "l"]))))
+  (testing "array::len"
+    (is (= "array::len([1, 2, 1, null, 'something', 3, 3, 4, 0])"
+           (array-fn :len [1 2 1 nil "something" 3 3 4 0]))))
 ;   (testing "array::logical_and"
 ;     (is (= "array::logical_and([true, false, true, false], [true, true, false, false])"
 ;            (array-fn :logical_and [true false true false] [true true false false]))))

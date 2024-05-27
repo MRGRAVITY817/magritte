@@ -10,5 +10,6 @@
   (cond
     (string? arg) (str "'" arg "'")
     (vector? arg) (str "[" (str/join ", " (map to-valid-str arg)) "]")
-    (nil? arg) "NONE"
+    (nil? arg) "null"
+    (= :none arg) "NONE"
     :else arg))
