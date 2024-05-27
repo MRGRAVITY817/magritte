@@ -55,6 +55,7 @@
            (format-select {:select [[{:array :address.coordinates
                                       :index 0} :latitude]]
                            :from   [:person]}))))
+
 ;
 ; -- Select unique values from an array
 ; SELECT array::distinct(tags) FROM article;
