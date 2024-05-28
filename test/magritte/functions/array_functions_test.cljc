@@ -85,20 +85,20 @@
   (testing "array::logical_and"
     (is (= "array::logical_and([true, false, true, false], [true, true, false, false])"
            (array-fn :logical-and [true false true false] [true true false false]))))
-;   (testing "array::logical_or"
-;     (is (= "array::logical_or([true, false, true, false], [true, true, false, false])"
-;            (array-fn :logical_or [true false true false] [true true false false]))))
-;   (testing "array::logical_xor"
-;     (is (= "array::logical_xor([true, false, true, false], [true, true, false, false])"
-;            (array-fn :logical_xor [true false true false] [true true false false]))))
-;   (testing "array::max"
-;     (is (= "array::max([0, 1, 2])"
-;            (array-fn :max [0 1 2]))))
-;   (testing "array::matches"
-;     (is (= "array::matches([0, 1, 2], 1)"
-;            (array-fn :matches [0 1 2] 1))
-;         (is (= "array::matches([{id: 'ohno:0'}, {id: 'ohno:1'}], {id: 'ohno:1'})"
-;                (array-fn :matches [{:id "ohno:0"} {:id "ohno:1"}] {:id "ohno:1"})))))
+  (testing "array::logical_or"
+    (is (= "array::logical_or([true, false, true, false], [true, true, false, false])"
+           (array-fn :logical-or [true false true false] [true true false false]))))
+  (testing "array::logical_xor"
+    (is (= "array::logical_xor([true, false, true, false], [true, true, false, false])"
+           (array-fn :logical-xor [true false true false] [true true false false]))))
+  (testing "array::max"
+    (is (= "array::max([0, 1, 2])"
+           (array-fn :max [0 1 2]))))
+  (testing "array::matches"
+    (is (= "array::matches([0, 1, 2], 1)"
+           (array-fn :matches [0 1 2] 1)))
+    (is (= "array::matches([{id: 'ohno:0'}, {id: 'ohno:1'}], {id: 'ohno:1'})"
+           (array-fn :matches [{:id "ohno:0"} {:id "ohno:1"}] {:id "ohno:1"}))))
 ;   (testing "array::min"
 ;     (is (= "array::min([0, 1, 2])"
 ;            (array-fn :min [0 1 2]))))
