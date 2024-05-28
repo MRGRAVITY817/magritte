@@ -51,16 +51,21 @@
    :reverse [vector?] ; Reverses the sorting order of an array
    :sort [vector? #(or (keyword? %) (boolean? %) (nil? %))] ; Sorts the values in an array in ascending or descending order
    :slice [vector? integer? integer?] ; Returns a slice of an array
-   :sort-asc [vector?] ; Sorts the values in an array in ascending order
-   :sort-desc [vector?] ; Sorts the values in an array in descending order
+   [:sort :asc] [vector?] ; Sorts the values in an array in ascending order
+   [:sort :desc] [vector?] ; Sorts the values in an array in descending order
    :transpose [vector? vector?] ; Performs 2d array transposition on two arrays
    :union [vector? vector?]}) ; Returns the unique merged values from two arrays
+
+(defn- new-function [function]
+  (cond
+    (keyword? function) (utils/kebab->snake_name function)
+    (vector? function) (str/join "::" (map utils/kebab->snake_name function))))
 
 (defn array-fn [function & args]
   (let [validator (get array-functions function)]
     (if validator
       (if (args-valid? validator args)
-        (str "array::" (utils/kebab->snake_name function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
+        (str "array::" (new-function function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
         (throw (ex-info (str "Invalid arguments for array function: " function) {})))
       (throw (ex-info (str "Unknown array function: " function) {})))))
 

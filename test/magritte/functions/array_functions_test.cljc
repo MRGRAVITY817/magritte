@@ -128,29 +128,27 @@
            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :asc)))
     (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], 'desc')"
            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :desc))))
-;   (testing "array::slice"
-;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], 1, 2)"
-;            (array-fn :slice [1 2 3 4 5] 1 2)))
-;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], 1, -1)"
-;            (array-fn :slice [1 2 3 4 5] 1 -1)))
-;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], 2)"
-;            (array-fn :slice [1 2 3 4 5] 2)))
-;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], -2)"
-;            (array-fn :slice [1 2 3 4 5] -2)))
-;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], -3, 2)"
-;            (array-fn :slice [1 2 3 4 5] -3 2))))
-;   (testing "array::sort::asc"
-;     (is (= "array::sort::asc([ 1, 2, 1, null, 'something', 3, 3, 4, 0 ])"
-;            (array-fn :sort::asc [1 2 1 nil "something" 3 3 4 0]))))
-;   (testing "array::sort::desc"
-;     (is (= "array::sort::desc([ 1, 2, 1, null, 'something', 3, 3, 4, 0 ])"
-;            (array-fn :sort::desc [1 2 1 nil "something" 3 3 4 0]))))
-;   (testing "array::transpose"
-;     (is (= "array::transpose([[0, 1], [2, 3]])"
-;            (array-fn :transpose [[0 1] [2 3]]))))
-;   (testing "array::union"
-;     (is (= "array::union([1,2,1,6], [1,3,4,5,6])"
-;            (array-fn :union [1 2 1 6] [1 3 4 5 6]))))
-;
-  )
+  (testing "array::slice"
+    (is (= "array::slice([1, 2, 3, 4, 5], 1, 2)"
+           (array-fn :slice [1 2 3 4 5] 1 2)))
+    (is (= "array::slice([1, 2, 3, 4, 5], 1, -1)"
+           (array-fn :slice [1 2 3 4 5] 1 -1)))
+    (is (= "array::slice([1, 2, 3, 4, 5], 2)"
+           (array-fn :slice [1 2 3 4 5] 2)))
+    (is (= "array::slice([1, 2, 3, 4, 5], -2)"
+           (array-fn :slice [1 2 3 4 5] -2)))
+    (is (= "array::slice([1, 2, 3, 4, 5], -3, 2)"
+           (array-fn :slice [1 2 3 4 5] -3 2))))
+  (testing "array::sort::asc"
+    (is (= "array::sort::asc([1, 2, 1, null, 'something', 3, 3, 4, 0])"
+           (array-fn [:sort :asc] [1 2 1 nil "something" 3 3 4 0]))))
+  (testing "array::sort::desc"
+    (is (= "array::sort::desc([1, 2, 1, null, 'something', 3, 3, 4, 0])"
+           (array-fn [:sort :desc] [1 2 1 nil "something" 3 3 4 0]))))
+  (testing "array::transpose"
+    (is (= "array::transpose([[0, 1], [2, 3]])"
+           (array-fn :transpose [[0 1] [2 3]]))))
+  (testing "array::union"
+    (is (= "array::union([1, 2, 1, 6], [1, 3, 4, 5, 6])"
+           (array-fn :union [1 2 1 6] [1 3 4 5 6])))))
 
