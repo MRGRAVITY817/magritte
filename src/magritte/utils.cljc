@@ -15,6 +15,7 @@
     (map? arg) (map->str arg)
     (nil? arg) "null"
     (= :none arg) "NONE"
+    (keyword? arg) (str "'" (name arg) "'")
     :else arg))
 
 (defn kebab->snake_name

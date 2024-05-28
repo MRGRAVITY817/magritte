@@ -3,13 +3,14 @@
             [magritte.utils :as utils]))
 
 (defn- args-valid? [validators args]
-  (if (= (count validators) (count args))
+  (if (>= (count validators) (count args))
     (every? identity (map (fn [v a] (v a)) validators args))
     false))
 
 (comment
   (args-valid? [vector? vector?] [["one" "two"] ["three"]])
-  (args-valid? [vector? vector?] [["one" "two"] "three"]))
+  (args-valid? [vector? vector?] [["one" "two"] "three"])
+  (every? identity (map (fn [v a] (v a)) [vector? #(or (boolean? %) (nil?  %))] [["hello"]])))
 
 (def ^:private array-functions
   {:add [vector? any?] ; Adds an item to an array if it doesn't exist
@@ -48,7 +49,7 @@
    :push [vector? any?] ; Appends an item to the end of an array
    :remove [vector? #(or (integer? %) (neg? %))] ; Removes an item at a specific position from an array, supports negative index
    :reverse [vector?] ; Reverses the sorting order of an array
-   :sort [vector?] ; Sorts the values in an array in ascending or descending order
+   :sort [vector? #(or (keyword? %) (boolean? %) (nil? %))] ; Sorts the values in an array in ascending or descending order
    :slice [vector? integer? integer?] ; Returns a slice of an array
    :sort-asc [vector?] ; Sorts the values in an array in ascending order
    :sort-desc [vector?] ; Sorts the values in an array in descending order

@@ -99,35 +99,35 @@
            (array-fn :matches [0 1 2] 1)))
     (is (= "array::matches([{id: 'ohno:0'}, {id: 'ohno:1'}], {id: 'ohno:1'})"
            (array-fn :matches [{:id "ohno:0"} {:id "ohno:1"}] {:id "ohno:1"}))))
-;   (testing "array::min"
-;     (is (= "array::min([0, 1, 2])"
-;            (array-fn :min [0 1 2]))))
-;   (testing "array::pop"
-;     (is (= "array::pop([ 1, 2, 3, 4 ])"
-;            (array-fn :pop [1 2 3 4]))))
-;   (testing "array::prepend"
-;     (is (= "array::prepend([1,2,3,4], 5)"
-;            (array-fn :prepend [1 2 3 4] 5))))
-;   (testing "array::push"
-;     (is (= "array::push([1,2,3,4], 5)"
-;            (array-fn :push [1 2 3 4] 5))))
-;   (testing "array::remove"
-;     (is (= "array::remove([1,2,3,4,5], 2)"
-;            (array-fn :remove [1 2 3 4 5] 2))
-;         (is (= "array::remove([1,2,3,4,5], -2)"
-;                (array-fn :remove [1 2 3 4 5] -2)))))
-;   (testing "array::reverse"
-;     (is (= "array::reverse([ 1, 2, 3, 4, 5 ])"
-;            (array-fn :reverse [1 2 3 4 5]))))
-;   (testing "array::sort"
-;     (is (= "array::sort([ 1, 2, 1, null, 'something', 3, 3, 4, 0 ])"
-;            (array-fn :sort [1 2 1 nil "something" 3 3 4 0])))
-;     (is (= "array::sort([1,2,1,null,'something',3,3,4,0], false)"
-;            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] false)))
-;     (is (= "array::sort([1,2,1,null,'something',3,3,4,0], 'asc')"
-;            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] "asc")))
-;     (is (= "array::sort([1,2,1,null,'something',3,3,4,0], 'desc')"
-;            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] "desc"))))
+  (testing "array::min"
+    (is (= "array::min([0, 1, 2])"
+           (array-fn :min [0 1 2]))))
+  (testing "array::pop"
+    (is (= "array::pop([1, 2, 3, 4])"
+           (array-fn :pop [1 2 3 4]))))
+  (testing "array::prepend"
+    (is (= "array::prepend([1, 2, 3, 4], 5)"
+           (array-fn :prepend [1 2 3 4] 5))))
+  (testing "array::push"
+    (is (= "array::push([1, 2, 3, 4], 5)"
+           (array-fn :push [1 2 3 4] 5))))
+  (testing "array::remove"
+    (is (= "array::remove([1, 2, 3, 4, 5], 2)"
+           (array-fn :remove [1 2 3 4 5] 2)))
+    (is (= "array::remove([1, 2, 3, 4, 5], -2)"
+           (array-fn :remove [1 2 3 4 5] -2))))
+  (testing "array::reverse"
+    (is (= "array::reverse([1, 2, 3, 4, 5])"
+           (array-fn :reverse [1 2 3 4 5]))))
+  (testing "array::sort"
+    (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0])"
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0])))
+    (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], false)"
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] false)))
+    (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], 'asc')"
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :asc)))
+    (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], 'desc')"
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :desc))))
 ;   (testing "array::slice"
 ;     (is (= "array::slice([ 1, 2, 3, 4, 5 ], 1, 2)"
 ;            (array-fn :slice [1 2 3 4 5] 1 2)))
