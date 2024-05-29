@@ -65,11 +65,11 @@
                            :from   [:article]}))))
 ; -- Select unique values from a nested array across an entire table
 ; SELECT array::group(tags) AS tags FROM article GROUP ALL;
-  ; (testing  "select unique values from a nested array across an entire table"
-  ;   (is (= "SELECT array::group(tags) AS tags FROM article GROUP ALL;"
-  ;          (format-select {:select [(array-fn :group [:tags])]
-  ;                          :from   [:article]
-  ;                          :group  :all}))))
+  (testing  "select unique values from a nested array across an entire table"
+    (is (= "SELECT array::group([title, tags]) AS tags FROM article GROUP ALL;"
+           (format-select {:select [(array-fn :group [:title :tags])]
+                           :from   [:article]
+                           :group  :all}))))
 ;
 ; -- Use mathematical calculations in a select expression
 ; SELECT ( ( celsius * 2 ) + 30 ) AS fahrenheit FROM temperature;
