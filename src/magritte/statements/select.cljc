@@ -56,16 +56,21 @@
   (let [fields (get expr :select)
         from (get expr :from)
         from-only (get expr :from-only)
-        select-value (get expr :select-value)]
-    (str
-     (if select-value
-       (str "SELECT VALUE " (name select-value))
-       (str "SELECT " (if (= fields [:*]) "*" (rename-fields fields))))
-     " FROM "
-     (if from-only
-       (str "ONLY " (name from-only))
-       (utils/to-str-items from))
-     ";")))
+        select-value (get expr :select-value)
+        group (get expr :group)]
+
+    (-> [(if select-value
+           (str "SELECT VALUE " (name select-value))
+           (str "SELECT " (if (= fields [:*]) "*" (rename-fields fields))))
+         "FROM"
+         (if from-only
+           (str "ONLY " (name from-only))
+           (utils/to-str-items from))
+         (when group
+           (str "GROUP " (-> group name str/upper-case)))]
+        (#(str/join " " %))
+        str/trimr
+        (#(str % ";")))))
 
 (comment
   (defn- check-array [field]

@@ -125,9 +125,9 @@
     (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], false)"
            (array-fn :sort [1 2 1 nil "something" 3 3 4 0] false)))
     (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], 'asc')"
-           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :asc)))
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] "asc")))
     (is (= "array::sort([1, 2, 1, null, 'something', 3, 3, 4, 0], 'desc')"
-           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] :desc))))
+           (array-fn :sort [1 2 1 nil "something" 3 3 4 0] "desc"))))
   (testing "array::slice"
     (is (= "array::slice([1, 2, 3, 4, 5], 1, 2)"
            (array-fn :slice [1 2 3 4 5] 1 2)))

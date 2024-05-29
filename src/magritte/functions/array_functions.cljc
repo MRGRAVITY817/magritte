@@ -27,7 +27,7 @@
    :clump [vector? integer?] ; Returns the original array split into multiple arrays of X size
    :concat [vector? vector?] ; Returns the merged values from two arrays
    :difference [vector? vector?] ; Returns the difference between two arrays
-   :distinct [vector?] ; Returns the unique items in an array
+   :distinct [#(or (vector? %) (keyword? %))] ; Returns the unique items in an array
    :find-index [vector? any?] ; Returns the index of the first occurrence of X value
    :filter-index [vector? any?] ; Find the indexes of all occurrences of all matching X value
    :first [vector?] ; Returns the first item in an array
@@ -49,7 +49,7 @@
    :push [vector? any?] ; Appends an item to the end of an array
    :remove [vector? #(or (integer? %) (neg? %))] ; Removes an item at a specific position from an array, supports negative index
    :reverse [vector?] ; Reverses the sorting order of an array
-   :sort [vector? #(or (keyword? %) (boolean? %) (nil? %))] ; Sorts the values in an array in ascending or descending order
+   :sort [vector? #(or (string? %) (boolean? %) (nil? %))] ; Sorts the values in an array in ascending or descending order
    :slice [vector? integer? integer?] ; Returns a slice of an array
    [:sort :asc] [vector?] ; Sorts the values in an array in ascending order
    [:sort :desc] [vector?] ; Sorts the values in an array in descending order

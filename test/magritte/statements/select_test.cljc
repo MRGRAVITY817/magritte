@@ -55,19 +55,13 @@
            (format-select {:select [[{:array :address.coordinates
                                       :index 0} :latitude]]
                            :from   [:person]}))))
-
-;
-; -- Select unique values from an array
-; SELECT array::distinct(tags) FROM article;
   (testing "select unique values from an array"
     (is (= "SELECT array::distinct(tags) FROM article;"
            (format-select {:select [(array-fn :distinct :tags)]
                            :from   [:article]}))))
-; -- Select unique values from a nested array across an entire table
-; SELECT array::group(tags) AS tags FROM article GROUP ALL;
   (testing  "select unique values from a nested array across an entire table"
-    (is (= "SELECT array::group([title, tags]) AS tags FROM article GROUP ALL;"
-           (format-select {:select [(array-fn :group [:title :tags])]
+    (is (= "SELECT array::group([title, tags]) AS title_tags FROM article GROUP ALL;"
+           (format-select {:select [[(array-fn :group [:title :tags]) :title_tags]]
                            :from   [:article]
                            :group  :all}))))
 ;
