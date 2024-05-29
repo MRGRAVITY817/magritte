@@ -32,8 +32,7 @@
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
-; 	[ WITH [ NOINDEX | INDEX @indexes ... ]]
-; 	[ WHERE @conditions ]
+; 	[ WITH [ NOINDEX | INDEX @indexes ... ]] [ WHERE @conditions ]
 ; 	[ SPLIT [ AT ] @field ... ]
 ; 	[ GROUP [ BY ] @fields ... ]
 ; 	[ ORDER [ BY ]
