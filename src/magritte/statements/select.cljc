@@ -15,16 +15,32 @@
    ```
   "
   [field]
-  (if (list? field)
-    (utils/list->infix field)
-    (let [{:keys [array index]} field]
-      (if (and array index)
-        (str (name array) "[" index "]")
-        (name field)))))
+  (cond
+    (list? field) (utils/list->infix field)
+    (map? field) (utils/map->str field)
+    :else (let [{:keys [array index]} field]
+            (if (and array index)
+              (str (name array) "[" index "]")
+              (name field)))))
+
+(defn- get-alias-name
+  "Get correct alias name.
+   
+   Example: 
+   
+   ```
+    (get-alias-name :username) ;; => \"username\"
+    (get-alias-name \"username\") ;; => \"`username`\"
+   ```
+  "
+  [alias]
+  (if (keyword? alias)
+    (name alias)
+    (str "`" alias "`")))
 
 (defn- rename-field [field]
   (if (vector? field)
-    (str (get-field-name (first field)) " AS " (name (second field)))
+    (str (get-field-name (first field)) " AS " (get-alias-name (second field)))
     (name field)))
 
 (defn- rename-fields [fields]
@@ -54,8 +70,6 @@
 ; ;
 
 (defn format-select [expr]
-  ;; {:select {:fields [:*] :from [:person]}}
-  ;; -> "SELECT * from person;"
   (let [fields (get expr :select)
         from (get expr :from)
         from-only (get expr :from-only)
