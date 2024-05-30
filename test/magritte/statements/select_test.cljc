@@ -49,11 +49,6 @@
     (is (= "SELECT address.coordinates AS coordinates FROM person;"
            (format-select {:select [[:address.coordinates :coordinates]]
                            :from   [:person]}))))
-  ; (testing "select one item from an array"
-  ;   (is (= "SELECT address.coordinates[0] AS latitude FROM person;"
-  ;          (format-select {:select [[{:array :address.coordinates
-  ;                                     :index 0} :latitude]]
-  ;                          :from   [:person]}))))
   (testing "select unique values from an array"
     (is (= "SELECT array::distinct(tags) FROM article;"
            (format-select {:select [(array-fn :distinct :tags)]
@@ -77,7 +72,14 @@
                            :from   [:user]}))))
 ; -- Select filtered nested array values
 ; SELECT address[WHERE active = true] FROM person;
-;
+  (testing "select one item from an array"
+    (is (= "SELECT address.coordinates[0] AS latitude FROM person;"
+           (format-select {:select [[:address.coordinates [0] :latitude]]
+                           :from   [:person]}))))
+  (testing "select filtered nested array values"
+    (is (= "SELECT address[WHERE (active = true)] FROM person;"
+           (format-select {:select [[:address [:where '(= :active true)]]]
+                           :from   [:person]}))))
 ; -- Select a person who has reacted to a post using a celebration
 ; -- You can see the graph as: person->(reacted_to WHERE type='celebrate')->post
 ; SELECT * FROM person WHERE ->(reacted_to WHERE type='celebrate')->post;

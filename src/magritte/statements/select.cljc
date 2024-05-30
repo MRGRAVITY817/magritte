@@ -18,10 +18,22 @@
   (cond
     (list? field) (utils/list->infix field)
     (map? field) (utils/map->str field)
-    :else (let [{:keys [array index]} field]
-            (if (and array index)
-              (str (name array) "[" index "]")
-              (name field)))))
+    (number? field) (str field)
+    :else (name field)))
+
+(defn- get-array-statement
+  "Get array statements. 
+
+   Array statements in SurrealQL are the statements inside the square brackets.
+   For example, in the statement `SELECT address[WHERE city = 'New York']`, 
+   the array statement is `WHERE city = 'New York'`."
+  [field]
+  (when (vector? field)
+    (str "["
+         (str/join " "
+                   (cons (-> field first get-field-name str/upper-case)
+                         (->> field rest (map get-field-name))))
+         "]")))
 
 (defn- get-alias-name
   "Get correct alias name.
@@ -34,13 +46,20 @@
    ```
   "
   [alias]
-  (if (keyword? alias)
-    (name alias)
-    (str "`" alias "`")))
+  (cond
+    (keyword? alias) (name alias)
+    :else (str "`" alias "`")))
+
+(defn- get-alias [field]
+  (when (not (vector? (last field)))
+    (str " AS " (get-alias-name (last field)))))
 
 (defn- rename-field [field]
-  (if (vector? field)
-    (str (get-field-name (first field)) " AS " (get-alias-name (second field)))
+  (if (and (vector? field)
+           (>= (count field) 2))
+    (str (get-field-name (first field))
+         (get-array-statement (second field))
+         (get-alias field))
     (name field)))
 
 (defn- rename-fields [fields]
