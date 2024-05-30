@@ -51,13 +51,34 @@
   "Converts a list with prefix notation to infix notation.
    If the operand is a keyword, it will be converted to a string."
   [expr]
-  (if (list? expr)
-    (let [operator (first expr)
-          operands (rest expr)]
-      (str "(" (str/join (str " " operator " ") (map list->infix operands)) ")"))
-    (if (keyword? expr) (name expr) (str expr))))
+  (cond
+    (list? expr) (let [operator (first expr)
+                       operands (rest expr)]
+                   (str "("
+                        (str/join (str " " operator " ")
+                                  (map list->infix operands))
+                        ")"))
+    :else (to-valid-str expr)))
+
+(defn graph-item->str
+  "Converts a graph item to a string."
+  [graph]
+  (cond
+    (vector? graph) (if (= (first graph) :where)
+                      (str "WHERE " (str/join " " (map graph-item->str (rest graph))))
+                      (str "(" (str/join " " (map graph-item->str graph)) ")"))
+    (list? graph) (list->infix graph)
+    (keyword? graph) (name graph)
+    :else (str graph)))
+
+(defn graph->str
+  "Converts a graph to a string."
+  [graph]
+  (str "->"
+       (str/join "->" (map graph-item->str (rest graph)))))
 
 (comment
+  (graph->str '(-> :person :user :name))
   (map kebab->snake_name
        [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case])
   (def new-map {:id "hello"})

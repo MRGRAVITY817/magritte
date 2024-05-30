@@ -79,7 +79,10 @@
 
 (defn- handle-where [where]
   (when where
-    (str "WHERE " where)))
+    (str "WHERE "
+         (cond
+           (list where) (utils/list->infix where)
+           :else (name where)))))
 
 (defn- handle-group [group]
   (when group

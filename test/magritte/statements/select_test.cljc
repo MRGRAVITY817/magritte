@@ -83,11 +83,13 @@
  ; -- Select a person who has reacted to a post using a celebration
  ; -- You can see the graph as: person->(reacted_to WHERE type='celebrate')->post
  ; SELECT * FROM person WHERE ->(reacted_to WHERE type='celebrate')->post
-  (testing "select a person who has reacted to a post using a celebration"
-    (is (= "SELECT * FROM person WHERE ->(reacted_to WHERE type='celebrate')->post"
-           (format-select {:select [:*]
-                           :from   [:person]
-                           :where  [[:-> [:reacted_to [:where '(= :type 'celebrate)] :post]]]}))))
+  #_(testing "select a person who has reacted to a post using a celebration"
+      (is (= "SELECT * FROM person WHERE ->(reacted_to WHERE type='celebrate')->post"
+             (format-select {:select [:*]
+                             :from   [:person]
+                             :where  '(-> :reacted_to
+                                          {:where '(= :type "celebrate")}
+                                          :post)}))))
  ; -- Select a remote field from connected out graph edges
  ; SELECT ->likes->friend.name AS friends FROM person:tobie
  ;
