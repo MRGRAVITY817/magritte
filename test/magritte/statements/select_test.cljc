@@ -46,7 +46,6 @@
     (is (= "SELECT address.*.coordinates AS coordinates FROM person;"
            (format-select {:select [[:address.*.coordinates :coordinates]]
                            :from   [:person]})))
-    ;; equivalent to 
     (is (= "SELECT address.coordinates AS coordinates FROM person;"
            (format-select {:select [[:address.coordinates :coordinates]]
                            :from   [:person]}))))
@@ -70,7 +69,10 @@
                            :from   [:temperature]}))))
 ; -- Return boolean expressions with an alias
 ; SELECT rating >= 4 as positive FROM review;
-;
+  (testing "select boolean expressions with an alias"
+    (is (= "SELECT (rating >= 4) AS positive FROM review;"
+           (format-select {:select [['(>= :rating 4) :positive]]
+                           :from   [:review]}))))
 ; -- Select manually generated object structure
 ; SELECT { weekly: false, monthly: true } AS `marketing settings` FROM user;
 ;
