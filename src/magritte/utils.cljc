@@ -28,10 +28,24 @@
        (#(str/replace % #"-" "_"))))
 
 (defn map->str
-  "Convert clojure map to string to be used in query"
+  "Convert clojure map to string to be used in query
+  
+   Example:
+
+   ```
+   (map-str {:id \"hello\" :name \"world\"})
+   ;; => \"{id: \"hello\", name: \"world\"}\"
+
+   (map-str {:rating '(+ :rating 2) :name \"world\"})
+   ;; => \"{rating: (rating + 2), name: \"world\"}\"
+   ```
+  "
   [map-entry]
-  (let [map-item (first map-entry)]
-    (str "{" (-> map-item first name) ": " (-> map-item second to-valid-str) "}")))
+  (str "{"
+       (str/join ", "
+                 (for [[k v] map-entry]
+                   (str (name k) ": " (to-valid-str v))))
+       "}"))
 
 (defn list->infix
   "Converts a list with prefix notation to infix notation.

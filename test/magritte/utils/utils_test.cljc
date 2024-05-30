@@ -13,3 +13,8 @@
   (testing "with keyword"
     (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4)))))))
 
+(deftest map->str-test
+  (testing "converts {:id \"hello\"} to {id: 'hello'}"
+    (is (= "{id: 'hello'}" (utils/map->str {:id "hello"})))
+    (is (= "{id: 'hello', name: 'world'}" (utils/map->str {:id "hello" :name "world"})))
+    (is (= "{rating: (rating + 2), name: 'world'}" (utils/map->str {:rating '(+ :rating 2) :name "world"})))))
