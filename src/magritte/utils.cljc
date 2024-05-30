@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]))
 
 (declare map->str)
+(declare list->infix)
 
 (defn to-str-items [fields]
   (->> fields (map name) (str/join ", ")))
@@ -12,6 +13,7 @@
   (cond
     (string? arg) (str "'" arg "'")
     (vector? arg) (str "[" (str/join ", " (map to-valid-str arg)) "]")
+    (list? arg) (list->infix arg)
     (map? arg) (map->str arg)
     (nil? arg) "null"
     (= :none arg) "NONE"
@@ -46,7 +48,7 @@
        [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case])
   (def new-map {:id "hello"})
   (def map-list [{:id "hello"} {:name "world"}])
-  (-> {:id "hello"} first map->str)
+  (-> {:id "hello" :name "good"} map->str)
   (to-valid-str map-list)
   (map map->str new-map)
   (list->infix '(+ 1 2))
