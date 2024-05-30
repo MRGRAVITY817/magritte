@@ -67,7 +67,10 @@
 ;
 ; -- Use mathematical calculations in a select expression
 ; SELECT ( ( celsius * 2 ) + 30 ) AS fahrenheit FROM temperature;
-;
+  ; (testing "select mathematical calculations"
+  ;   (is (= "SELECT ((celsius * 2) + 30) AS fahrenheit FROM temperature;"
+  ;          (format-select {:select [[:celsius :* 2 :+ 30 :fahrenheit]]
+  ;                          :from   [:temperature]})))
 ; -- Return boolean expressions with an alias
 ; SELECT rating >= 4 as positive FROM review;
 ;

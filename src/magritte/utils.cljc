@@ -31,17 +31,27 @@
   (let [map-item (first map-entry)]
     (str "{" (-> map-item first name) ": " (-> map-item second to-valid-str) "}")))
 
+(defn list->infix
+  "Converts a list with prefix notation to infix notation."
+  [expr]
+  (if (list? expr)
+    (let [operator (first expr)
+          operands (rest expr)]
+      (str "(" (str/join (str " " operator " ") (map list->infix operands)) ")"))
+    (str expr)))
+
 (comment
   (map kebab->snake_name
-      ; ("camelCase" "snake_case" "kebab_case" "snake_case" "kebab_case" "camel_case")
        [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case])
-
   (def new-map {:id "hello"})
-
   (def map-list [{:id "hello"} {:name "world"}])
-
   (-> {:id "hello"} first map->str)
-
   (to-valid-str map-list)
-
-  (map map->str new-map))
+  (map map->str new-map)
+  (list->infix '(+ 1 2))
+  (list->infix '(* 1 2))
+  (list->infix '(/ 1 2))
+  (list->infix '(- 1 2))
+  ;; More complicated
+  (list->infix '(* (+ 1 2) (- 3 4)))
+  (list->infix '(* (+ 1 2) (- 3 4) (/ 5 6))))
