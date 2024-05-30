@@ -15,11 +15,12 @@
    ```
   "
   [field]
-  (let [{:keys [array index]} field]
-    (cond
-      (and array index) (str (name array) "[" index "]")
-      array (name array)
-      :else (name field))))
+  (if (list? field)
+    (utils/list->infix field)
+    (let [{:keys [array index]} field]
+      (if (and array index)
+        (str (name array) "[" index "]")
+        (name field)))))
 
 (defn- rename-field [field]
   (if (vector? field)
