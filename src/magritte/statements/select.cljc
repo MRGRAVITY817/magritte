@@ -11,13 +11,15 @@
     (get-field-name :username) ;; => \"username\"
     (get-field-name {:array :username
                      :index 12}) ;; => \"username[12]\"
+    (get-field-name '(+ :rating 2)) ;; => \"(rating + 2)\"
    ```
   "
   [field]
   (let [{:keys [array index]} field]
-    (if (and array index)
-      (str (name array) "[" index "]")
-      (name field))))
+    (cond
+      (and array index) (str (name array) "[" index "]")
+      array (name array)
+      :else (name field))))
 
 (defn- rename-field [field]
   (if (vector? field)

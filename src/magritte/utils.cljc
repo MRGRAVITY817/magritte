@@ -32,13 +32,14 @@
     (str "{" (-> map-item first name) ": " (-> map-item second to-valid-str) "}")))
 
 (defn list->infix
-  "Converts a list with prefix notation to infix notation."
+  "Converts a list with prefix notation to infix notation.
+   If the operand is a keyword, it will be converted to a string."
   [expr]
   (if (list? expr)
     (let [operator (first expr)
           operands (rest expr)]
       (str "(" (str/join (str " " operator " ") (map list->infix operands)) ")"))
-    (str expr)))
+    (if (keyword? expr) (name expr) (str expr))))
 
 (comment
   (map kebab->snake_name
