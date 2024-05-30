@@ -67,6 +67,24 @@
        (map rename-field)
        (str/join ", ")))
 
+(defn- handle-select [select-value select]
+  (if select-value
+    (str "SELECT VALUE " (name select-value))
+    (str "SELECT " (if (= select [:*]) "*" (rename-fields select)))))
+
+(defn- handle-from [from-only from]
+  (if from-only
+    (str "FROM ONLY " (name from-only))
+    (str "FROM " (utils/to-str-items from))))
+
+(defn- handle-where [where]
+  (when where
+    (str "WHERE " where)))
+
+(defn- handle-group [group]
+  (when group
+    (str "GROUP " (-> group name str/upper-case))))
+
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
@@ -88,25 +106,15 @@
 ; 	[ EXPLAIN [ FULL ]]
 ; ;
 
-(defn format-select [expr]
-  (let [fields (get expr :select)
-        from (get expr :from)
-        from-only (get expr :from-only)
-        select-value (get expr :select-value)
-        group (get expr :group)]
-
-    (-> [(if select-value
-           (str "SELECT VALUE " (name select-value))
-           (str "SELECT " (if (= fields [:*]) "*" (rename-fields fields))))
-         "FROM"
-         (if from-only
-           (str "ONLY " (name from-only))
-           (utils/to-str-items from))
-         (when group
-           (str "GROUP " (-> group name str/upper-case)))]
-        (#(str/join " " %))
-        str/trimr
-        (#(str % ";")))))
+(defn format-select [{:keys [select select-value from
+                             from-only where group]}]
+  (->> [(handle-select select-value select)
+        (handle-from from-only from)
+        (handle-where where)
+        (handle-group group)]
+       (filter identity)
+       (str/join " ")
+       str/trimr))
 
 (comment
   (defn- check-array [field]
