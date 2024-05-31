@@ -91,6 +91,11 @@
     (is (= "SELECT ->likes->friend.name AS friends FROM person:tobie"
            (format-select {:select [[:->likes->friend.name :friends]] ;; equivalent to the above
                            :from   [:person:tobie]}))))
- ; -- Use the result of a subquery as a returned field
- ; SELECT *, (SELECT * FROM events WHERE type = 'activity' LIMIT 5) AS history FROM user
-  )
+  (testing "select a subquery as a returned field"
+    (is (= "SELECT *, (SELECT * FROM events WHERE (type = 'activity') LIMIT 5) AS history FROM user"
+           (format-select {:select [:* [^:subquery
+                                        {:select [:*]
+                                         :from   [:events]
+                                         :where  '(= :type "activity")
+                                         :limit  5} :history]]
+                           :from   [:user]})))))

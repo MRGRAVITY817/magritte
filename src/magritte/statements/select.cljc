@@ -2,6 +2,8 @@
   (:require [magritte.utils :as utils]
             [clojure.string :as str]))
 
+(declare format-select)
+
 (defn- get-field-name
   "Get correct field name.
    
@@ -17,7 +19,9 @@
   [field]
   (cond
     (list? field) (utils/list->str field)
-    (map? field) (utils/map->str field)
+    (map? field) (if (= (meta field) {:subquery true})
+                   (str "(" (format-select field)  ")")
+                   (utils/map->str field))
     (number? field) (str field)
     :else (name field)))
 
@@ -88,6 +92,10 @@
   (when group
     (str "GROUP " (-> group name str/upper-case))))
 
+(defn- handle-limit [limit]
+  (when (integer? limit)
+    (str "LIMIT "  limit)))
+
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
@@ -110,11 +118,12 @@
 ; ;
 
 (defn format-select [{:keys [select select-value from
-                             from-only where group]}]
+                             from-only where group limit]}]
   (->> [(handle-select select-value select)
         (handle-from from-only from)
         (handle-where where)
-        (handle-group group)]
+        (handle-group group)
+        (handle-limit limit)]
        (filter identity)
        (str/join " ")
        str/trimr))
@@ -128,6 +137,8 @@
 
   (check-array {:array :hello.world
                 :index 12})
-  (check-array :hello))
+  (check-array :hello)
+
+  (meta ^:private {:hello "world"}))
 
 
