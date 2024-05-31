@@ -70,8 +70,6 @@
     (is (= "SELECT {weekly: false, monthly: true} AS `marketing settings` FROM user"
            (format-select {:select [[{:weekly false :monthly true} "marketing settings"]]
                            :from   [:user]}))))
- ; -- Select filtered nested array values
- ; SELECT address[WHERE active = true] FROM person
   (testing "select one item from an array"
     (is (= "SELECT address.coordinates[0] AS latitude FROM person"
            (format-select {:select [[:address.coordinates [0] :latitude]]
@@ -80,18 +78,19 @@
     (is (= "SELECT address[WHERE (active = true)] FROM person"
            (format-select {:select [[:address [:where '(= :active true)]]]
                            :from   [:person]}))))
- ; -- Select a person who has reacted to a post using a celebration
- ; -- You can see the graph as: person->(reacted_to WHERE type='celebrate')->post
- ; SELECT * FROM person WHERE ->(reacted_to WHERE type='celebrate')->post
   (testing "select a person who has reacted to a post using a celebration"
     (is (= "SELECT * FROM person WHERE ->(reacted_to WHERE (type = 'celebrate'))->post"
            (format-select {:select [:*]
                            :from   [:person]
                            :where  '(-> [:reacted_to [:where (= :type "celebrate")]]
                                         :post)}))))
- ; -- Select a remote field from connected out graph edges
- ; SELECT ->likes->friend.name AS friends FROM person:tobie
- ;
+  (testing "select a remote field from connected out graph edges"
+    (is (= "SELECT ->likes->friend.name AS friends FROM person:tobie"
+           (format-select {:select [['(-> :likes :friend.name) :friends]]
+                           :from   [:person:tobie]})))
+    (is (= "SELECT ->likes->friend.name AS friends FROM person:tobie"
+           (format-select {:select [[:->likes->friend.name :friends]] ;; equivalent to the above
+                           :from   [:person:tobie]}))))
  ; -- Use the result of a subquery as a returned field
  ; SELECT *, (SELECT * FROM events WHERE type = 'activity' LIMIT 5) AS history FROM user
   )

@@ -3,6 +3,8 @@
 
 (declare map->str)
 (declare list->infix)
+(declare graph->str)
+(declare list->infix)
 
 (defn to-str-items [fields]
   (->> fields (map name) (str/join ", ")))
@@ -46,6 +48,14 @@
                  (for [[k v] map-entry]
                    (str (name k) ": " (to-valid-str v))))
        "}"))
+
+(defn list->str
+  "Converts a list to a string representation suitable for use in a SurrealQL query."
+  [expr]
+  (let [operator (first expr)]
+    (if (= operator '->)
+      (graph->str expr)
+      (list->infix expr))))
 
 (defn list->infix
   "Converts a list with prefix notation to infix notation.

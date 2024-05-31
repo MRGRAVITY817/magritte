@@ -16,7 +16,7 @@
   "
   [field]
   (cond
-    (list? field) (utils/list->infix field)
+    (list? field) (utils/list->str field)
     (map? field) (utils/map->str field)
     (number? field) (str field)
     :else (name field)))
@@ -81,9 +81,7 @@
   (when where
     (str "WHERE "
          (cond
-           (list where) (if (= (first where) '->)
-                          (utils/graph->str where)
-                          (utils/list->infix where))
+           (list? where) (utils/list->str where)
            :else (name where)))))
 
 (defn- handle-group [group]
