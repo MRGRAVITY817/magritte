@@ -99,3 +99,15 @@
                                          :where  '(= :type "activity")
                                          :limit  5} :history]]
                            :from   [:user]})))))
+
+(deftest format-select-test-using-pararmeters
+; -- Store the subquery result in a variable and query that result.
+; LET $history = SELECT * FROM events WHERE type = 'activity' LIMIT 5;
+; SELECT * from $history;
+;
+; -- Use the parent instance's field in a subquery (predefined variable)
+; SELECT *, (SELECT * FROM events WHERE host == $parent.id) AS hosted_events FROM user;
+  (testing "assign select result to let"
+    (is (= "SELECT * FROM $history"
+           (format-select {:select [:*]
+                           :from   [:$history]})))))
