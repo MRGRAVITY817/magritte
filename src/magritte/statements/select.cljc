@@ -81,7 +81,9 @@
   (when where
     (str "WHERE "
          (cond
-           (list where) (utils/list->infix where)
+           (list where) (if (= (first where) '->)
+                          (utils/graph->str where)
+                          (utils/list->infix where))
            :else (name where)))))
 
 (defn- handle-group [group]
