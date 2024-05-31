@@ -87,7 +87,37 @@
   (str "->"
        (str/join "->" (map graph-item->str (rest graph)))))
 
+(defn range-map->str
+  "Converts a range map to a string.
+   
+   Example: 
+   ```
+   (range-map->str {:> 2 :< 5})
+   ;; => \"2..5\"
+
+   (range-map->str {:> 2})
+   ;; => \"2..\"
+
+   (range-map->str {:< 5})
+   ;; => \"..5\"
+
+   (range-map->str {:>= 2 :<= 5})
+   ;; => \"2=..=5\"
+   ```
+  "
+  [range-map]
+  (str (when (range-map :>) (str (range-map :>)))
+       (when (range-map :>=) (str (range-map :>=) "="))
+       ".."
+       (when (range-map :<=) (str "=" (range-map :<=)))
+       (when (range-map :<) (str (range-map :<)))))
+
 (comment
+  (range-map->str {:> 2 :< 5})
+  (range-map->str {:> 2})
+  (range-map->str {:< 5})
+  (range-map->str {:>= 2 :<= 5})
+  (range-map->str {:> 2 :<= 5})
   (graph->str '(-> :person :user :name))
   (map kebab->snake_name
        [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case])

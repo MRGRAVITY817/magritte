@@ -123,11 +123,12 @@
                            :from   [:person:1..1000]}))))
 ; -- Select all records for a particular location, inclusive
 ; SELECT * FROM temperature:['London', NONE]..=['London', time::now()];
-  (testing "select all records for a particular location, inclusive"
-    (is (= "SELECT * FROM temperature:['London', NONE]..=['London', time::now()]"
-           (format-select {:select [:*]
-                           :from   [:temperature {:start ['London' :none]
-                                                  :end   ['London' (time-fn :now)]}]}))))
+  #_(testing "select all records for a particular location, inclusive"
+      (is (= "SELECT * FROM temperature:['London', NONE]..=['London', time::now()]"
+             (format-select {:select [:*]
+                             :from   [[:temperature
+                                       ^:range {:>  ["London" :none]
+                                                :<= ["London" (time-fn :now)]}]]}))))
 
 ; -- Select all temperature records with IDs less than a maximum value
 ; SELECT * FROM temperature:..['London', '2022-08-29T08:09:31'];

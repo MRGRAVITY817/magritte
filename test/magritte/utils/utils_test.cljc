@@ -29,6 +29,21 @@
     (is (= "->person->(user WHERE (name = 'charlie'))->address"
            (utils/graph->str '(-> :person
                                   [:user [:where (= name "charlie")]]
-                                  :address)))))
-  ;
-  )
+                                  :address))))))
+
+(deftest range-map->str-test
+  (testing "greater than 2, less than 5"
+    (is (= "2..5"
+           (utils/range-map->str {:> 2 :< 5}))))
+  (testing "greater than 2"
+    (is (= "2.."
+           (utils/range-map->str {:> 2}))))
+  (testing "less than 5"
+    (is (= "..5"
+           (utils/range-map->str {:< 5}))))
+  (testing "greater than or equal to 2, less than or equal to 5"
+    (is (= "2=..=5"
+           (utils/range-map->str {:>= 2 :<= 5}))))
+  (testing "greater than 2, less than or equal to 5"
+    (is (= "2..=5"
+           (utils/range-map->str {:> 2 :<= 5})))))
