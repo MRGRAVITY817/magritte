@@ -56,7 +56,7 @@
    :transpose [vector? vector?] ; Performs 2d array transposition on two arrays
    :union [vector? vector?]}) ; Returns the unique merged values from two arrays
 
-(defn- new-function [function]
+(defn- matched-fn [function]
   (cond
     (keyword? function) (utils/kebab->snake_name function)
     (vector? function) (str/join "::" (map utils/kebab->snake_name function))))
@@ -65,7 +65,7 @@
   (let [validator (get array-functions function)]
     (if validator
       (if (args-valid? validator args)
-        (str "array::" (new-function function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
+        (str "array::" (matched-fn function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
         (throw (ex-info (str "Invalid arguments for array function: " function) {})))
       (throw (ex-info (str "Unknown array function: " function) {})))))
 

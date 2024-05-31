@@ -1,7 +1,8 @@
 (ns magritte.statements.select-test
   (:require [clojure.test :refer [deftest is testing]]
             [magritte.statements.select :refer [format-select]]
-            [magritte.functions.array-functions :refer [array-fn]]))
+            [magritte.functions.array-functions :refer [array-fn]]
+            [magritte.functions.time-functions :refer [time-fn]]))
 
 (deftest format-select-test
   (testing "select all fields from a table"
@@ -105,8 +106,6 @@
     (is (= "SELECT * FROM $history"
            (format-select {:select [:*]
                            :from   [:$history]}))))
-; -- Use the parent instance's field in a subquery (predefined variable)
-; SELECT *, (SELECT * FROM events WHERE host == $parent.id) AS hosted_events FROM user;
   (testing "use the parent instance's field in a subquery"
     (is (= "SELECT *, (SELECT * FROM events WHERE (host == $parent.id)) AS hosted_events FROM user"
            (format-select {:select [:* [^:subquery
@@ -114,3 +113,29 @@
                                          :from   [:events]
                                          :where  '(== :host $parent.id)} :hosted_events]]
                            :from   [:user]})))))
+
+(deftest format-select-test-record-ranges
+  ; -- Select all person records with IDs between the given range
+  ; SELECT * FROM person:1..1000;
+  (testing "select all records with IDs between the given range"
+    (is (= "SELECT * FROM person:1..1000"
+           (format-select {:select [:*]
+                           :from   [:person:1..1000]}))))
+; -- Select all records for a particular location, inclusive
+; SELECT * FROM temperature:['London', NONE]..=['London', time::now()];
+  (testing "select all records for a particular location, inclusive"
+    (is (= "SELECT * FROM temperature:['London', NONE]..=['London', time::now()]"
+           (format-select {:select [:*]
+                           :from   [:temperature {:start ['London' :none]
+                                                  :end   ['London' (time-fn :now)]}]}))))
+
+; -- Select all temperature records with IDs less than a maximum value
+; SELECT * FROM temperature:..['London', '2022-08-29T08:09:31'];
+
+; -- Select all temperature records with IDs greater than a minimum value
+; SELECT * FROM temperature:['London', '2022-08-29T08:03:39']..;
+
+; -- Select all temperature records with IDs between the specified range
+; SELECT * FROM temperature:['London', '2022-08-29T08:03:39']..['London', '2022-08-29T08:09:31'];
+  )
+
