@@ -64,7 +64,7 @@
     (str (get-field-name (first field))
          (get-array-statement (second field))
          (get-alias field))
-    (name field)))
+    (utils/to-valid-str field)))
 
 (defn- rename-fields [fields]
   (->> fields

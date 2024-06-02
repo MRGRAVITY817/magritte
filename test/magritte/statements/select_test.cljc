@@ -1,8 +1,6 @@
 (ns magritte.statements.select-test
   (:require [clojure.test :refer [deftest is testing]]
-            [magritte.statements.select :refer [format-select]]
-            [magritte.functions.array-functions :refer [array-fn]]
-            [magritte.functions.time-functions :refer [time-fn]]))
+            [magritte.statements.select :refer [format-select]]))
 
 (deftest format-select-test
   (testing "select all fields from a table"
@@ -52,11 +50,11 @@
                            :from   [:person]}))))
   (testing "select unique values from an array"
     (is (= "SELECT array::distinct(tags) FROM article"
-           (format-select {:select [(array-fn :distinct :tags)]
+           (format-select {:select ['(array/distinct :tags)]
                            :from   [:article]}))))
   (testing  "select unique values from a nested array across an entire table"
     (is (= "SELECT array::group([title, tags]) AS title_tags FROM article GROUP ALL"
-           (format-select {:select [[(array-fn :group [:title :tags]) :title_tags]]
+           (format-select {:select [['(array/group [:title :tags]) :title_tags]]
                            :from   [:article]
                            :group  :all}))))
   (testing "select mathematical calculations"
@@ -115,20 +113,15 @@
                            :from   [:user]})))))
 
 (deftest format-select-test-record-ranges
-  ; -- Select all person records with IDs between the given range
-  ; SELECT * FROM person:1..1000;
   (testing "select all records with IDs between the given range"
     (is (= "SELECT * FROM person:1..1000"
            (format-select {:select [:*]
                            :from   [:person:1..1000]}))))
-; -- Select all records for a particular location, inclusive
-; SELECT * FROM temperature:['London', NONE]..=['London', time::now()];
   (testing "select all records for a particular location, inclusive"
     (is (= "SELECT * FROM temperature:['London', NONE]..=['London', time::now()]"
            (format-select {:select [:*]
-                           :from   [[:temperature
-                                     ^:range {:>  ["London" :none]
-                                              :<= ["London" '(time/now)]}]]}))))
+                           :from   [[:temperature ^:range {:>  ["London" :none]
+                                                           :<= ["London" '(time/now)]}]]}))))
 
 ; -- Select all temperature records with IDs less than a maximum value
 ; SELECT * FROM temperature:..['London', '2022-08-29T08:09:31'];
