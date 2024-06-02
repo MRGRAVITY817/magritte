@@ -3,9 +3,10 @@
             [clojure.repl :as repl]))
 
 (declare map->str)
-(declare list->infix)
 (declare graph->str)
 (declare list->infix)
+(declare list->infix)
+(declare list->db-fn)
 (declare to-valid-str)
 
 (defn to-str-items [fields]
@@ -55,9 +56,10 @@
   "Converts a list to a string representation suitable for use in a SurrealQL query."
   [expr]
   (let [operator (first expr)]
-    (if (= operator '->)
-      (graph->str expr)
-      (list->infix expr))))
+    (cond
+      (= operator '->) (graph->str expr)
+      (and (symbol? operator) (namespace operator)) (list->db-fn expr)
+      :else (list->infix expr))))
 
 (defn symbol->db-fn-name
   "Builds a database function name from given namespaced symbol.

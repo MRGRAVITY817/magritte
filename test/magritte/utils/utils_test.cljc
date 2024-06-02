@@ -2,6 +2,19 @@
   (:require [clojure.test :refer [deftest is testing]]
             [magritte.utils :as utils]))
 
+(deftest list->str-test
+  (testing "mathematical expression"
+    (is (= "(1 + 2)"
+           (utils/list->str '(+ 1 2)))))
+  (testing "graph expression"
+    (is (= "->person->user->name"
+           (utils/list->str '(-> :person :user :name))))
+    (is (= "->person->(user WHERE (name = 'charlie'))->address"
+           (utils/list->str '(-> :person [:user [:where (= name "charlie")]] :address)))))
+  (testing "db functions"
+    (is (= "time::now()"
+           (utils/list->str '(time/now))))))
+
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"
     (is (= "(1 + 2)" (utils/list->infix '(+ 1 2)))))
