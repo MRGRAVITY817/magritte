@@ -4,6 +4,7 @@
 
 (declare map->str)
 (declare graph->str)
+(declare list->str)
 (declare list->infix)
 (declare list->infix)
 (declare list->db-fn)
@@ -18,7 +19,7 @@
   (cond
     (string? arg) (str "'" arg "'")
     (vector? arg) (str "[" (str/join ", " (map to-valid-str arg)) "]")
-    (list? arg) (list->infix arg)
+    (list? arg) (list->str arg)
     (map? arg) (map->str arg)
     (nil? arg) "null"
     (= :none arg) "NONE"
