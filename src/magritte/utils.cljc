@@ -59,6 +59,40 @@
       (graph->str expr)
       (list->infix expr))))
 
+(defn symbol->db-fn-name
+  "Builds a database function name from given namespaced symbol.
+   
+   Example:
+   ```
+   (build-db-fn-name 'time/now)
+   ;; => \"time::now()\"
+   ```
+  "
+  [expr]
+  (let [[category fn-name] (-> expr str (str/split #"/"))
+        fn-name (-> fn-name (str/replace #"-" "::"))]
+    (str category "::" fn-name)))
+
+(defn list->db-fn
+  "Converts list to a database function string representation.
+   
+   Example:
+   ```
+   (list->db-fn '(time/now))
+   ;; => \"time::now()\"
+   ```
+  "
+  [expr]
+  (str (->> expr first symbol->db-fn-name)
+       "(" (str/join ", " (map to-valid-str (rest expr))) ")"))
+
+(comment
+  (symbol->db-fn-name 'time/now)
+  (list->db-fn '(time/now))
+  (list->db-fn '(time/floor "2021-11-01T08:30:17+00:00" :1w))
+  (list->db-fn '(array/append [1 2 3] 4))
+  (list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))
+
 (defn list->infix
   "Converts a list with prefix notation to infix notation.
    If the operand is a keyword, it will be converted to a string."
@@ -108,11 +142,11 @@
    ```
   "
   [range-map]
-  (str (when (range-map :>) (str (range-map :>)))
-       (when (range-map :>=) (str (range-map :>=) "="))
+  (str (when (range-map :>) (str (-> range-map :> to-valid-str)))
+       (when (range-map :>=) (str (-> range-map :>= to-valid-str) "="))
        ".."
-       (when (range-map :<=) (str "=" (range-map :<=)))
-       (when (range-map :<) (str (range-map :<)))))
+       (when (range-map :<=) (str "=" (-> range-map :<= to-valid-str)))
+       (when (range-map :<) (str (-> range-map :< to-valid-str)))))
 
 (comment
   (repl/doc to-valid-str)

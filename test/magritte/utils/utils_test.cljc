@@ -13,6 +13,19 @@
   (testing "with keyword"
     (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4)))))))
 
+(deftest list->db-fn-test
+  (testing "time::now()"
+    (is (= "time::now()" (utils/list->db-fn '(time/now)))))
+  (testing "time::floor(date, interval)"
+    (is (= "time::floor('2021-11-01T08:30:17+00:00', 1w)"
+           (utils/list->db-fn '(time/floor "2021-11-01T08:30:17+00:00" :1w)))))
+  (testing "array::append(list, item)"
+    (is (= "array::append([1, 2, 3], 4)"
+           (utils/list->db-fn '(array/append [1 2 3] 4)))))
+  (testing "array::boolean::and(list, list)"
+    (is (= "array::boolean::and(['true', 'false', 1, 1], ['true', 'true', 0, 'true'])"
+           (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"]))))))
+
 (deftest map->str-test
   (testing "converts {:id \"hello\"} to {id: 'hello'}"
     (is (= "{id: 'hello'}" (utils/map->str {:id "hello"})))
@@ -46,4 +59,8 @@
            (utils/range-map->str {:>= 2 :<= 5}))))
   (testing "greater than 2, less than or equal to 5"
     (is (= "2..=5"
-           (utils/range-map->str {:> 2 :<= 5})))))
+           (utils/range-map->str {:> 2 :<= 5}))))
+  #_(testing "range items are vectors"
+      (is (= "['London', NONE]..=['London', time::now()]"
+             (utils/range-map->str {:>  ["London" :none]
+                                    :<= ["London" '(time/now)]})))))
