@@ -1,10 +1,12 @@
 (ns magritte.utils
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.repl :as repl]))
 
 (declare map->str)
 (declare list->infix)
 (declare graph->str)
 (declare list->infix)
+(declare to-valid-str)
 
 (defn to-str-items [fields]
   (->> fields (map name) (str/join ", ")))
@@ -113,6 +115,7 @@
        (when (range-map :<) (str (range-map :<)))))
 
 (comment
+  (repl/doc to-valid-str)
   (range-map->str {:> 2 :< 5})
   (range-map->str {:> 2})
   (range-map->str {:< 5})

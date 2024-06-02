@@ -76,10 +76,19 @@
     (str "SELECT VALUE " (name select-value))
     (str "SELECT " (if (= select [:*]) "*" (rename-fields select)))))
 
+(defn- handle-from-field [from-field]
+  (if (and (vector? from-field) (= (-> from-field second meta) {:range true}))
+    (str (get-field-name (first from-field))
+         ":"
+         (utils/range-map->str (second from-field)))
+    (name from-field)))
+
 (defn- handle-from [from-only from]
   (if from-only
     (str "FROM ONLY " (name from-only))
-    (str "FROM " (utils/to-str-items from))))
+    (str "FROM " (->> from
+                      (map handle-from-field)
+                      (str/join ", ")))))
 
 (defn- handle-where [where]
   (when where

@@ -44,6 +44,6 @@
   (let [validator (get time-functions function)]
     (if validator
       (if (args-valid? validator args)
-        (str "array::" (matched-fn function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
+        (str "time::" (matched-fn function) "(" (str/join ", " (map utils/to-valid-str args)) ")")
         (throw (ex-info (str "Invalid arguments for time function: " function) {})))
       (throw (ex-info (str "Unknown time function: " function) {})))))
