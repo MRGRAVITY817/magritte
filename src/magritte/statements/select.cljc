@@ -77,10 +77,10 @@
     (str "SELECT " (if (= select [:*]) "*" (rename-fields select)))))
 
 (defn- handle-from-field [from-field]
-  (if (and (vector? from-field) (= (-> from-field second meta) {:range true}))
+  (if (and (vector? from-field) (-> from-field second utils/is-range?))
     (str (get-field-name (first from-field))
          ":"
-         (utils/range-map->str (second from-field)))
+         (utils/list->range (second from-field)))
     (name from-field)))
 
 (defn- handle-from [from-only from]

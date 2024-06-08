@@ -114,18 +114,17 @@
   (testing "select all records with IDs between the given range"
     (is (= "SELECT * FROM person:1..1000"
            (format-select {:select [:*]
-                           :from   [:person:1..1000]}))))
+                           :from   [[:person '(.. 1 1000)]]}))))
   (testing "select all records for a particular location, inclusive"
     (is (= "SELECT * FROM temperature:['London', NONE]..=['London', time::now()]"
            (format-select {:select [:*]
-                           :from   [[:temperature ^:range {:>  ["London" :none]
-                                                           :<= ["London" '(time/now)]}]]}))))
+                           :from   [[:temperature '(..= ["London" :none] ["London" (time/now)])]]}))))
   (testing "select all records with IDs less than a maximum value"
     (is (= "SELECT * FROM temperature:..['London', '2022-08-29T08:09:31']"
            (format-select {:select [:*]
-                           :from   [[:temperature ^:range {:< ["London" "2022-08-29T08:09:31"]}]]}))))
+                           :from   [[:temperature '(.. nil ["London" "2022-08-29T08:09:31"])]]}))))
   (testing "select all records with IDs greater than a minimum value"
     (is (= "SELECT * FROM temperature:['London', '2022-08-29T08:03:39'].."
            (format-select {:select [:*]
-                           :from   [[:temperature ^:range {:> ["London" "2022-08-29T08:03:39"]}]]})))))
+                           :from   [[:temperature '(.. ["London" "2022-08-29T08:03:39"])]]})))))
 
