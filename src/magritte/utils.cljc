@@ -6,7 +6,8 @@
 (declare graph->str)
 (declare list->str)
 (declare list->infix)
-(declare list->infix)
+(declare is-range?)
+(declare list->range)
 (declare list->db-fn)
 (declare to-valid-str)
 
@@ -59,6 +60,7 @@
   (let [operator (first expr)]
     (cond
       (= operator '->) (graph->str expr)
+      (is-range? expr) (list->range expr)
       (and (symbol? operator) (namespace operator)) (list->db-fn expr)
       :else (list->infix expr))))
 
@@ -108,6 +110,11 @@
                                   (map list->infix operands))
                         ")"))
     :else (to-valid-str expr)))
+
+(defn is-range?
+  "Checks if the given list is a range expression."
+  [expr]
+  (some #(= (first expr) %) '[.. ..= =..]))
 
 (defn list->range
   "Converts list to a range string representation.
@@ -188,4 +195,6 @@
   ;; More complicated
   (list->infix '(* (+ 1 2) (- 3 4)))
   (list->infix '(* (+ 1 2) (- 3 4) (/ 5 6))))
+
+
 

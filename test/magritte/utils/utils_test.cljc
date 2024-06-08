@@ -39,6 +39,12 @@
     (is (= "array::boolean::and(['true', 'false', 1, 1], ['true', 'true', 0, 'true'])"
            (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"]))))))
 
+(deftest test-is-range
+  (is (utils/is-range? '(.. 1 1000)))
+  (is (utils/is-range? '(..= 1 1000)))
+  (is (utils/is-range? '(.. nil 1)))
+  (is (utils/is-range? '(.. 1))))
+
 (deftest test-list->range
   (is (= "1..1000"
          (utils/list->range '(.. 1 1000))))
