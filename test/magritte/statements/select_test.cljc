@@ -67,7 +67,7 @@
                            :from   [:review]}))))
   (testing "select object structure"
     (is (= "SELECT {weekly: false, monthly: true} AS `marketing settings` FROM user"
-           (format-select {:select [[{:weekly false :monthly true} "marketing settings"]]
+           (format-select {:select [[^:object {:weekly false :monthly true} "marketing settings"]]
                            :from   [:user]}))))
   (testing "select one item from an array"
     (is (= "SELECT address.coordinates[0] AS latitude FROM person"
@@ -92,8 +92,7 @@
                            :from   [:person:tobie]}))))
   (testing "select a subquery as a returned field"
     (is (= "SELECT *, (SELECT * FROM events WHERE (type = 'activity') LIMIT 5) AS history FROM user"
-           (format-select {:select [:* [^:subquery
-                                        {:select [:*]
+           (format-select {:select [:* [{:select [:*]
                                          :from   [:events]
                                          :where  '(= :type "activity")
                                          :limit  5} :history]]
@@ -106,12 +105,10 @@
                            :from   [:$history]}))))
   (testing "use the parent instance's field in a subquery"
     (is (= "SELECT *, (SELECT * FROM events WHERE (host == $parent.id)) AS hosted_events FROM user"
-           (format-select {:select [:* [^:subquery
-                                        {:select [:*]
+           (format-select {:select [:* [{:select [:*]
                                          :from   [:events]
                                          :where  '(== :host $parent.id)} :hosted_events]]
                            :from   [:user]})))))
-
 (deftest format-select-test-record-ranges
   (testing "select all records with IDs between the given range"
     (is (= "SELECT * FROM person:1..1000"
@@ -122,14 +119,12 @@
            (format-select {:select [:*]
                            :from   [[:temperature ^:range {:>  ["London" :none]
                                                            :<= ["London" '(time/now)]}]]}))))
-
-; -- Select all temperature records with IDs less than a maximum value
-; SELECT * FROM temperature:..['London', '2022-08-29T08:09:31'];
-
-; -- Select all temperature records with IDs greater than a minimum value
-; SELECT * FROM temperature:['London', '2022-08-29T08:03:39']..;
-
-; -- Select all temperature records with IDs between the specified range
-; SELECT * FROM temperature:['London', '2022-08-29T08:03:39']..['London', '2022-08-29T08:09:31'];
-  )
+  (testing "select all records with IDs less than a maximum value"
+    (is (= "SELECT * FROM temperature:..['London', '2022-08-29T08:09:31']"
+           (format-select {:select [:*]
+                           :from   [[:temperature ^:range {:< ["London" "2022-08-29T08:09:31"]}]]}))))
+  (testing "select all records with IDs greater than a minimum value"
+    (is (= "SELECT * FROM temperature:['London', '2022-08-29T08:03:39'].."
+           (format-select {:select [:*]
+                           :from   [[:temperature ^:range {:> ["London" "2022-08-29T08:03:39"]}]]})))))
 

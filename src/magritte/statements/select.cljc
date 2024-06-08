@@ -19,9 +19,9 @@
   [field]
   (cond
     (list? field) (utils/list->str field)
-    (map? field) (if (= (meta field) {:subquery true})
-                   (str "(" (format-select field)  ")")
-                   (utils/map->str field))
+    (map? field) (if (= (meta field) {:object true})
+                   (utils/map->str field)
+                   (str "(" (format-select field) ")"))
     (number? field) (str field)
     :else (name field)))
 
