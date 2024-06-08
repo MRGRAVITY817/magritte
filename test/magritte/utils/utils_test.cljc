@@ -39,6 +39,16 @@
     (is (= "array::boolean::and(['true', 'false', 1, 1], ['true', 'true', 0, 'true'])"
            (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"]))))))
 
+(deftest test-list->range
+  (is (= "1..1000"
+         (utils/list->range '(.. 1 1000))))
+  (is (= "['London', NONE]..=['London', time::now()]"
+         (utils/list->range '(..= ["London" :none] ["London" (time/now)]))))
+  (is (= "..['London', '2022-08-29T08:09:31']"
+         (utils/list->range '(.. nil ["London" "2022-08-29T08:09:31"]))))
+  (is (= "['London', '2022-08-29T08:03:39'].."
+         (utils/list->range '(.. ["London" "2022-08-29T08:03:39"])))))
+
 (deftest map->str-test
   (testing "converts {:id \"hello\"} to {id: 'hello'}"
     (is (= "{id: 'hello'}" (utils/map->str {:id "hello"})))

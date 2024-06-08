@@ -109,6 +109,21 @@
                         ")"))
     :else (to-valid-str expr)))
 
+(defn list->range
+  "Converts list to a range string representation.
+   
+   Example:
+   ```
+   (list->range '(.. 1 1000))
+   ;; => \"1..1000\"
+
+   (list->range '(..= [\"London\" :none] [\"London\" (time/now)]))
+   ;; => \"['London', NONE]..=['London', time::now()]\""
+  [[operator start end]]
+  (str (when start (to-valid-str start))
+       (str operator)
+       (when end (to-valid-str end))))
+
 (defn graph-item->str
   "Converts a graph item to a string."
   [graph]
@@ -173,3 +188,4 @@
   ;; More complicated
   (list->infix '(* (+ 1 2) (- 3 4)))
   (list->infix '(* (+ 1 2) (- 3 4) (/ 5 6))))
+

@@ -109,6 +109,7 @@
                                          :from   [:events]
                                          :where  '(== :host $parent.id)} :hosted_events]]
                            :from   [:user]})))))
+
 (deftest format-select-test-record-ranges
   (testing "select all records with IDs between the given range"
     (is (= "SELECT * FROM person:1..1000"
