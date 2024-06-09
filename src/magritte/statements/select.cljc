@@ -105,6 +105,10 @@
   (when (integer? limit)
     (str "LIMIT "  limit)))
 
+(defn- handle-omit [omit]
+  (when omit
+    (str "OMIT " (str/join ", " (map name omit)))))
+
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
@@ -126,9 +130,10 @@
 ; 	[ EXPLAIN [ FULL ]]
 ; ;
 
-(defn format-select [{:keys [select select-value from
+(defn format-select [{:keys [select select-value omit from
                              from-only where group limit]}]
   (->> [(handle-select select-value select)
+        (handle-omit omit)
         (handle-from from-only from)
         (handle-where where)
         (handle-group group)

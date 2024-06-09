@@ -96,7 +96,12 @@
                                          :from   [:events]
                                          :where  '(= :type "activity")
                                          :limit  5} :history]]
-                           :from   [:user]})))))
+                           :from   [:user]}))))
+  (testing "skip certain fields with OMIT clause"
+    (is (= "SELECT * OMIT address, email FROM person"
+           (format-select {:select [:*]
+                           :omit   [:address :email]
+                           :from   [:person]})))))
 
 (deftest format-select-test-using-pararmeters
   (testing "assign select result to let"
@@ -127,4 +132,5 @@
     (is (= "SELECT * FROM temperature:['London', '2022-08-29T08:03:39'].."
            (format-select {:select [:*]
                            :from   [[:temperature '(.. ["London" "2022-08-29T08:03:39"])]]})))))
+
 
