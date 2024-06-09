@@ -133,4 +133,12 @@
            (format-select {:select [:*]
                            :from   [[:temperature '(.. ["London" "2022-08-29T08:03:39"])]]})))))
 
+(deftest test-select-multiple-targets
+  (testing "select from two or more tables"
+    (is (= "SELECT * FROM person, temperature"
+           (format-select {:select [:*]
+                           :from   [:person :temperature]})))
+    (is (= "SELECT * FROM person, temperature, article"
+           (format-select {:select [:*]
+                           :from   [:person :temperature :article]})))))
 
