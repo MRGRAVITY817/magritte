@@ -140,5 +140,12 @@
                            :from   [:person :temperature]})))
     (is (= "SELECT * FROM person, temperature, article"
            (format-select {:select [:*]
-                           :from   [:person :temperature :article]})))))
+                           :from   [:person :temperature :article]}))))
+  (testing "select from multiple records"
+    (is (= "SELECT * FROM user:tobie, user:jaime, company:surrealdb"
+           (format-select {:select [:*]
+                           :from   [:user:tobie :user:jaime :company:surrealdb]})))
+    (is (= "SELECT * FROM [3648937, 'test', person:lrym5gur8hzws72ux5fa, person:4luro9170uwcv1xrfvby]"
+           (format-select {:select [:*]
+                           :from   [[3648937 "test" :person:lrym5gur8hzws72ux5fa :person:4luro9170uwcv1xrfvby]]})))))
 

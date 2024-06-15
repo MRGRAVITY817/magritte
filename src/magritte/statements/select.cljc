@@ -77,11 +77,21 @@
     (str "SELECT " (if (= select [:*]) "*" (rename-fields select)))))
 
 (defn- handle-from-field [from-field]
-  (if (and (vector? from-field) (-> from-field second utils/is-range?))
+  (cond
+    (and (vector? from-field)
+         (-> from-field second utils/is-range?))
     (str (get-field-name (first from-field))
          ":"
          (utils/list->range (second from-field)))
-    (name from-field)))
+
+    (and (vector? from-field)
+         (every? #(not (list? %)) from-field))
+    (str "[" (str/join ", " (map utils/to-valid-str from-field)) "]")
+
+    :else (name from-field)))
+
+(comment
+  (type '[1 2 3]))
 
 (defn- handle-from [from-only from]
   (if from-only
