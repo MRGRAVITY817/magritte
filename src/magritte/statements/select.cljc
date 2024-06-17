@@ -88,7 +88,7 @@
          (every? #(not (list? %)) from-field))
     (str "[" (str/join ", " (map utils/to-valid-str from-field)) "]")
 
-    :else (name from-field)))
+    :else (get-field-name from-field)))
 
 (comment
   (type '[1 2 3]))

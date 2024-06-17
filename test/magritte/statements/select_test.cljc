@@ -147,5 +147,10 @@
                            :from   [:user:tobie :user:jaime :company:surrealdb]})))
     (is (= "SELECT * FROM [3648937, 'test', person:lrym5gur8hzws72ux5fa, person:4luro9170uwcv1xrfvby]"
            (format-select {:select [:*]
-                           :from   [[3648937 "test" :person:lrym5gur8hzws72ux5fa :person:4luro9170uwcv1xrfvby]]})))))
+                           :from   [[3648937 "test" :person:lrym5gur8hzws72ux5fa :person:4luro9170uwcv1xrfvby]]})))
+    (is (= "SELECT * FROM {person: person:lrym5gur8hzws72ux5fa, embedded: true}"
+           (format-select {:select [:*]
+                           :from   [^:object
+                                    {:person :person:lrym5gur8hzws72ux5fa :embedded true}]})))))
+
 
