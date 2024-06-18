@@ -54,6 +54,11 @@
                    (str (name k) ": " (to-valid-str v))))
        "}"))
 
+(defn- db-fn? [operator]
+  (and (symbol? operator)
+       (or (= operator 'count) ;; The only db function without namespace
+           (namespace operator))))
+
 (defn list->str
   "Converts a list to a string representation suitable for use in a SurrealQL query."
   [expr]
@@ -61,7 +66,7 @@
     (cond
       (= operator '->) (graph->str expr)
       (is-range? expr) (list->range expr)
-      (and (symbol? operator) (namespace operator)) (list->db-fn expr)
+      (db-fn? operator) (list->db-fn expr)
       :else (list->infix expr))))
 
 (defn symbol->db-fn-name
@@ -104,14 +109,12 @@
   "Converts a list with prefix notation to infix notation.
    If the operand is a keyword, it will be converted to a string."
   [expr]
-  (cond
-    (list? expr) (let [operator (first expr)
-                       operands (rest expr)]
-                   (str "("
-                        (str/join (str " " operator " ")
-                                  (map list->infix operands))
-                        ")"))
-    :else (to-valid-str expr)))
+  (let [operator (first expr)
+        operands (rest expr)]
+    (str "("
+         (str/join (str " " operator " ")
+                   (map to-valid-str operands))
+         ")")))
 
 (defn is-range?
   "Checks if the given list is a range expression."

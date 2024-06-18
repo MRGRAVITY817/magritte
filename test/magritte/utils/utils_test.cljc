@@ -24,7 +24,10 @@
     (is (= "((1 + 2) * (3 - 4))" (utils/list->infix '(* (+ 1 2) (- 3 4)))))
     (is (= "((1 + 2) * (3 - 4) * (5 / 6))" (utils/list->infix '(* (+ 1 2) (- 3 4) (/ 5 6))))))
   (testing "with keyword"
-    (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4)))))))
+    (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4))))))
+  (testing "complex"
+    (is (= "(count(->experience->organisation) > 3)"
+           (utils/list->infix '(> (count (-> :experience :organisation)) 3))))))
 
 (deftest test-symbol->db-fn-name
   (testing "converts 'time/now to time::now()"
