@@ -151,6 +151,11 @@
     (is (= "SELECT * FROM {person: person:lrym5gur8hzws72ux5fa, embedded: true}"
            (format-select {:select [:*]
                            :from   [^:object
-                                    {:person :person:lrym5gur8hzws72ux5fa :embedded true}]})))))
+                                    {:person :person:lrym5gur8hzws72ux5fa :embedded true}]})))
+    (is (= "SELECT * FROM (SELECT (age >= 18) AS adult FROM user) WHERE (adult = true)"
+           (format-select {:select [:*]
+                           :from   [{:select [['(>= :age 18) :adult]]
+                                     :from   [:user]}]
+                           :where  '(= :adult true)})))))
 
 
