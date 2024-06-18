@@ -167,7 +167,11 @@
                            :where  '(= :published true)}))))
 ; -- Conditional filtering based on graph edges
 ; SELECT * FROM profile WHERE count(->experience->organisation) > 3;
-;
+  #_(testing "conditional filtering based on graph edge properties"
+      (is (= "SELECT * FROM profile WHERE (count(->experience->organisation) > 3)"
+             (format-select {:select [:*]
+                             :from   [:profile]
+                             :where  '(> '(count (-> :experience :organisation)) 3)}))))
 ; -- Conditional filtering based on graph edge properties
 ; SELECT * FROM person WHERE ->(reaction WHERE type='celebrate')->post;
 ;

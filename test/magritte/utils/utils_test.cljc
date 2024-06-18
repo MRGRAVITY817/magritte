@@ -26,6 +26,12 @@
   (testing "with keyword"
     (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4)))))))
 
+(deftest test-symbol->db-fn-name
+  (testing "converts 'time/now to time::now()"
+    (is (= "time::now" (utils/symbol->db-fn-name 'time/now))))
+  (testing "converts 'count to count()"
+    (is (= "count" (utils/symbol->db-fn-name 'count)))))
+
 (deftest list->db-fn-test
   (testing "time::now()"
     (is (= "time::now()" (utils/list->db-fn '(time/now)))))
@@ -37,7 +43,10 @@
            (utils/list->db-fn '(array/append [1 2 3] 4)))))
   (testing "array::boolean::and(list, list)"
     (is (= "array::boolean::and(['true', 'false', 1, 1], ['true', 'true', 0, 'true'])"
-           (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"]))))))
+           (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))))
+  (testing "count(->person->user->name)"
+    (is (= "count(->person->user->name)"
+           (utils/list->db-fn '(count (-> :person :user :name)))))))
 
 (deftest test-is-range
   (is (utils/is-range? '(.. 1 1000)))

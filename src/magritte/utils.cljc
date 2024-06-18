@@ -74,9 +74,11 @@
    ```
   "
   [expr]
-  (let [[category fn-name] (-> expr str (str/split #"/"))
-        fn-name (-> fn-name (str/replace #"-" "::"))]
-    (str category "::" fn-name)))
+  (let [[category fn-name] (-> expr str (str/split #"/"))]
+    (if (str/blank? fn-name)
+      (str category)
+      (let [fn-name (-> fn-name (str/replace #"-" "::"))]
+        (str category "::" fn-name)))))
 
 (defn list->db-fn
   "Converts list to a database function string representation.
