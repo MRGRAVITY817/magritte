@@ -1,5 +1,6 @@
 (ns magritte.utils
   (:require [clojure.string :as str]
+            [clojure.set :as set]
             [clojure.repl :as repl]))
 
 (declare map->str)
@@ -105,11 +106,16 @@
   (list->db-fn '(array/append [1 2 3] 4))
   (list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))
 
+(defn get-operator [expr]
+  (if (set/subset? #{expr} #{'or 'and})
+    (-> expr name str/upper-case)
+    (-> expr name)))
+
 (defn list->infix
   "Converts a list with prefix notation to infix notation.
    If the operand is a keyword, it will be converted to a string."
   [expr]
-  (let [operator (first expr)
+  (let [operator (-> expr first get-operator)
         operands (rest expr)]
     (str "("
          (str/join (str " " operator " ")

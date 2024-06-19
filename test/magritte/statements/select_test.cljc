@@ -176,7 +176,12 @@
                                         :post)}))))
 ; -- Conditional filtering with boolean logic
 ; SELECT * FROM user WHERE (admin AND active) OR owner = true;
-;
+  (testing "conditional filtering with boolean logic"
+    (is (= "SELECT * FROM user WHERE ((admin AND active) OR (owner = true))"
+           (format-select {:select [:*]
+                           :from   [:user]
+                           :where  '(or (and :admin :active)
+                                        (= :owner true))}))))
 ; -- Select filtered nested array values
 ; SELECT address[WHERE active = true] FROM person;
   )

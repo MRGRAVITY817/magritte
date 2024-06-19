@@ -27,7 +27,13 @@
     (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4))))))
   (testing "complex"
     (is (= "(count(->experience->organisation) > 3)"
-           (utils/list->infix '(> (count (-> :experience :organisation)) 3))))))
+           (utils/list->infix '(> (count (-> :experience :organisation)) 3)))))
+  (testing "OR"
+    (is (= "((rating > 3) OR (rating < 5))"
+           (utils/list->infix '(or (> :rating 3) (< :rating 5))))))
+  (testing "AND"
+    (is (= "((rating > 3) AND (rating < 5))"
+           (utils/list->infix '(and (> :rating 3) (< :rating 5)))))))
 
 (deftest test-symbol->db-fn-name
   (testing "converts 'time/now to time::now()"
