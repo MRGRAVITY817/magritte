@@ -158,23 +158,22 @@
                                      :from   [:user]}]
                            :where  '(= :adult true)})))))
 (deftest test-filter-query-using-where-clause
-; -- Simple conditional filtering
-; SELECT * FROM article WHERE published = true;
   (testing "select all records where a field is true"
     (is (= "SELECT * FROM article WHERE (published = true)"
            (format-select {:select [:*]
                            :from   [:article]
                            :where  '(= :published true)}))))
-; -- Conditional filtering based on graph edges
-; SELECT * FROM profile WHERE count(->experience->organisation) > 3;
   (testing "conditional filtering based on graph edge properties"
     (is (= "SELECT * FROM profile WHERE (count(->experience->organisation) > 3)"
            (format-select {:select [:*]
                            :from   [:profile]
                            :where  '(> (count (-> :experience :organisation)) 3)}))))
-; -- Conditional filtering based on graph edge properties
-; SELECT * FROM person WHERE ->(reaction WHERE type='celebrate')->post;
-;
+  (testing "conditional filtering based on graph edge properties"
+    (is (= "SELECT * FROM person WHERE ->(reaction WHERE (type = 'celebrate'))->post"
+           (format-select {:select [:*]
+                           :from   [:person]
+                           :where  '(-> [:reaction [:where (= :type "celebrate")]]
+                                        :post)}))))
 ; -- Conditional filtering with boolean logic
 ; SELECT * FROM user WHERE (admin AND active) OR owner = true;
 ;
