@@ -187,17 +187,21 @@
                            :from   [:person]})))))
 
 (deftest test-select-with-split-clause
-; -- Split the results by each value in an array
-; SELECT * FROM user SPLIT emails;
   (testing "split the results by each value in an array"
     (is (= "SELECT * FROM user SPLIT emails"
            (format-select {:select [:*]
                            :from   [:user]
-                           :split  :emails})))
-; -- Split the results by each value in a nested array
-; SELECT * FROM country SPLIT locations.cities;
-;
-; -- Filter the result of a subquery
-; SELECT * FROM (SELECT * FROM person SPLIT loggedin) WHERE loggedin > '2023-05-01';
-    ))
+                           :split  :emails}))))
+  (testing "split the results by each value in a nested array"
+    (is (= "SELECT * FROM country SPLIT locations.cities"
+           (format-select {:select [:*]
+                           :from   [:country]
+                           :split  :locations.cities}))))
+  (testing "split the results by each value in a subquery"
+    (is (= "SELECT * FROM (SELECT * FROM person SPLIT loggedin) WHERE (loggedin > '2023-05-01')"
+           (format-select {:select [:*]
+                           :from   [{:select [:*]
+                                     :from   [:person]
+                                     :split  :loggedin}]
+                           :where  '(> :loggedin "2023-05-01")})))))
 
