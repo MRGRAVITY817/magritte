@@ -109,7 +109,9 @@
 
 (defn- handle-group [group]
   (when group
-    (str "GROUP " (-> group name str/upper-case))))
+    (if (= group :all)
+      "GROUP ALL"
+      (str "GROUP BY " (str/join ", " (map name group))))))
 
 (defn- handle-limit [limit]
   (when (integer? limit)

@@ -205,3 +205,36 @@
                                      :split  :loggedin}]
                            :where  '(> :loggedin "2023-05-01")})))))
 
+(deftest test-select-with-group-clause
+  (testing "group results by a single field"
+    (is (= "SELECT country FROM user GROUP BY country"
+           (format-select {:select [:country]
+                           :from   [:user]
+                           :group  [:country]}))))
+  (testing "group results by a nested field"
+    (is (= "SELECT settings.published FROM article GROUP BY settings.published"
+           (format-select {:select [:settings.published]
+                           :from   [:article]
+                           :group  [:settings.published]}))))
+  (testing "group results by multiple fields"
+    (is (= "SELECT gender, country, city FROM person GROUP BY gender, country, city"
+           (format-select {:select [:gender :country :city]
+                           :from   [:person]
+                           :group  [:gender :country :city]}))))
+  (testing "group results with aggregate functions"
+    (is (= "SELECT count() AS total, math::mean(age) AS average_age, gender, country FROM person GROUP BY gender, country"
+           (format-select {:select [['(count) :total]
+                                    ['(math/mean :age) :average_age]
+                                    :gender :country]
+                           :from   [:person]
+                           :group  [:gender :country]}))))
+  (testing "group all records"
+    (is (= "SELECT count() AS number_of_records FROM person GROUP ALL"
+           (format-select {:select [['(count) :number_of_records]]
+                           :from   [:person]
+                           :group  :all}))))
+  (testing "group unique values from a nested array across an entire table"
+    (is (= "SELECT array::group(tags) AS tags FROM article GROUP ALL"
+           (format-select {:select [['(array/group :tags) :tags]]
+                           :from   [:article]
+                           :group  :all})))))
