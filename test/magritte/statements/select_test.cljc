@@ -157,6 +157,7 @@
                            :from   [{:select [['(>= :age 18) :adult]]
                                      :from   [:user]}]
                            :where  '(= :adult true)})))))
+
 (deftest test-filter-query-using-where-clause
   (testing "select all records where a field is true"
     (is (= "SELECT * FROM article WHERE (published = true)"
@@ -184,4 +185,19 @@
     (is (= "SELECT address[WHERE (active = true)] FROM person"
            (format-select {:select [[:address [:where '(= :active true)]]]
                            :from   [:person]})))))
+
+(deftest test-select-with-split-clause
+; -- Split the results by each value in an array
+; SELECT * FROM user SPLIT emails;
+  (testing "split the results by each value in an array"
+    (is (= "SELECT * FROM user SPLIT emails"
+           (format-select {:select [:*]
+                           :from   [:user]
+                           :split  :emails})))
+; -- Split the results by each value in a nested array
+; SELECT * FROM country SPLIT locations.cities;
+;
+; -- Filter the result of a subquery
+; SELECT * FROM (SELECT * FROM person SPLIT loggedin) WHERE loggedin > '2023-05-01';
+    ))
 

@@ -115,6 +115,10 @@
   (when (integer? limit)
     (str "LIMIT "  limit)))
 
+(defn- handle-split [split]
+  (when split
+    (str "SPLIT " (name split))))
+
 (defn- handle-omit [omit]
   (when omit
     (str "OMIT " (str/join ", " (map name omit)))))
@@ -140,11 +144,12 @@
 ; 	[ EXPLAIN [ FULL ]]
 ; ;
 
-(defn format-select [{:keys [select select-value omit from
+(defn format-select [{:keys [select select-value omit from split
                              from-only where group limit]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
+        (handle-split split)
         (handle-where where)
         (handle-group group)
         (handle-limit limit)]
