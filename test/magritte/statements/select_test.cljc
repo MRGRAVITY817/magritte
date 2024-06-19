@@ -174,15 +174,14 @@
                            :from   [:person]
                            :where  '(-> [:reaction [:where (= :type "celebrate")]]
                                         :post)}))))
-; -- Conditional filtering with boolean logic
-; SELECT * FROM user WHERE (admin AND active) OR owner = true;
   (testing "conditional filtering with boolean logic"
     (is (= "SELECT * FROM user WHERE ((admin AND active) OR (owner = true))"
            (format-select {:select [:*]
                            :from   [:user]
                            :where  '(or (and :admin :active)
                                         (= :owner true))}))))
-; -- Select filtered nested array values
-; SELECT address[WHERE active = true] FROM person;
-  )
+  (testing "select filtered nested array values"
+    (is (= "SELECT address[WHERE (active = true)] FROM person"
+           (format-select {:select [[:address [:where '(= :active true)]]]
+                           :from   [:person]})))))
 
