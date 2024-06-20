@@ -282,3 +282,19 @@
            (format-select {:select [:*]
                            :from   [:user]
                            :limit  [50 :start 50]})))))
+
+(deftest test-select-with-fetch-clause
+  (testing "use fetched fields in the select statement"
+    (is (= "SELECT *, artist.email FROM review FETCH artist"
+           (format-select {:select [:* :artist.email]
+                           :from   [:review]
+                           :fetch  :artist}))))
+; -- Select all the article information 
+; -- only if the author's age (from the author table) is under 30.
+; SELECT * FROM article WHERE author.age < 30 FETCH author;
+  (testing "use fetched fields in the where clause"
+    (is (= "SELECT * FROM article WHERE (author.age < 30) FETCH author"
+           (format-select {:select [:*]
+                           :from   [:article]
+                           :where  '(< :author.age 30)
+                           :fetch  :author})))))

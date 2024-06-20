@@ -100,6 +100,10 @@
                       (map handle-from-field)
                       (str/join ", ")))))
 
+(defn- handle-fetch [fetch]
+  (when fetch
+    (str "FETCH " (name fetch))))
+
 (defn- handle-where [where]
   (when where
     (str "WHERE "
@@ -139,7 +143,7 @@
         (and (vector? limit) (= (second limit) :start))
         (str "LIMIT " (first limit) " START " (nth limit 0))
 
-        :else ""))
+        :else nil))
 
 (defn- handle-split [split]
   (when split
@@ -170,7 +174,7 @@
 ; 	[ EXPLAIN [ FULL ]]
 ; ;
 
-(defn format-select [{:keys [select select-value omit from split
+(defn format-select [{:keys [select select-value omit from fetch split
                              from-only where group order limit]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
@@ -179,7 +183,8 @@
         (handle-where where)
         (handle-group group)
         (handle-order order)
-        (handle-limit limit)]
+        (handle-limit limit)
+        (handle-fetch fetch)]
        (filter identity)
        (str/join " ")
        str/trimr))
