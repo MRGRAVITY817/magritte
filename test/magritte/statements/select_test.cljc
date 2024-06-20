@@ -240,19 +240,21 @@
                            :group  :all})))))
 
 (deftest test-select-with-order-by-clause
-  ; -- Order records randomly
-  ; SELECT * FROM user ORDER BY RAND();
   (testing "order records randomly"
     (is (= "SELECT * FROM user ORDER BY rand()"
            (format-select {:select [:*]
                            :from   [:user]
                            :order  ['(rand)]}))))
-  ; -- Order records descending by a single field
-  ; SELECT * FROM song ORDER BY rating DESC;
-  ;
-  ; -- Order records by multiple fields independently
-  ; SELECT * FROM song ORDER BY artist ASC, rating DESC;
-  ;
+  (testing "order records descending by a single field"
+    (is (= "SELECT * FROM song ORDER BY rating DESC"
+           (format-select {:select [:*]
+                           :from   [:song]
+                           :order  [[:rating :desc]]}))))
+  (testing "order records by multiple fields independently"
+    (is (= "SELECT * FROM song ORDER BY artist ASC, rating DESC"
+           (format-select {:select [:*]
+                           :from   [:song]
+                           :order  [[:artist :asc] [:rating :desc]]}))))
   ; -- Order text fields with unicode collation
   ; SELECT * FROM article ORDER BY title COLLATE ASC;
   ;

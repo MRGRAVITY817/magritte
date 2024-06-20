@@ -113,11 +113,18 @@
       "GROUP ALL"
       (str "GROUP BY " (str/join ", " (map name group))))))
 
+(defn- handle-ordering-factor [field]
+  (condp apply [field]
+    vector? (let [[field order] field]
+              (str (utils/to-valid-str field)
+                   " "
+                   (-> order name str/upper-case)))
+    (utils/to-valid-str field)))
+
 (defn- handle-order [order]
   (when order
     (str "ORDER BY "
-         (str/join ", " (map (fn [field]
-                               (utils/to-valid-str field))
+         (str/join ", " (map handle-ordering-factor
                              order)))))
 
 (comment
