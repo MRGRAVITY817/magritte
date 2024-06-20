@@ -255,9 +255,18 @@
            (format-select {:select [:*]
                            :from   [:song]
                            :order  [[:artist :asc] [:rating :desc]]}))))
-  ; -- Order text fields with unicode collation
-  ; SELECT * FROM article ORDER BY title COLLATE ASC;
-  ;
-  ; -- Order text fields with which include numeric values
-  ; SELECT * FROM article ORDER BY title NUMERIC ASC;
-  )
+  (testing "order text fields with unicode collation"
+    (is (= "SELECT * FROM article ORDER BY title COLLATE ASC"
+           (format-select {:select [:*]
+                           :from   [:article]
+                           :order  [[:title :collate :asc]]}))))
+  (testing "order text fields with numeric values"
+    (is (= "SELECT * FROM article ORDER BY title NUMERIC ASC"
+           (format-select {:select [:*]
+                           :from   [:article]
+                           :order  [[:title :numeric :asc]]}))))
+  (testing "order text fields with unicode collation and just values"
+    (is (= "SELECT * FROM article ORDER BY title COLLATE ASC, rating DESC"
+           (format-select {:select [:*]
+                           :from   [:article]
+                           :order  [[:title :collate :asc] [:rating :desc]]})))))

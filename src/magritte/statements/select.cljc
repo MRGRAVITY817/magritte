@@ -115,10 +115,12 @@
 
 (defn- handle-ordering-factor [field]
   (condp apply [field]
-    vector? (let [[field order] field]
+    vector? (let [[field & orders] field]
               (str (utils/to-valid-str field)
                    " "
-                   (-> order name str/upper-case)))
+                   (->> orders
+                        (map #(-> % name str/upper-case))
+                        (str/join " "))))
     (utils/to-valid-str field)))
 
 (defn- handle-order [order]
