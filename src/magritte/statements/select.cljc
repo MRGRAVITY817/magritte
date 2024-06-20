@@ -113,6 +113,16 @@
       "GROUP ALL"
       (str "GROUP BY " (str/join ", " (map name group))))))
 
+(defn- handle-order [order]
+  (when order
+    (str "ORDER BY "
+         (str/join ", " (map (fn [field]
+                               (utils/to-valid-str field))
+                             order)))))
+
+(comment
+  (utils/to-valid-str '(rand)))
+
 (defn- handle-limit [limit]
   (when (integer? limit)
     (str "LIMIT "  limit)))
@@ -147,13 +157,14 @@
 ; ;
 
 (defn format-select [{:keys [select select-value omit from split
-                             from-only where group limit]}]
+                             from-only where group order limit]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
         (handle-split split)
         (handle-where where)
         (handle-group group)
+        (handle-order order)
         (handle-limit limit)]
        (filter identity)
        (str/join " ")

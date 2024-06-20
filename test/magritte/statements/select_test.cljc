@@ -238,3 +238,24 @@
            (format-select {:select [['(array/group :tags) :tags]]
                            :from   [:article]
                            :group  :all})))))
+
+(deftest test-select-with-order-by-clause
+  ; -- Order records randomly
+  ; SELECT * FROM user ORDER BY RAND();
+  (testing "order records randomly"
+    (is (= "SELECT * FROM user ORDER BY rand()"
+           (format-select {:select [:*]
+                           :from   [:user]
+                           :order  ['(rand)]}))))
+  ; -- Order records descending by a single field
+  ; SELECT * FROM song ORDER BY rating DESC;
+  ;
+  ; -- Order records by multiple fields independently
+  ; SELECT * FROM song ORDER BY artist ASC, rating DESC;
+  ;
+  ; -- Order text fields with unicode collation
+  ; SELECT * FROM article ORDER BY title COLLATE ASC;
+  ;
+  ; -- Order text fields with which include numeric values
+  ; SELECT * FROM article ORDER BY title NUMERIC ASC;
+  )

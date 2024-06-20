@@ -39,7 +39,9 @@
   (testing "converts 'time/now to time::now()"
     (is (= "time::now" (utils/symbol->db-fn-name 'time/now))))
   (testing "converts 'count to count()"
-    (is (= "count" (utils/symbol->db-fn-name 'count)))))
+    (is (= "count" (utils/symbol->db-fn-name 'count))))
+  (testing "converts 'rand to rand()"
+    (is (= "rand" (utils/symbol->db-fn-name 'rand)))))
 
 (deftest list->db-fn-test
   (testing "time::now()"
@@ -55,7 +57,9 @@
            (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))))
   (testing "count(->person->user->name)"
     (is (= "count(->person->user->name)"
-           (utils/list->db-fn '(count (-> :person :user :name)))))))
+           (utils/list->db-fn '(count (-> :person :user :name))))))
+  (testing "converts 'rand to rand()"
+    (is (= "rand()" (utils/list->db-fn '(rand))))))
 
 (deftest test-is-range
   (is (utils/is-range? '(.. 1 1000)))
