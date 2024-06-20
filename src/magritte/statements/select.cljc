@@ -133,8 +133,13 @@
   (utils/to-valid-str '(rand)))
 
 (defn- handle-limit [limit]
-  (when (integer? limit)
-    (str "LIMIT "  limit)))
+  (cond (number? limit)
+        (str "LIMIT " limit)
+
+        (and (vector? limit) (= (second limit) :start))
+        (str "LIMIT " (first limit) " START " (nth limit 0))
+
+        :else ""))
 
 (defn- handle-split [split]
   (when split

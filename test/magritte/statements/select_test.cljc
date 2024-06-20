@@ -270,3 +270,15 @@
            (format-select {:select [:*]
                            :from   [:article]
                            :order  [[:title :collate :asc] [:rating :desc]]})))))
+
+(deftest test-select-with-limit-clause
+  (testing "select only 50 records"
+    (is (= "SELECT * FROM person LIMIT 50"
+           (format-select {:select [:*]
+                           :from   [:person]
+                           :limit  50}))))
+  (testing "select only 50 records starting at record 50"
+    (is (= "SELECT * FROM user LIMIT 50 START 50"
+           (format-select {:select [:*]
+                           :from   [:user]
+                           :limit  [50 :start 50]})))))
