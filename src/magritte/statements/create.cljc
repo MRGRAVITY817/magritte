@@ -1,9 +1,21 @@
 (ns magritte.statements.create
+  (:refer-clojure :exclude [set])
   (:require [clojure.string :as str]
             [magritte.utils :refer [to-valid-str]]))
 
 (defn- handle-create [create]
   (str "CREATE " (to-valid-str create)))
+
+(defn- handle-set [set]
+  ;{:name    "Tobie"
+  ; :company "SurrealDB"
+  ; :skills  ["Rust" "Go" "JavaScript"]}
+  ; => "SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
+  (when set
+    (let [setters (for [[k v] set]
+                    (str (name k) " = " (to-valid-str v)))]
+      (str "SET "
+           (str/join ", " setters)))))
 
 (defn format-create
   "Format create statement.
@@ -19,7 +31,18 @@
    ;
    ```
   "
-  [{:keys [create]}]
-  (->> [(handle-create create)]
-       identity
+  [{:keys [create set]}]
+  (->> [(handle-create create)
+        (handle-set set)]
+       (filter identity)
        (str/join " ")))
+
+(comment
+  (format-create {:create :person}) ; "CREATE person"
+  (format-create {:create :person:100}) ; "CREATE person:100"
+  (format-create {:create :person:100
+                  :set    {:name    "Tobie"
+                           :company "SurrealDB"
+                           :skills  ["Rust" "Go" "JavaScript"]}}) ; "CREATE person:100 SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
+  )
+
