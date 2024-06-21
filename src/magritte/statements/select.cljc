@@ -167,29 +167,47 @@
            "NOINDEX"
            (str "INDEX " (str/join ", " (map name with)))))))
 
-; SELECT [ VALUE ] @fields [ AS @alias ]
-; 	[ OMIT @fields ...]
-; 	FROM [ ONLY ] @targets
-; 	[ WITH [ NOINDEX | INDEX @indexes ... ]]
-; 	[ WHERE @conditions ]
-; 	[ SPLIT [ AT ] @field ... ]
-; 	[ GROUP [ BY ] @fields ... ]
-; 	[ ORDER [ BY ]
-; 		@fields [
-; 			RAND()
-; 			| COLLATE
-; 			| NUMERIC
-; 		] [ ASC | DESC ] ...
-; 	]
-; 	[ LIMIT [ BY ] @limit ]
-; 	[ START [ AT ] @start ]
-; 	[ FETCH @fields ... ]
-; 	[ TIMEOUT @duration ]
-; 	[ PARALLEL ]
-; 	[ EXPLAIN [ FULL ]]
+; eval (buf): /Users/tripboi/Projects/magritte/src/magritte/statements/select.cljc
+; (err) java.io.FileNotFoundException: Could not locate magritte/utils.bb, magritte/utils.clj or magritte/utils.cljc on classpath. magritte.statements.select /Users/tripboi/Projects/magritte/src/magritte/statements/select.cljc:2:3
 
-(defn format-select [{:keys [select select-value omit from with fetch split from-only
-                             where group order limit timeout parallel explain]}]
+(defn format-select
+  "Format SELECT statement of SurrealQL.
+
+   Example:
+   ```
+   (format-select {:select [:*]
+                   :from [:users]
+                   :where [:> :age 18]
+                   :group [:name]})
+   ;; => \"SELECT * FROM users WHERE (age > 18) GROUP BY name\"
+   ```
+   
+   Following is the structure of the select statement:
+   ```
+   SELECT [ VALUE ] @fields [ AS @alias ]
+     [ OMIT @fields ...]
+     FROM [ ONLY ] @targets
+     [ WITH [ NOINDEX | INDEX @indexes ... ]]
+     [ WHERE @conditions ]
+     [ SPLIT [ AT ] @field ... ]
+     [ GROUP [ BY ] @fields ... ]
+     [ ORDER [ BY ]
+       @fields [
+         RAND()
+         | COLLATE
+         | NUMERIC
+       ] [ ASC | DESC ] ...
+     ]
+     [ LIMIT [ BY ] @limit ]
+     [ START [ AT ] @start ]
+     [ FETCH @fields ... ]
+     [ TIMEOUT @duration ]
+     [ PARALLEL ]
+     [ EXPLAIN [ FULL ]]
+   ```
+  "
+  [{:keys [select select-value omit from with fetch split from-only
+           where group order limit timeout parallel explain]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
@@ -218,6 +236,12 @@
                 :index 12})
   (check-array :hello)
 
-  (meta ^:private {:hello "world"}))
+  (meta ^:private {:hello "world"})
+
+  (format-select {:select [:*]
+                  :from   [:users]
+                  :where  '(> :age 18)
+                  :group  [:name]}) ; "SELECT * FROM users WHERE (age > 18) GROUP BY name"
+  )
 
 
