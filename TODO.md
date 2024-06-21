@@ -31,7 +31,7 @@
 - [ ] REBUILD
 - [ ] REMOVE
 - [ ] RETURN
-- [ ] SELECT
+- [x] SELECT
 - [ ] SHOW
 - [ ] SLEEP
 - [ ] THROW
