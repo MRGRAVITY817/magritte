@@ -289,9 +289,6 @@
            (format-select {:select [:* :artist.email]
                            :from   [:review]
                            :fetch  :artist}))))
-; -- Select all the article information 
-; -- only if the author's age (from the author table) is under 30.
-; SELECT * FROM article WHERE author.age < 30 FETCH author;
   (testing "use fetched fields in the where clause"
     (is (= "SELECT * FROM article WHERE (author.age < 30) FETCH author"
            (format-select {:select [:*]
@@ -300,9 +297,6 @@
                            :fetch  :author})))))
 
 (deftest test-select-with-timeout-clause
-; -- Cancel this conditional filtering based on graph edge properties
-; -- if it's not finished within 5 seconds
-; SELECT * FROM person WHERE ->knows->person->(knows WHERE influencer = true) TIMEOUT 5s;
   (testing "select with timeout, cancel the query if it takes longer than 5 seconds"
     (is (= "SELECT * FROM person WHERE ->knows->person->(knows WHERE (influencer = true)) TIMEOUT 5s"
            (format-select {:select [:*]
@@ -340,4 +334,10 @@
            (format-select {:select [:*]
                            :from   [:person]
                            :with   :noindex})))))
+
+(deftest test-select-with-only-clause
+  (testing "select from only a single table"
+    (is (= "SELECT * FROM ONLY person:john"
+           (format-select {:select    [:*]
+                           :from-only :person:john})))))
 
