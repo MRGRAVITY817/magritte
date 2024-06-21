@@ -277,11 +277,11 @@
            (format-select {:select [:*]
                            :from   [:person]
                            :limit  50}))))
-  (testing "select only 50 records starting at record 50"
-    (is (= "SELECT * FROM user LIMIT 50 START 50"
+  (testing "select only 50 records starting at record 20"
+    (is (= "SELECT * FROM user LIMIT 50 START 20"
            (format-select {:select [:*]
                            :from   [:user]
-                           :limit  [50 :start 50]})))))
+                           :limit  [50 :start 20]})))))
 
 (deftest test-select-with-fetch-clause
   (testing "use fetched fields in the select statement"
@@ -341,3 +341,16 @@
            (format-select {:select    [:*]
                            :from-only :person:john})))))
 
+(deftest test-select-with-combined-clauses
+  (testing "select with multiple clauses"
+    (is (= "SELECT name, address, email FROM person:john WHERE (age > 18) GROUP BY country ORDER BY name ASC LIMIT 10 START 0 FETCH address TIMEOUT 5s PARALLEL EXPLAIN"
+           (format-select {:select    [:name :address :email]
+                           :from      [:person:john]
+                           :where     '(> :age 18)
+                           :group     [:country]
+                           :order     [[:name :asc]]
+                           :limit     [10 :start 0]
+                           :fetch     :address
+                           :timeout   "5s"
+                           :parallel  true
+                           :explain   true})))))

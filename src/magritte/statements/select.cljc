@@ -141,7 +141,7 @@
         (str "LIMIT " limit)
 
         (and (vector? limit) (= (second limit) :start))
-        (str "LIMIT " (first limit) " START " (nth limit 0))
+        (str "LIMIT " (first limit) " START " (nth limit 2))
 
         :else nil))
 
