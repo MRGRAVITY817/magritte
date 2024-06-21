@@ -298,3 +298,19 @@
                            :from   [:article]
                            :where  '(< :author.age 30)
                            :fetch  :author})))))
+
+(deftest test-select-with-timeout-clause
+; -- Cancel this conditional filtering based on graph edge properties
+; -- if it's not finished within 5 seconds
+; SELECT * FROM person WHERE ->knows->person->(knows WHERE influencer = true) TIMEOUT 5s;
+  (testing "select with timeout, cancel the query if it takes longer than 5 seconds"
+    (is (= "SELECT * FROM person WHERE ->knows->person->(knows WHERE (influencer = true)) TIMEOUT 5s"
+           (format-select {:select [:*]
+                           :from   [:person]
+                           :where  '(-> :knows :person [:knows [:where (= :influencer true)]])
+                           :timeout "5s"}))))
+  (testing "simple timeout"
+    (is (= "SELECT * FROM person TIMEOUT 5s"
+           (format-select {:select  [:*]
+                           :from    [:person]
+                           :timeout 5})))))

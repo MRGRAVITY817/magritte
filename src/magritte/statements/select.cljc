@@ -153,10 +153,18 @@
   (when omit
     (str "OMIT " (str/join ", " (map name omit)))))
 
+(defn- handle-timeout [timeout]
+  (when timeout
+    (let [time (cond
+                 (number? timeout) (str timeout "s")
+                 :else (name timeout))]
+      (str "TIMEOUT " time))))
+
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
-; 	[ WITH [ NOINDEX | INDEX @indexes ... ]] [ WHERE @conditions ]
+; 	[ WITH [ NOINDEX | INDEX @indexes ... ]]
+; 	[ WHERE @conditions ]
 ; 	[ SPLIT [ AT ] @field ... ]
 ; 	[ GROUP [ BY ] @fields ... ]
 ; 	[ ORDER [ BY ]
@@ -172,10 +180,9 @@
 ; 	[ TIMEOUT @duration ]
 ; 	[ PARALLEL ]
 ; 	[ EXPLAIN [ FULL ]]
-; ;
 
 (defn format-select [{:keys [select select-value omit from fetch split
-                             from-only where group order limit]}]
+                             from-only where group order limit timeout]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
@@ -184,7 +191,8 @@
         (handle-group group)
         (handle-order order)
         (handle-limit limit)
-        (handle-fetch fetch)]
+        (handle-fetch fetch)
+        (handle-timeout timeout)]
        (filter identity)
        (str/join " ")
        str/trimr))
