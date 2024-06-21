@@ -314,3 +314,12 @@
            (format-select {:select  [:*]
                            :from    [:person]
                            :timeout 5})))))
+
+(deftest test-select-with-parallel-clause
+  (testing "select with parallel clause"
+    (is (= "SELECT ->purchased->product<-purchased<-person->purchased->product FROM person:tobie PARALLEL"
+           (format-select {:select   [:->purchased->product<-purchased<-person->purchased->product]
+                           :from     [:person:tobie]
+                           :parallel true})))))
+
+

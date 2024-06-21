@@ -182,7 +182,7 @@
 ; 	[ EXPLAIN [ FULL ]]
 
 (defn format-select [{:keys [select select-value omit from fetch split
-                             from-only where group order limit timeout]}]
+                             from-only where group order limit timeout parallel]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
@@ -192,7 +192,8 @@
         (handle-order order)
         (handle-limit limit)
         (handle-fetch fetch)
-        (handle-timeout timeout)]
+        (handle-timeout timeout)
+        (if parallel "PARALLEL" nil)]
        (filter identity)
        (str/join " ")
        str/trimr))
