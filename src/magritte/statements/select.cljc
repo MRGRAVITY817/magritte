@@ -160,6 +160,13 @@
                  :else (name timeout))]
       (str "TIMEOUT " time))))
 
+(defn- handle-with [with]
+  (when with
+    (str "WITH "
+         (if (= with :noindex)
+           "NOINDEX"
+           (str "INDEX " (str/join ", " (map name with)))))))
+
 ; SELECT [ VALUE ] @fields [ AS @alias ]
 ; 	[ OMIT @fields ...]
 ; 	FROM [ ONLY ] @targets
@@ -181,11 +188,12 @@
 ; 	[ PARALLEL ]
 ; 	[ EXPLAIN [ FULL ]]
 
-(defn format-select [{:keys [select select-value omit from fetch split from-only where
-                             group order limit timeout parallel explain]}]
+(defn format-select [{:keys [select select-value omit from with fetch split from-only
+                             where group order limit timeout parallel explain]}]
   (->> [(handle-select select-value select)
         (handle-omit omit)
         (handle-from from-only from)
+        (handle-with with)
         (handle-split split)
         (handle-where where)
         (handle-group group)

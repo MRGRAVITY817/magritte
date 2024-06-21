@@ -329,5 +329,15 @@
                            :from    [:person]
                            :explain true})))))
 
-
+(deftest test-select-with-with-clause
+  (testing "select with index clause"
+    (is (= "SELECT * FROM person WITH INDEX ft_age, ft_name"
+           (format-select {:select [:*]
+                           :from   [:person]
+                           :with   [:ft_age :ft_name]}))))
+  (testing "select with noindex clause"
+    (is (= "SELECT * FROM person WITH NOINDEX"
+           (format-select {:select [:*]
+                           :from   [:person]
+                           :with   :noindex})))))
 
