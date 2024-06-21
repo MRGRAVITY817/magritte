@@ -322,4 +322,12 @@
                            :from     [:person:tobie]
                            :parallel true})))))
 
+(deftest test-select-with-explain-clause
+  (testing "select with explain clause"
+    (is (= "SELECT * FROM person EXPLAIN"
+           (format-select {:select  [:*]
+                           :from    [:person]
+                           :explain true})))))
+
+
 
