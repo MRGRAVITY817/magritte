@@ -19,5 +19,15 @@
            (format-create {:create   :person:100
                            :content  {:name    "Tobie"
                                       :company "SurrealDB"
-                                      :skills  ["Rust" "Go" "JavaScript"]}})))))
+                                      :skills  ["Rust" "Go" "JavaScript"]}}))))
+; --Note: meta::tb(id) returns just the table name portion of a record ID
+; CREATE townsperson, cat, dog SET
+;     created_at = time::now(),
+;     name = "Just a " + meta::tb(id);
+
+  (testing "create multiple records"
+    (is (= "CREATE townsperson, cat, dog SET created_at = time::now(), name = ('Just a ' + meta::tb(id))"
+           (format-create {:create [:townsperson :cat :dog]
+                           :set    {:created_at '(time/now)
+                                    :name       '(+ "Just a " (meta/tb :id))}})))))
 

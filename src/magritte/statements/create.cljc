@@ -4,7 +4,10 @@
             [magritte.utils :refer [to-valid-str]]))
 
 (defn- handle-create [create]
-  (str "CREATE " (to-valid-str create)))
+  (let [fields (if (vector? create)
+                 (str/join ", " (map to-valid-str create))
+                 (name create))]
+    (str "CREATE " fields)))
 
 (defn- handle-set [set]
   ;{:name    "Tobie"
