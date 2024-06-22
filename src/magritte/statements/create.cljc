@@ -15,10 +15,6 @@
     (str "CREATE ONLY " (name create-only))))
 
 (defn- handle-set [set]
-  ;{:name    "Tobie"
-  ; :company "SurrealDB"
-  ; :skills  ["Rust" "Go" "JavaScript"]}
-  ; => "SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
   (when set
     (let [setters (for [[k v] set]
                     (str (name k) " = " (to-valid-str v)))]
@@ -32,6 +28,17 @@
                    (for [[k v] content]
                      (str (name k) ": " (to-valid-str v))))
          ",}")))
+
+(defn- handle-return [return]
+  (when return
+    (let [return-value (cond
+                         (vector? return) (str/join ", " (map name return))
+                         (= return :none) "NONE"
+                         (= return :before) "BEFORE"
+                         (= return :after) "AFTER"
+                         (= return :diff) "DIFF"
+                         :else (name return))]
+      (str "RETURN " return-value))))
 
 (defn format-create
   "Format create statement.
@@ -47,11 +54,12 @@
    ;
    ```
   "
-  [{:keys [create create-only set content]}]
+  [{:keys [create create-only set content return]}]
   (->> [(handle-create create)
         (handle-create-only create-only)
         (handle-set set)
-        (handle-content content)]
+        (handle-content content)
+        (handle-return return)]
        (filter identity)
        (str/join " ")))
 

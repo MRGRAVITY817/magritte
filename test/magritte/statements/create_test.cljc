@@ -20,22 +20,40 @@
                            :content  {:name    "Tobie"
                                       :company "SurrealDB"
                                       :skills  ["Rust" "Go" "JavaScript"]}}))))
-; --Note: meta::tb(id) returns just the table name portion of a record ID
-; CREATE townsperson, cat, dog SET
-;     created_at = time::now(),
-;     name = "Just a " + meta::tb(id);
-
   (testing "create multiple records"
     (is (= "CREATE townsperson, cat, dog SET created_at = time::now(), name = ('Just a ' + meta::tb(id))"
            (format-create {:create [:townsperson :cat :dog]
                            :set    {:created_at '(time/now)
                                     :name       '(+ "Just a " (meta/tb :id))}}))))
-; -- Create just a single record
-; CREATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];
   (testing "create only one record"
     (is (= "CREATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
            (format-create {:create-only :person:tobie
                            :set         {:name    "Tobie"
                                          :company "SurrealDB"
-                                         :skills  ["Rust" "Go" "JavaScript"]}})))))
+                                         :skills  ["Rust" "Go" "JavaScript"]}}))))
+; CREATE person SET age = 46, username = "john-smith" RETURN NONE;
+  (testing "create with return clause"
+    (is (= "CREATE person SET age = 46, username = 'john-smith' RETURN NONE"
+           (format-create {:create :person
+                           :set    {:age      46
+                                    :username "john-smith"}
+                           :return :none})))
+    (is (= "CREATE person SET age = 46, username = 'john-smith' RETURN DIFF"
+           (format-create {:create :person
+                           :set    {:age      46
+                                    :username "john-smith"}
+                           :return :diff})))
+    (is (= "CREATE person SET age = 46, username = 'john-smith' RETURN BEFORE"
+           (format-create {:create :person
+                           :set    {:age      46
+                                    :username "john-smith"}
+                           :return :before})))
+    (is (= "CREATE person SET age = 46, username = 'john-smith' RETURN AFTER"
+           (format-create {:create :person
+                           :set    {:age      46
+                                    :username "john-smith"}
+                           :return :after}))))
+; -- Return a specific field only from the updated records
+; CREATE person SET age = 46, username = "john-smith", interests = ['skiing', 'music'] RETURN interests;
+  )
 
