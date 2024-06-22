@@ -52,8 +52,11 @@
            (format-create {:create :person
                            :set    {:age      46
                                     :username "john-smith"}
-                           :return :after}))))
-; -- Return a specific field only from the updated records
-; CREATE person SET age = 46, username = "john-smith", interests = ['skiing', 'music'] RETURN interests;
-  )
+                           :return :after})))
+    (is (= "CREATE person SET age = 46, username = 'john-smith', interests = ['skiing', 'music'] RETURN interests"
+           (format-create {:create :person
+                           :set    {:age      46
+                                    :username "john-smith"
+                                    :interests ["skiing" "music"]}
+                           :return [:interests]})))))
 
