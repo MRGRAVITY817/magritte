@@ -17,6 +17,14 @@
       (str "SET "
            (str/join ", " setters)))))
 
+(defn- handle-content [content]
+  (when content
+    (str "CONTENT {"
+         (str/join ", "
+                   (for [[k v] content]
+                     (str (name k) ": " (to-valid-str v))))
+         ",}")))
+
 (defn format-create
   "Format create statement.
 
@@ -31,9 +39,10 @@
    ;
    ```
   "
-  [{:keys [create set]}]
+  [{:keys [create set content]}]
   (->> [(handle-create create)
-        (handle-set set)]
+        (handle-set set)
+        (handle-content content)]
        (filter identity)
        (str/join " ")))
 
