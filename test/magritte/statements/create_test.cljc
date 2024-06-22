@@ -29,5 +29,13 @@
     (is (= "CREATE townsperson, cat, dog SET created_at = time::now(), name = ('Just a ' + meta::tb(id))"
            (format-create {:create [:townsperson :cat :dog]
                            :set    {:created_at '(time/now)
-                                    :name       '(+ "Just a " (meta/tb :id))}})))))
+                                    :name       '(+ "Just a " (meta/tb :id))}}))))
+; -- Create just a single record
+; CREATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];
+  (testing "create only one record"
+    (is (= "CREATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
+           (format-create {:create-only :person:tobie
+                           :set         {:name    "Tobie"
+                                         :company "SurrealDB"
+                                         :skills  ["Rust" "Go" "JavaScript"]}})))))
 

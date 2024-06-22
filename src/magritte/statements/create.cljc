@@ -4,10 +4,15 @@
             [magritte.utils :refer [to-valid-str]]))
 
 (defn- handle-create [create]
-  (let [fields (if (vector? create)
-                 (str/join ", " (map to-valid-str create))
-                 (name create))]
-    (str "CREATE " fields)))
+  (when create
+    (let [fields (if (vector? create)
+                   (str/join ", " (map to-valid-str create))
+                   (name create))]
+      (str "CREATE " fields))))
+
+(defn- handle-create-only [create-only]
+  (when create-only
+    (str "CREATE ONLY " (name create-only))))
 
 (defn- handle-set [set]
   ;{:name    "Tobie"
@@ -42,8 +47,9 @@
    ;
    ```
   "
-  [{:keys [create set content]}]
+  [{:keys [create create-only set content]}]
   (->> [(handle-create create)
+        (handle-create-only create-only)
         (handle-set set)
         (handle-content content)]
        (filter identity)
