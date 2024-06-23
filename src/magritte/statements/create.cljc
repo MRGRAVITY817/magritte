@@ -1,7 +1,9 @@
 (ns magritte.statements.create
   (:refer-clojure :exclude [set])
-  (:require [clojure.string :as str]
-            [magritte.utils :refer [to-valid-str]]))
+  (:require
+   [clojure.string :as str]
+   [magritte.statements.common :refer [handle-timeout]]
+   [magritte.utils :refer [to-valid-str]]))
 
 (defn- handle-create [create]
   (when create
@@ -54,12 +56,13 @@
    ;
    ```
   "
-  [{:keys [create create-only set content return]}]
+  [{:keys [create create-only set content return timeout]}]
   (->> [(handle-create create)
         (handle-create-only create-only)
         (handle-set set)
         (handle-content content)
-        (handle-return return)]
+        (handle-return return)
+        (handle-timeout timeout)]
        (filter identity)
        (str/join " ")))
 

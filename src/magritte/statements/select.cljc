@@ -1,6 +1,8 @@
 (ns magritte.statements.select
-  (:require [magritte.utils :as utils]
-            [clojure.string :as str]))
+  (:require
+   [clojure.string :as str]
+   [magritte.statements.common :refer [handle-timeout]]
+   [magritte.utils :as utils]))
 
 (declare format-select)
 
@@ -152,13 +154,6 @@
 (defn- handle-omit [omit]
   (when omit
     (str "OMIT " (str/join ", " (map name omit)))))
-
-(defn- handle-timeout [timeout]
-  (when timeout
-    (let [time (cond
-                 (number? timeout) (str timeout "s")
-                 :else (name timeout))]
-      (str "TIMEOUT " time))))
 
 (defn- handle-with [with]
   (when with
