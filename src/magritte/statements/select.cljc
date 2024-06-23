@@ -1,7 +1,7 @@
 (ns magritte.statements.select
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-timeout]]
+   [magritte.statements.common :refer [handle-parallel handle-timeout]]
    [magritte.utils :as utils]))
 
 (declare format-select)
@@ -214,7 +214,7 @@
         (handle-limit limit)
         (handle-fetch fetch)
         (handle-timeout timeout)
-        (if parallel "PARALLEL" nil)
+        (handle-parallel parallel)
         (if explain "EXPLAIN" nil)]
        (filter identity)
        (str/join " ")

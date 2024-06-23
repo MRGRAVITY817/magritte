@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [set])
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-timeout]]
+   [magritte.statements.common :refer [handle-parallel handle-timeout]]
    [magritte.utils :refer [to-valid-str]]))
 
 (defn- handle-create [create]
@@ -56,13 +56,14 @@
    ;
    ```
   "
-  [{:keys [create create-only set content return timeout]}]
+  [{:keys [create create-only set content return timeout parallel]}]
   (->> [(handle-create create)
         (handle-create-only create-only)
         (handle-set set)
         (handle-content content)
         (handle-return return)
-        (handle-timeout timeout)]
+        (handle-timeout timeout)
+        (handle-parallel parallel)]
        (filter identity)
        (str/join " ")))
 

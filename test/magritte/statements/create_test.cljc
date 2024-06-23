@@ -59,9 +59,17 @@
                                     :username "john-smith"
                                     :interests ["skiing" "music"]}
                            :return [:interests]}))))
-  (is (= "CREATE person:25 SET age = 46, username = 'john-smith' TIMEOUT 1000ms"
-         (format-create {:create :person:25
-                         :set    {:age      46
-                                  :username "john-smith"}
-                         :timeout "1000ms"}))))
+  (testing "create with timeout clause"
+    (is (= "CREATE person:25 SET age = 46, username = 'john-smith' TIMEOUT 1000ms"
+           (format-create {:create :person:25
+                           :set    {:age      46
+                                    :username "john-smith"}
+                           :timeout "1000ms"}))))
+  (testing "create with parallel clause"
+    (is (= "CREATE person:26, person:27 PARALLEL"
+           (format-create {:create [:person:26 :person:27]
+                           :parallel true})))
+    (is (= "CREATE person:26, person:27"
+           (format-create {:create [:person:26 :person:27]
+                           :parallel false})))))
 
