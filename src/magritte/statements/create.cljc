@@ -3,12 +3,12 @@
   (:require
    [clojure.string :as str]
    [magritte.statements.common :refer [handle-parallel handle-timeout]]
-   [magritte.utils :refer [to-valid-str]]))
+   [magritte.utils :refer [->query-str]]))
 
 (defn- handle-create [create]
   (when create
     (let [fields (if (vector? create)
-                   (str/join ", " (map to-valid-str create))
+                   (str/join ", " (map ->query-str create))
                    (name create))]
       (str "CREATE " fields))))
 
@@ -19,7 +19,7 @@
 (defn- handle-set [set]
   (when set
     (let [setters (for [[k v] set]
-                    (str (name k) " = " (to-valid-str v)))]
+                    (str (name k) " = " (->query-str v)))]
       (str "SET "
            (str/join ", " setters)))))
 
@@ -28,7 +28,7 @@
     (str "CONTENT {"
          (str/join ", "
                    (for [[k v] content]
-                     (str (name k) ": " (to-valid-str v))))
+                     (str (name k) ": " (->query-str v))))
          ",}")))
 
 (defn- handle-return [return]

@@ -66,7 +66,7 @@
     (str (get-field-name (first field))
          (get-array-statement (second field))
          (get-alias field))
-    (utils/to-valid-str field)))
+    (utils/->query-str field)))
 
 (defn- rename-fields [fields]
   (->> fields
@@ -88,7 +88,7 @@
 
     (and (vector? from-field)
          (every? #(not (list? %)) from-field))
-    (str "[" (str/join ", " (map utils/to-valid-str from-field)) "]")
+    (str "[" (str/join ", " (map utils/->query-str from-field)) "]")
 
     :else (get-field-name from-field)))
 
@@ -122,12 +122,12 @@
 (defn- handle-ordering-factor [field]
   (condp apply [field]
     vector? (let [[field & orders] field]
-              (str (utils/to-valid-str field)
+              (str (utils/->query-str field)
                    " "
                    (->> orders
                         (map #(-> % name str/upper-case))
                         (str/join " "))))
-    (utils/to-valid-str field)))
+    (utils/->query-str field)))
 
 (defn- handle-order [order]
   (when order
@@ -136,7 +136,7 @@
                              order)))))
 
 (comment
-  (utils/to-valid-str '(rand)))
+  (utils/->query-str '(rand)))
 
 (defn- handle-limit [limit]
   (cond (number? limit)

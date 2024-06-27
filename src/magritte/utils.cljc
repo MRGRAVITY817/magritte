@@ -10,17 +10,14 @@
 (declare is-range?)
 (declare list->range)
 (declare list->db-fn)
-(declare to-valid-str)
+(declare ->query-str)
 
-(defn to-str-items [fields]
-  (->> fields (map name) (str/join ", ")))
-
-(defn to-valid-str
+(defn ->query-str
   "Converts an argument to a string representation suitable for use in a SurrealQL query."
   [arg]
   (cond
     (string? arg) (str "'" arg "'")
-    (vector? arg) (str "[" (str/join ", " (map to-valid-str arg)) "]")
+    (vector? arg) (str "[" (str/join ", " (map ->query-str arg)) "]")
     (list? arg) (list->str arg)
     (map? arg) (map->str arg)
     (nil? arg) "null"
@@ -52,7 +49,7 @@
   (str "{"
        (str/join ", "
                  (for [[k v] map-entry]
-                   (str (name k) ": " (to-valid-str v))))
+                   (str (name k) ": " (->query-str v))))
        "}"))
 
 (defn- db-fn? [operator]
@@ -97,7 +94,7 @@
   "
   [expr]
   (str (->> expr first symbol->db-fn-name)
-       "(" (str/join ", " (map to-valid-str (rest expr))) ")"))
+       "(" (str/join ", " (map ->query-str (rest expr))) ")"))
 
 (comment
   (symbol->db-fn-name 'time/now)
@@ -119,7 +116,7 @@
         operands (rest expr)]
     (str "("
          (str/join (str " " operator " ")
-                   (map to-valid-str operands))
+                   (map ->query-str operands))
          ")")))
 
 (defn is-range?
@@ -138,9 +135,9 @@
    (list->range '(..= [\"London\" :none] [\"London\" (time/now)]))
    ;; => \"['London', NONE]..=['London', time::now()]\""
   [[operator start end]]
-  (str (when start (to-valid-str start))
+  (str (when start (->query-str start))
        (str operator)
-       (when end (to-valid-str end))))
+       (when end (->query-str end))))
 
 (defn graph-item->str
   "Converts a graph item to a string."
@@ -178,14 +175,14 @@
    ```
   "
   [range-map]
-  (str (when (range-map :>) (str (-> range-map :> to-valid-str)))
-       (when (range-map :>=) (str (-> range-map :>= to-valid-str) "="))
+  (str (when (range-map :>) (str (-> range-map :> ->query-str)))
+       (when (range-map :>=) (str (-> range-map :>= ->query-str) "="))
        ".."
-       (when (range-map :<=) (str "=" (-> range-map :<= to-valid-str)))
-       (when (range-map :<) (str (-> range-map :< to-valid-str)))))
+       (when (range-map :<=) (str "=" (-> range-map :<= ->query-str)))
+       (when (range-map :<) (str (-> range-map :< ->query-str)))))
 
 (comment
-  (repl/doc to-valid-str)
+  (repl/doc ->query-str)
   (range-map->str {:> 2 :< 5})
   (range-map->str {:> 2})
   (range-map->str {:< 5})
@@ -197,7 +194,7 @@
   (def new-map {:id "hello"})
   (def map-list [{:id "hello"} {:name "world"}])
   (-> {:id "hello" :name "good"} map->str)
-  (to-valid-str map-list)
+  (->query-str map-list)
   (map map->str new-map)
   (list->infix '(+ 1 2))
   (list->infix '(* 1 2))
