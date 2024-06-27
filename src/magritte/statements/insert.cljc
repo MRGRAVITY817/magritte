@@ -10,10 +10,17 @@
   (when insert
     ;; implement the logic above
     (let [fields (if (vector? insert)
-                   (str/join ", " (map ->query-str insert))
+                   (let [table (name (first insert))
+                         fields (map name (second insert))]
+                     (str table " (" (str/join ", " fields) ")"))
                    (name insert))]
       (str "INSERT INTO " fields))))
 
+(comment
+  (handle-insert :person)
+  (handle-insert [:company [:name :founded]])
+  ;
+  )
 (defn- handle-content
   "Handle content statement"
   [content]
@@ -23,6 +30,15 @@
                    (for [[k v] content]
                      (str (name k) ": " (->query-str v))))
          "}")))
+
+(defn- handle-values
+  "Handle VALUES statement inside INSERT statement."
+  [values]
+  (let [insert-values (->> values
+                           (map ->query-str)
+                           (str/join ", "))]
+    (when values
+      (str "VALUES (" insert-values ")"))))
 
 (defn format-insert
   "Format insert statement.
@@ -36,9 +52,10 @@
    ;
    ```
   "
-  [{:keys [insert content]}]
+  [{:keys [insert content values]}]
   (->> [(handle-insert insert)
-        (handle-content content)]
+        (handle-content content)
+        (handle-values values)]
        (filter identity)
        (str/join " ")))
 

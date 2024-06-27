@@ -9,8 +9,10 @@
                            :content {:name    "Tobie"
                                      :company "SurrealDB"
                                      :skills  ["Rust" "Go" "JavaScript"]}}))))
-; -- Insert a single record with VALUES
-; INSERT INTO company (name, founded) VALUES ('SurrealDB', '2021-09-10');
+  (testing "insert a single record with VALUES"
+    (is (= "INSERT INTO company (name, founded) VALUES ('SurrealDB', '2021-09-10')"
+           (format-insert {:insert [:company [:name :founded]]
+                           :values ["SurrealDB" "2021-09-10"]}))))
 
 ; -- Insert multiple records with VALUES
 ; INSERT INTO company (name, founded) VALUES ('Acme Inc.', '1967-05-03'), ('Apple Inc.', '1976-04-01');
