@@ -13,17 +13,18 @@
     (is (= "INSERT INTO company (name, founded) VALUES ('SurrealDB', '2021-09-10')"
            (format-insert {:insert [:company [:name :founded]]
                            :values ["SurrealDB" "2021-09-10"]}))))
-
-; -- Insert multiple records with VALUES
-; INSERT INTO company (name, founded) VALUES ('Acme Inc.', '1967-05-03'), ('Apple Inc.', '1976-04-01');
   (testing "insert multiple records with VALUES"
     (is (= "INSERT INTO company (name, founded) VALUES ('Acme Inc.', '1967-05-03'), ('Apple Inc.', '1976-04-01')"
            (format-insert {:insert [:company [:name :founded]]
                            :values [["Acme Inc." "1967-05-03"]
                                     ["Apple Inc." "1976-04-01"]]}))))
-
 ; -- When a record already exists, update the record by adding a tag
 ; INSERT INTO product (name, url) VALUES ('Salesforce', 'salesforce.com') ON DUPLICATE KEY UPDATE tags += 'crm';
+  (testing "update already inserted record"
+    (is (= "INSERT INTO product (name, url) VALUES ('Salesforce', 'salesforce.com') ON DUPLICATE KEY UPDATE tags += 'crm'"
+           (format-insert {:insert   [:product [:name :url]]
+                           :values   ["Salesforce" "salesforce.com"]
+                           :dupdate  ['(+= :tags "crm")]}))))
 
 ; -- Refer input value within ON DUPLICATE KEY UPDATE
 ; INSERT INTO city (id, population, at_year) VALUES ("Calgary", 1665000, 2024)

@@ -1,7 +1,7 @@
 (ns magritte.statements.insert
   (:require
    [clojure.string :as str]
-   [magritte.utils :refer [->query-str]]))
+   [magritte.utils :refer [->query-str list->str]]))
 
 (defn- handle-insert
   "Handle insert statement"
@@ -49,6 +49,16 @@
     (when values
       (str "VALUES " insert-values))))
 
+(defn- handle-dupdate
+  "Handle ON DUPLICATE KEY UPDATE clause"
+  [dupdate]
+  (when (and (vector? dupdate)
+             (list? (first dupdate)))
+    (str "ON DUPLICATE KEY UPDATE "
+         (->> dupdate
+              (map #(list->str % :no-surroundings))
+              (str/join ", ")))))
+
 (defn format-insert
   "Format insert statement.
 
@@ -61,10 +71,11 @@
    ;
    ```
   "
-  [{:keys [insert content values]}]
+  [{:keys [insert content values dupdate]}]
   (->> [(handle-insert insert)
         (handle-content content)
-        (handle-values values)]
+        (handle-values values)
+        (handle-dupdate dupdate)]
        (filter identity)
        (str/join " ")))
 

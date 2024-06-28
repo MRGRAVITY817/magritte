@@ -59,13 +59,22 @@
 
 (defn list->str
   "Converts a list to a string representation suitable for use in a SurrealQL query."
-  [expr]
-  (let [operator (first expr)]
-    (cond
-      (= operator '->) (graph->str expr)
-      (is-range? expr) (list->range expr)
-      (db-fn? operator) (list->db-fn expr)
-      :else (list->infix expr))))
+  ([expr]
+   (let [operator (first expr)]
+     (cond
+       (= operator '->) (graph->str expr)
+       (is-range? expr) (list->range expr)
+       (db-fn? operator) (list->db-fn expr)
+       :else (list->infix expr))))
+  ([expr _]
+   (->> (list->str expr)
+        (re-seq #"^\((.*)\)$")
+        (first)
+        (second))))
+
+(comment
+  (re-seq #"^\((.*)\)$" "(+ 1 2)")
+  (list->str '(+ 1 2) true))
 
 (defn symbol->db-fn-name
   "Builds a database function name from given namespaced symbol.
