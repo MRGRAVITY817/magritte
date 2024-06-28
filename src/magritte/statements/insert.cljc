@@ -31,14 +31,23 @@
                      (str (name k) ": " (->query-str v))))
          "}")))
 
+(defn- handle-one-value
+  [value]
+  (str "(" (str/join ", " (map ->query-str value)) ")"))
+
+(comment
+  (handle-one-value ["SurrealDB" "2021-09-10"]))
+
 (defn- handle-values
   "Handle VALUES statement inside INSERT statement."
   [values]
-  (let [insert-values (->> values
-                           (map ->query-str)
-                           (str/join ", "))]
+  (let [insert-values (if (vector? (first values))
+                        (->> values
+                             (map handle-one-value)
+                             (str/join ", "))
+                        (handle-one-value values))]
     (when values
-      (str "VALUES (" insert-values ")"))))
+      (str "VALUES " insert-values))))
 
 (defn format-insert
   "Format insert statement.
