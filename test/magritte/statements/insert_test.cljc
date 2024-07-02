@@ -29,9 +29,12 @@
                            :values   ["Calgary" 1665000 2024]
                            :dupdate  ['(= :population $input.population)
                                       '(= :at_year $input.at_year)]}))))
-
-; -- Insert a record with a subquery
-; INSERT INTO recordings_san_francisco (SELECT * FROM temperature WHERE city = 'San Francisco');
+  (testing "insert a record with a subquery"
+    (is (= "INSERT INTO recordings_san_francisco (SELECT * FROM temperature WHERE (city = 'San Francisco'))"
+           (format-insert {:insert   :recordings_san_francisco
+                           :subquery {:select [:*]
+                                      :from   [:temperature]
+                                      :where  '(= :city "San Francisco")}}))))
 
 ; -- bulk insert
 ; INSERT INTO person [

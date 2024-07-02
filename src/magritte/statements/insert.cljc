@@ -1,6 +1,7 @@
 (ns magritte.statements.insert
   (:require
    [clojure.string :as str]
+   [magritte.statements.select :refer [format-select]]
    [magritte.utils :refer [->query-str list->str]]))
 
 (defn- handle-insert
@@ -59,6 +60,14 @@
               (map #(list->str % :no-surroundings))
               (str/join ", ")))))
 
+(defn- handle-subquery
+  "Handle subquery statement inside INSERT statement."
+  [subquery]
+  (when subquery
+    (str "("
+         (format-select subquery)
+         ")")))
+
 (defn format-insert
   "Format insert statement.
 
@@ -71,11 +80,12 @@
    ;
    ```
   "
-  [{:keys [insert content values dupdate]}]
+  [{:keys [insert content values dupdate subquery]}]
   (->> [(handle-insert insert)
         (handle-content content)
         (handle-values values)
-        (handle-dupdate dupdate)]
+        (handle-dupdate dupdate)
+        (handle-subquery subquery)]
        (filter identity)
        (str/join " ")))
 
