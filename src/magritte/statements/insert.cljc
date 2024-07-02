@@ -26,11 +26,17 @@
   "Handle content statement"
   [content]
   (when content
-    (str "{"
-         (str/join ", "
-                   (for [[k v] content]
-                     (str (name k) ": " (->query-str v))))
-         "}")))
+    (cond
+      (map? content) (str "{"
+                          (str/join ", "
+                                    (for [[k v] content]
+                                      (str (name k) ": " (->query-str v))))
+                          "}")
+      (vector? content) (str "["
+                             (str/join ", "
+                                       (map handle-content content))
+                             "]")
+      :else (->query-str content))))
 
 (defn- handle-one-value
   [value]

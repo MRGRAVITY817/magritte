@@ -35,12 +35,12 @@
                            :subquery {:select [:*]
                                       :from   [:temperature]
                                       :where  '(= :city "San Francisco")}}))))
-
-; -- bulk insert
-; INSERT INTO person [
-;    {id: "person:jaime", name: "Jaime", surname: "Morgan Hitchcock"},
-;    {id: "person:tobie", name: "Tobie", surname: "Morgan Hitchcock"},
-; ]
-
-  ;; add more tests
-  )
+  (testing "bulk insert"
+    (is (= "INSERT INTO person [{id: 'person:jaime', name: 'Jaime', surname: 'Morgan Hitchcock'}, {id: 'person:tobie', name: 'Tobie', surname: 'Morgan Hitchcock'}]"
+           (format-insert {:insert  :person
+                           :content [{:id      "person:jaime"
+                                      :name    "Jaime"
+                                      :surname "Morgan Hitchcock"}
+                                     {:id      "person:tobie"
+                                      :name    "Tobie"
+                                      :surname "Morgan Hitchcock"}]})))))
