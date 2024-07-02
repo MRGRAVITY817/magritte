@@ -18,19 +18,17 @@
            (format-insert {:insert [:company [:name :founded]]
                            :values [["Acme Inc." "1967-05-03"]
                                     ["Apple Inc." "1976-04-01"]]}))))
-; -- When a record already exists, update the record by adding a tag
-; INSERT INTO product (name, url) VALUES ('Salesforce', 'salesforce.com') ON DUPLICATE KEY UPDATE tags += 'crm';
   (testing "update already inserted record"
     (is (= "INSERT INTO product (name, url) VALUES ('Salesforce', 'salesforce.com') ON DUPLICATE KEY UPDATE tags += 'crm'"
            (format-insert {:insert   [:product [:name :url]]
                            :values   ["Salesforce" "salesforce.com"]
                            :dupdate  ['(+= :tags "crm")]}))))
-
-; -- Refer input value within ON DUPLICATE KEY UPDATE
-; INSERT INTO city (id, population, at_year) VALUES ("Calgary", 1665000, 2024)
-; ON DUPLICATE KEY UPDATE
-; 	population = $input.population,
-; 	at_year = $input.at_year;
+  (testing "update already inserted record with input value"
+    (is (= "INSERT INTO city (id, population, at_year) VALUES ('Calgary', 1665000, 2024) ON DUPLICATE KEY UPDATE population = $input.population, at_year = $input.at_year"
+           (format-insert {:insert   [:city [:id :population :at_year]]
+                           :values   ["Calgary" 1665000 2024]
+                           :dupdate  ['(= :population $input.population)
+                                      '(= :at_year $input.at_year)]}))))
 
 ; -- Insert a record with a subquery
 ; INSERT INTO recordings_san_francisco (SELECT * FROM temperature WHERE city = 'San Francisco');
