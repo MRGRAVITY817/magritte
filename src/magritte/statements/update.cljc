@@ -1,4 +1,17 @@
-(ns magritte.statements.update)
+(ns magritte.statements.update
+  (:require
+   [clojure.string :as str]
+   [magritte.utils :refer [->query-str list->str]]))
+
+(defn- handle-update [update]
+  (when update
+    (str "UPDATE " (->query-str update))))
+
+(defn- handle-set [set]
+  (when set
+    (str "SET " (->> set
+                     (map #(list->str % :no-surroundings))
+                     (str/join ", ")))))
 
 (defn format-update
   "Formats an update statement.
@@ -17,4 +30,8 @@
   ;
   ```
   "
-  [{:keys [update set]}])
+  [{:keys [update set]}]
+  (->> [(handle-update update)
+        (handle-set set)]
+       (filter identity)
+       (str/join " ")))
