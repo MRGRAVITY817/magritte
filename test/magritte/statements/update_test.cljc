@@ -3,10 +3,6 @@
             [magritte.statements.update :refer [format-update]]))
 
 (deftest format-update-test
-; -- Update all records in a table
-; -- The skills field is an array. The += operator alone is enough for SurrealDB to infer the type
-; UPDATE person SET skills += 'breathing';
-
   (testing "update all records in a table"
     (is (= "UPDATE person SET skills += 'breathing'"
            (format-update {:update :person
@@ -14,6 +10,12 @@
 
 ; -- Update or create a record with a specific numeric id
 ; UPDATE person:100 SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];
+  (testing "update or create a record with a specific numeric id"
+    (is (= "UPDATE person:100 SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
+           (format-update {:update :person:100
+                           :set    [{:name    "Tobie"
+                                     :company "SurrealDB"
+                                     :skills  ["Rust" "Go" "JavaScript"]}]}))))
 ;
 ; -- Update or create a record with a specific string id
 ; UPDATE person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];

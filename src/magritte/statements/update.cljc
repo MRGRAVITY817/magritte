@@ -7,10 +7,18 @@
   (when update
     (str "UPDATE " (->query-str update))))
 
+(defn- handle-set-item [arg1]
+  (cond
+    (list? arg1) (list->str arg1 :no-brackets)
+    (map? arg1)  (->> arg1
+                      (map (fn [[k v]] (str (name k) " = " (->query-str v))))
+                      (str/join ", "))
+    :else        (->query-str arg1)))
+
 (defn- handle-set [set]
   (when set
     (str "SET " (->> set
-                     (map #(list->str % :no-surroundings))
+                     (map handle-set-item)
                      (str/join ", ")))))
 
 (defn format-update
