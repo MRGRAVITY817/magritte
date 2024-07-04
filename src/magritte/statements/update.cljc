@@ -2,23 +2,23 @@
   (:require
    [clojure.string :as str]
    [magritte.statements.common :refer [handle-where]]
-   [magritte.utils :refer [->query-str list->str]]))
+   [magritte.utils :as utils]))
 
 (defn- handle-update [update]
   (when update
-    (str "UPDATE " (->query-str update))))
+    (str "UPDATE " (utils/->query-str update))))
 
 (defn- handle-update-only [update-only]
   (when update-only
-    (str "UPDATE ONLY " (->query-str update-only))))
+    (str "UPDATE ONLY " (utils/->query-str update-only))))
 
 (defn- handle-set-item [arg1]
   (cond
-    (list? arg1) (list->str arg1 :no-brackets)
+    (list? arg1) (utils/list->str arg1 :no-brackets)
     (map? arg1)  (->> arg1
-                      (map (fn [[k v]] (str (name k) " = " (->query-str v))))
+                      (map (fn [[k v]] (str (name k) " = " (utils/->query-str v))))
                       (str/join ", "))
-    :else        (->query-str arg1)))
+    :else        (utils/->query-str arg1)))
 
 (defn- handle-set [set]
   (when set
@@ -34,11 +34,18 @@
 
 (defn- handle-content [content]
   (when content
-    (str "CONTENT " (->query-str content))))
+    (str "CONTENT " (utils/->query-str content))))
 
 (defn- handle-merge [merge]
   (when merge
-    (str "MERGE " (->query-str merge))))
+    (str "MERGE " (utils/->query-str merge))))
+
+(defn- handle-patch [patch]
+  (when (vector? patch)
+    (let [jsons (->> patch
+                     (map utils/map->json))
+          patch-str (str "[" (str/join ", " jsons) "]")]
+      (str "PATCH " patch-str))))
 
 (defn format-update
   "Formats an update statement.
@@ -57,11 +64,12 @@
   ;
   ```
   "
-  [{:keys [update update-only content merge set unset where]}]
+  [{:keys [update update-only content merge patch set unset where]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
         (handle-content content)
         (handle-merge merge)
+        (handle-patch patch)
         (handle-set set)
         (handle-unset unset)
         (handle-where where)]

@@ -14,16 +14,20 @@
 
 (defn ->query-str
   "Converts an argument to a string representation suitable for use in a SurrealQL query."
-  [arg]
-  (cond
-    (string? arg) (str "'" arg "'")
-    (vector? arg) (str "[" (str/join ", " (map ->query-str arg)) "]")
-    (list? arg) (list->str arg)
-    (map? arg) (map->str arg)
-    (nil? arg) "null"
-    (= :none arg) "NONE"
-    (keyword? arg) (name arg)
-    :else arg))
+  ([arg]
+   (cond
+     (string? arg) (str "'" arg "'")
+     (vector? arg) (str "[" (str/join ", " (map ->query-str arg)) "]")
+     (list? arg) (list->str arg)
+     (map? arg) (map->str arg)
+     (nil? arg) "null"
+     (= :none arg) "NONE"
+     (keyword? arg) (name arg)
+     :else arg))
+  ([arg _]
+   (cond
+     (string? arg) (str "\"" arg "\"")
+     :else (->query-str arg))))
 
 (defn kebab->snake_name
   "Converts kebab item to a snake_case string."
@@ -190,8 +194,20 @@
        (when (range-map :<=) (str "=" (-> range-map :<= ->query-str)))
        (when (range-map :<) (str (-> range-map :< ->query-str)))))
 
+(defn map->json [arg1]
+  (cond
+    (map? arg1)  (str "{"
+                      (->> arg1
+                           (map (fn [[k v]] (str (str "\"" (name k) "\"")
+                                                 ":"
+                                                 (->query-str v :double-quote))))
+                           (str/join ","))
+                      "}")
+    :else        (->query-str arg1)))
+
 (comment
   (repl/doc ->query-str)
+  (map->json {:id "hello" :name "world"}) ; "{\"id\":\"hello\",\"name\":\"world\"}"
   (range-map->str {:> 2 :< 5})
   (range-map->str {:> 2})
   (range-map->str {:< 5})

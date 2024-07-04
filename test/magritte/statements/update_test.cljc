@@ -66,7 +66,6 @@
     (is (= "UPDATE person:tobie MERGE {settings: {marketing: true}}"
            (format-update {:update :person:tobie
                            :merge  {:settings {:marketing true}}}))))
-;
 ; -- Patch the JSON response
 ; UPDATE person:tobie PATCH [
 ; 	{
@@ -75,6 +74,13 @@
 ; 		"value": "true"
 ; 	}
 ; ]
+
+  (testing "patch the JSON response"
+    (is (= "UPDATE person:tobie PATCH [{\"op\":\"add\",\"path\":\"Engineering\",\"value\":\"true\"}]"
+           (format-update {:update :person:tobie
+                           :patch  [{:op    "add"
+                                     :path  "Engineering"
+                                     :value "true"}]}))))
 ;
 ;
 ; -- Don't return any result
