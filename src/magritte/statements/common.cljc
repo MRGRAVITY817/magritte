@@ -1,4 +1,5 @@
-(ns magritte.statements.common)
+(ns magritte.statements.common
+  (:require [magritte.utils :as utils]))
 
 (defn handle-timeout [timeout]
   (when timeout
@@ -9,3 +10,10 @@
 
 (defn handle-parallel [parallel]
   (if parallel "PARALLEL" nil))
+
+(defn handle-where [where]
+  (when where
+    (str "WHERE "
+         (cond
+           (list? where) (utils/list->str where)
+           :else (name where)))))

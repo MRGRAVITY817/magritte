@@ -1,7 +1,8 @@
 (ns magritte.statements.select
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-parallel handle-timeout]]
+   [magritte.statements.common :refer [handle-parallel handle-timeout
+                                       handle-where]]
    [magritte.utils :as utils]))
 
 (declare format-select)
@@ -105,13 +106,6 @@
 (defn- handle-fetch [fetch]
   (when fetch
     (str "FETCH " (name fetch))))
-
-(defn- handle-where [where]
-  (when where
-    (str "WHERE "
-         (cond
-           (list? where) (utils/list->str where)
-           :else (name where)))))
 
 (defn- handle-group [group]
   (when group

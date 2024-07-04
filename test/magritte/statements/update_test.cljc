@@ -41,9 +41,11 @@
     (is (= "UPDATE user:one UNSET email, address"
            (format-update {:update :user:one
                            :unset  [:email :address]}))))
-;
-; -- Update all records which match the condition
-; UPDATE city SET population = 9541000 WHERE name = 'London';
+  (testing "update all records which match the condition"
+    (is (= "UPDATE city SET population = 9541000 WHERE (name = 'London')"
+           (format-update {:update :city
+                           :set    [{:population 9541000}]
+                           :where  '(= :name "London")}))))
 ;
 ; -- Update all records with the same content
 ; UPDATE person CONTENT {

@@ -1,6 +1,7 @@
 (ns magritte.statements.update
   (:require
    [clojure.string :as str]
+   [magritte.statements.common :refer [handle-where]]
    [magritte.utils :refer [->query-str list->str]]))
 
 (defn- handle-update [update]
@@ -48,10 +49,11 @@
   ;
   ```
   "
-  [{:keys [update update-only set unset]}]
+  [{:keys [update update-only set unset where]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
         (handle-set set)
-        (handle-unset unset)]
+        (handle-unset unset)
+        (handle-where where)]
        (filter identity)
        (str/join " ")))
