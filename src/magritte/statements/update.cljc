@@ -36,6 +36,10 @@
   (when content
     (str "CONTENT " (->query-str content))))
 
+(defn- handle-merge [merge]
+  (when merge
+    (str "MERGE " (->query-str merge))))
+
 (defn format-update
   "Formats an update statement.
 
@@ -53,10 +57,11 @@
   ;
   ```
   "
-  [{:keys [update update-only content set unset where]}]
+  [{:keys [update update-only content merge set unset where]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
         (handle-content content)
+        (handle-merge merge)
         (handle-set set)
         (handle-unset unset)
         (handle-where where)]

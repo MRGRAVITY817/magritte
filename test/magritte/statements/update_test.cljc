@@ -64,6 +64,10 @@
 ; 		marketing: true,
 ; 	},
 ; };
+  (testing "update certain fields on all records"
+    (is (= "UPDATE person MERGE {settings: {marketing: true}}"
+           (format-update {:update :person
+                           :merge  {:settings {:marketing true}}}))))
 ;
 ; -- Update certain fields on a specific record
 ; UPDATE person:tobie MERGE {
