@@ -37,7 +37,10 @@
     (is (= "UPDATE webpage:home SET click_count = NONE"
            (format-update {:update :webpage:home
                            :set    [{:click_count :none}]}))))
-; UPDATE user:one UNSET email, address;
+  (testing "remove fields using UNSET"
+    (is (= "UPDATE user:one UNSET email, address"
+           (format-update {:update :user:one
+                           :unset  [:email :address]}))))
 ;
 ; -- Update all records which match the condition
 ; UPDATE city SET population = 9541000 WHERE name = 'London';

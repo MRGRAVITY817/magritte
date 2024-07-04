@@ -25,6 +25,12 @@
                      (map handle-set-item)
                      (str/join ", ")))))
 
+(defn- handle-unset [unset]
+  (when (vector? unset)
+    (str "UNSET " (->> unset
+                       (map name)
+                       (str/join ", ")))))
+
 (defn format-update
   "Formats an update statement.
 
@@ -42,9 +48,10 @@
   ;
   ```
   "
-  [{:keys [update update-only set]}]
+  [{:keys [update update-only set unset]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
-        (handle-set set)]
+        (handle-set set)
+        (handle-unset unset)]
        (filter identity)
        (str/join " ")))
