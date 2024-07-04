@@ -25,10 +25,10 @@
                            :set         [{:name    "Tobie"
                                           :company "SurrealDB"
                                           :skills  ["Rust" "Go" "JavaScript"]}]}))))
-;
-; -- Update a document and increment a numeric value
-; UPDATE webpage:home SET click_count += 1;
-;
+  (testing "update a document and increment a numeric value"
+    (is (= "UPDATE webpage:home SET click_count += 1"
+           (format-update {:update :webpage:home
+                           :set    ['(+= :click_count 1)]}))))
 ; -- Update a document and remove a tag from an array
 ; UPDATE person:tobie SET interests -= 'Java';
 ;
