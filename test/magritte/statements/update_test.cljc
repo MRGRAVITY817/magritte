@@ -33,10 +33,10 @@
     (is (= "UPDATE person:tobie SET interests -= 'Java'"
            (format-update {:update :person:tobie
                            :set    ['(-= :interests "Java")]}))))
-;
-; -- Remove a field by setting it to NONE or using the UNSET keyword
-; UPDATE webpage:home SET click_count = NONE;
-;
+  (testing "remove a field by setting it to NONE"
+    (is (= "UPDATE webpage:home SET click_count = NONE"
+           (format-update {:update :webpage:home
+                           :set    [{:click_count :none}]}))))
 ; UPDATE user:one UNSET email, address;
 ;
 ; -- Update all records which match the condition
