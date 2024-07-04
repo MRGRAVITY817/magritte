@@ -29,8 +29,10 @@
     (is (= "UPDATE webpage:home SET click_count += 1"
            (format-update {:update :webpage:home
                            :set    ['(+= :click_count 1)]}))))
-; -- Update a document and remove a tag from an array
-; UPDATE person:tobie SET interests -= 'Java';
+  (testing "update a document and remove a tag from an array"
+    (is (= "UPDATE person:tobie SET interests -= 'Java'"
+           (format-update {:update :person:tobie
+                           :set    ['(-= :interests "Java")]}))))
 ;
 ; -- Remove a field by setting it to NONE or using the UNSET keyword
 ; UPDATE webpage:home SET click_count = NONE;
