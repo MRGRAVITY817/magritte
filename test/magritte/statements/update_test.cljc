@@ -52,15 +52,12 @@
                            :content {:name    "Tobie"
                                      :company "SurrealDB"
                                      :skills  ["Rust" "Go" "JavaScript"]}}))))
-
-;
-; -- Update a specific record with some content
-; UPDATE person:tobie CONTENT {
-; 	name: 'Tobie',
-; 	company: 'SurrealDB',
-; 	skills: ['Rust', 'Go', 'JavaScript'],
-; };
-;
+  (testing "update a specific record with some content"
+    (is (= "UPDATE person:tobie CONTENT {name: 'Tobie', company: 'SurrealDB', skills: ['Rust', 'Go', 'JavaScript']}"
+           (format-update {:update  :person:tobie
+                           :content {:name    "Tobie"
+                                     :company "SurrealDB"
+                                     :skills  ["Rust" "Go" "JavaScript"]}}))))
 ; -- Update certain fields on all records
 ; UPDATE person MERGE {
 ; 	settings: {
