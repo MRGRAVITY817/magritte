@@ -7,6 +7,10 @@
   (when update
     (str "UPDATE " (->query-str update))))
 
+(defn- handle-update-only [update-only]
+  (when update-only
+    (str "UPDATE ONLY " (->query-str update-only))))
+
 (defn- handle-set-item [arg1]
   (cond
     (list? arg1) (list->str arg1 :no-brackets)
@@ -38,8 +42,9 @@
   ;
   ```
   "
-  [{:keys [update set]}]
+  [{:keys [update update-only set]}]
   (->> [(handle-update update)
+        (handle-update-only update-only)
         (handle-set set)]
        (filter identity)
        (str/join " ")))

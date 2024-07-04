@@ -19,10 +19,12 @@
                            :set    [{:name    "Tobie"
                                      :company "SurrealDB"
                                      :skills  ["Rust" "Go" "JavaScript"]}]}))))
-; -- Update just a single record
-; -- Using the ONLY keyword, just an object for the record in question will be returned.
-; -- This, instead of an array with a single object.
-; UPDATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];
+  (testing "update a single record"
+    (is (= "UPDATE ONLY person:tobie SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript']"
+           (format-update {:update-only :person:tobie
+                           :set         [{:name    "Tobie"
+                                          :company "SurrealDB"
+                                          :skills  ["Rust" "Go" "JavaScript"]}]}))))
 ;
 ; -- Update a document and increment a numeric value
 ; UPDATE webpage:home SET click_count += 1;
