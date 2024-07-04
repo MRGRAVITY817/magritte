@@ -46,13 +46,13 @@
            (format-update {:update :city
                            :set    [{:population 9541000}]
                            :where  '(= :name "London")}))))
-;
-; -- Update all records with the same content
-; UPDATE person CONTENT {
-; 	name: 'Tobie',
-; 	company: 'SurrealDB',
-; 	skills: ['Rust', 'Go', 'JavaScript'],
-; };
+  (testing "update all records with the same content"
+    (is (= "UPDATE person CONTENT {name: 'Tobie', company: 'SurrealDB', skills: ['Rust', 'Go', 'JavaScript']}"
+           (format-update {:update :person
+                           :content {:name    "Tobie"
+                                     :company "SurrealDB"
+                                     :skills  ["Rust" "Go" "JavaScript"]}}))))
+
 ;
 ; -- Update a specific record with some content
 ; UPDATE person:tobie CONTENT {

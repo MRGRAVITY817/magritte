@@ -32,6 +32,10 @@
                        (map name)
                        (str/join ", ")))))
 
+(defn- handle-content [content]
+  (when content
+    (str "CONTENT " (->query-str content))))
+
 (defn format-update
   "Formats an update statement.
 
@@ -49,9 +53,10 @@
   ;
   ```
   "
-  [{:keys [update update-only set unset where]}]
+  [{:keys [update update-only content set unset where]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
+        (handle-content content)
         (handle-set set)
         (handle-unset unset)
         (handle-where where)]
