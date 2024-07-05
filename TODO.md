@@ -23,7 +23,7 @@
 - [ ] FOR
 - [ ] IF ELSE
 - [ ] INFO
-- [ ] INSERT
+- [x] INSERT
 - [ ] KILL
 - [ ] LET
 - [ ] LIVE
@@ -35,7 +35,7 @@
 - [ ] SHOW
 - [ ] SLEEP
 - [ ] THROW
-- [ ] UPDATE
+- [x] UPDATE
 - [ ] USE
 
 ## Functions
