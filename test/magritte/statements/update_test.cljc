@@ -72,22 +72,26 @@
                            :patch  [{:op    "add"
                                      :path  "Engineering"
                                      :value "true"}]}))))
-; -- Don't return any result
-; UPDATE person SET interests += 'reading' RETURN NONE;
   (testing "update, but don't return the result"
     (is (= "UPDATE person SET interests += 'reading' RETURN NONE"
            (format-update {:update :person
                            :set    ['(+= :interests "reading")]
                            :return :none}))))
-;
-; -- Return the changeset diff
-; UPDATE person SET interests += 'reading' RETURN DIFF;
-;
-; -- Return the record before changes were applied
-; UPDATE person SET interests += 'reading' RETURN BEFORE;
-;
-; -- Return the record after changes were applied (the default)
-; UPDATE person SET interests += 'reading' RETURN AFTER;
+  (testing "update and return the changeset diff"
+    (is (= "UPDATE person SET interests += 'reading' RETURN DIFF"
+           (format-update {:update :person
+                           :set    ['(+= :interests "reading")]
+                           :return :diff}))))
+  (testing "return the record beofore changes were applied"
+    (is (= "UPDATE person SET interests += 'reading' RETURN BEFORE"
+           (format-update {:update :person
+                           :set    ['(+= :interests "reading")]
+                           :return :before}))))
+  (testing "return the record after changes were applied"
+    (is (= "UPDATE person SET interests += 'reading' RETURN AFTER"
+           (format-update {:update :person
+                           :set    ['(+= :interests "reading")]
+                           :return :after}))))
 ;
 ; -- Return a specific field only from the updated records
 ; UPDATE person:tobie SET interests = ['skiing', 'music'] RETURN name, interests;
