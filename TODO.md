@@ -19,7 +19,7 @@
     - [ ] DEFINE TABLE
     - [ ] DEFINE TOKEN
     - [ ] DEFINE USER
-- [ ] DELETE
+- [x] DELETE
 - [ ] FOR
 - [ ] IF ELSE
 - [ ] INFO
