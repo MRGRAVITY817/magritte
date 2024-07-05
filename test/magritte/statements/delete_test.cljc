@@ -6,17 +6,15 @@
   (testing "delete all records in a table"
     (is (= "DELETE person"
            (format-delete {:delete :person}))))
-;
-; -- Delete a record with a specific numeric id
-; DELETE person:100;
-;
-; -- Delete a record with a specific string id
-; DELETE person:tobie;
-;
-; -- Delete just a single record
-; -- Using the ONLY keyword, just an object for the record in question will be returned.
-; -- This, instead of an array with a single object.
-; DELETE ONLY person:tobie;
+  (testing "delete a record with a specific numeric id"
+    (is (= "DELETE person:100"
+           (format-delete {:delete :person:100}))))
+  (testing "delete a record with a specific string id"
+    (is (= "DELETE person:tobie"
+           (format-delete {:delete :person:tobie}))))
+  (testing "delete a single record"
+    (is (= "DELETE ONLY person:tobie"
+           (format-delete {:delete-only :person:tobie}))))
 ; -- Update all records which match the condition
 ; DELETE city WHERE name = 'London';
 ; -- Don't return any result (the default)
