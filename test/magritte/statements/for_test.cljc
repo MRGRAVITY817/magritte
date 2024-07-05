@@ -10,16 +10,11 @@
                           {:create  (type/thing "person" :$name)
                            :content {:name :$name}})))))
 
-; -- Set can_vote to true for every person over 18 years old.
-; FOR $person IN (SELECT VALUE id FROM person WHERE age >= 18) {
-; 	UPDATE $person SET can_vote = true;
-; };
-
-  #_(testing "create a person for everyone from select result"
-      (is (= "FOR $person IN (SELECT VALUE id FROM person WHERE age >= 18) { UPDATE $person SET can_vote = true; }"
-             (format-for '(for [$person {:select-value :id
-                                         :from         :person
-                                         :where        (>= :age 18)}]
-                            {:update $person
-                             :set {:can_vote true}}))))))
+  (testing "create a person for everyone from select result"
+    (is (= "FOR $person IN (SELECT VALUE id FROM person WHERE (age >= 18)) { UPDATE $person SET can_vote = true; };"
+           (format-for '(for [person {:select-value :id
+                                      :from         [:person]
+                                      :where        (>= :age 18)}]
+                          {:update $person
+                           :set    [{:can_vote true}]}))))))
 

@@ -1,5 +1,6 @@
 (ns magritte.statements.for
   (:require
+   [clojure.string :as str]
    [magritte.statements.format :refer [format-statement]]
    [magritte.utils :as utils]))
 
@@ -14,6 +15,12 @@
   [for-statement]
   (when (list? for-statement)
     (let [[item iterable] (second for-statement)
-          block (last for-statement)]
-      (prn item iterable block)
-      (str "FOR $" item " IN " (utils/->query-str iterable) " { " (format-statement block) " };"))))
+          block (last for-statement)
+          iterable (cond
+                     (vector? iterable) (utils/->query-str iterable)
+                     :else (str "(" (str/replace (format-statement iterable) #";" "") ")"))]
+      (str "FOR $" item " IN " iterable " { " (format-statement block) " };"))))
+
+"FOR $person IN (SELECT VALUE id FROM person WHERE age >= 18) { UPDATE $person SET can_vote = true; };"
+
+"FOR $person IN (SELECT VALUE id FROM person WHERE (age >= 18);) { UPDATE $person SET [can_vote, true]; };"
