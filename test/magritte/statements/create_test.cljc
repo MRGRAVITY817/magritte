@@ -15,7 +15,7 @@
                                     :company "SurrealDB"
                                     :skills  ["Rust" "Go" "JavaScript"]}}))))
   (testing "create with content clause"
-    (is (= "CREATE person:100 CONTENT {name: 'Tobie', company: 'SurrealDB', skills: ['Rust', 'Go', 'JavaScript'],}"
+    (is (= "CREATE person:100 CONTENT {name: 'Tobie', company: 'SurrealDB', skills: ['Rust', 'Go', 'JavaScript']}"
            (format-create {:create   :person:100
                            :content  {:name    "Tobie"
                                       :company "SurrealDB"

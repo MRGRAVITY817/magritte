@@ -9,7 +9,7 @@
   (when create
     (let [fields (if (vector? create)
                    (str/join ", " (map ->query-str create))
-                   (name create))]
+                   (->query-str create))]
       (str "CREATE " fields))))
 
 (defn- handle-create-only [create-only]
@@ -29,7 +29,7 @@
          (str/join ", "
                    (for [[k v] content]
                      (str (name k) ": " (->query-str v))))
-         ",}")))
+         "}")))
 
 (defn- handle-return [return]
   (when return
