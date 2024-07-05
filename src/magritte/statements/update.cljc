@@ -47,6 +47,13 @@
           patch-str (str "[" (str/join ", " jsons) "]")]
       (str "PATCH " patch-str))))
 
+(defn- handle-return [return]
+  (when return
+    (let [return-str (if (keyword? return)
+                       (str/upper-case (name return))
+                       (utils/->query-str return))]
+      (str "RETURN " return-str))))
+
 (defn format-update
   "Formats an update statement.
 
@@ -64,7 +71,7 @@
   ;
   ```
   "
-  [{:keys [update update-only content merge patch set unset where]}]
+  [{:keys [update update-only content merge patch set unset where return]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
         (handle-content content)
@@ -72,6 +79,7 @@
         (handle-patch patch)
         (handle-set set)
         (handle-unset unset)
-        (handle-where where)]
+        (handle-where where)
+        (handle-return return)]
        (filter identity)
        (str/join " ")))

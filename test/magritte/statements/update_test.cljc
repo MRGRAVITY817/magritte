@@ -66,25 +66,19 @@
     (is (= "UPDATE person:tobie MERGE {settings: {marketing: true}}"
            (format-update {:update :person:tobie
                            :merge  {:settings {:marketing true}}}))))
-; -- Patch the JSON response
-; UPDATE person:tobie PATCH [
-; 	{
-; 		"op": "add",
-; 		"path": "Engineering",
-; 		"value": "true"
-; 	}
-; ]
-
   (testing "patch the JSON response"
     (is (= "UPDATE person:tobie PATCH [{\"op\":\"add\",\"path\":\"Engineering\",\"value\":\"true\"}]"
            (format-update {:update :person:tobie
                            :patch  [{:op    "add"
                                      :path  "Engineering"
                                      :value "true"}]}))))
-;
-;
 ; -- Don't return any result
 ; UPDATE person SET interests += 'reading' RETURN NONE;
+  (testing "update, but don't return the result"
+    (is (= "UPDATE person SET interests += 'reading' RETURN NONE"
+           (format-update {:update :person
+                           :set    ['(+= :interests "reading")]
+                           :return :none}))))
 ;
 ; -- Return the changeset diff
 ; UPDATE person SET interests += 'reading' RETURN DIFF;
