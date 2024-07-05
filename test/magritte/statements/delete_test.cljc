@@ -24,9 +24,11 @@
            (format-delete {:delete :user
                            :where  '(< :age 18)
                            :return :none}))))
-;
-; -- Return the changeset diff
-; DELETE user WHERE interests CONTAINS 'reading' RETURN DIFF;
+  (testing "return the record before changes were applied"
+    (is (= "DELETE user WHERE (interests CONTAINS 'reading') RETURN BEFORE"
+           (format-delete {:delete :user
+                           :where  '(contains? :interests "reading")
+                           :return :before}))))
 ;
 ; -- Return the record before changes were applied
 ; DELETE user WHERE interests CONTAINS 'reading' RETURN BEFORE;

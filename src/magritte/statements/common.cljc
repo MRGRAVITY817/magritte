@@ -17,7 +17,11 @@
   (when where
     (str "WHERE "
          (cond
-           (list? where) (utils/list->str where)
+           (list? where) (let [list-where (utils/list->str where)
+                               [left op right] (str/split list-where #" ")]
+                           (if (= "contains?" op)
+                             (str  left " CONTAINS " right)
+                             list-where))
            :else (name where)))))
 
 (defn handle-return [return]
