@@ -97,11 +97,10 @@
            (format-update {:update :person:tobie
                            :set    [{:interests ["skiing" "music"]}]
                            :return [:name :interests]}))))
-; CREATE person SET name = 'Tobie';
-; // A single id works: $tobie will now look something like person:qz8mnqmuzs2w6emdn08q
-; LET $tobie = SELECT VALUE id FROM ONLY person WHERE name = 'Tobie' LIMIT 1;
-; UPDATE $tobie SET skills += 'breathing';
-;
+  (testing "update a record which is bound by let"
+    (is (= "UPDATE $tobie SET skills += 'breathing'"
+           (format-update {:update :$tobie
+                           :set    ['(+= :skills "breathing")]}))))
 ; CREATE person SET name = 'Jaime';
 ; // An entire record also works:
 ; // $jaime will look something like { id: person:y5o8pf1hkerlhdzf7jyb, name: 'Jaime' }
