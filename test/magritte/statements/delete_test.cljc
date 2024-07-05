@@ -29,12 +29,17 @@
            (format-delete {:delete :user
                            :where  '(contains? :interests "reading")
                            :return :before}))))
-;
-; -- Return the record before changes were applied
-; DELETE user WHERE interests CONTAINS 'reading' RETURN BEFORE;
-;
-; -- Return the record after changes were applied
-; DELETE user WHERE interests CONTAINS 'reading' RETURN AFTER;
-; DELETE person WHERE ->knows->person->(knows WHERE influencer = false) TIMEOUT 5s;
-; DELETE person:tobie->bought WHERE out=product:iphone;
-  )
+  (testing "return the record after changes were applied"
+    (is (= "DELETE user WHERE (interests CONTAINS 'reading') RETURN AFTER"
+           (format-delete {:delete :user
+                           :where  '(contains? :interests "reading")
+                           :return :after}))))
+  (testing "delete all records which match the condition with a timeout"
+    (is (= "DELETE person WHERE (influencer = false) TIMEOUT 5s"
+           (format-delete {:delete :person
+                           :where  '(= :influencer false)
+                           :timeout 5}))))
+  (testing "delete all records which match the condition with a subquery"
+    (is (= "DELETE person:tobie->bought WHERE (out = product:iphone)"
+           (format-delete {:delete :person:tobie->bought
+                           :where  '(= :out :product:iphone)})))))
