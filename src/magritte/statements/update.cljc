@@ -1,8 +1,8 @@
 (ns magritte.statements.update
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-parallel handle-timeout
-                                       handle-where]]
+   [magritte.statements.common :refer [handle-parallel handle-return
+                                       handle-timeout handle-where]]
    [magritte.utils :as utils]))
 
 (defn- handle-update [update]
@@ -47,18 +47,6 @@
                      (map utils/map->json))
           patch-str (str "[" (str/join ", " jsons) "]")]
       (str "PATCH " patch-str))))
-
-(defn- handle-return [return]
-  (when return
-    (let [return-str (cond
-                       (keyword? return)
-                       (str/upper-case (name return))
-
-                       (vector? return)
-                       (str/join ", " (map utils/->query-str return))
-
-                       :else (utils/->query-str return))]
-      (str "RETURN " return-str))))
 
 (defn format-update
   "Formats an update statement.
