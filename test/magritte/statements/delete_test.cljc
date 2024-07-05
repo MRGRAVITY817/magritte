@@ -15,10 +15,15 @@
   (testing "delete a single record"
     (is (= "DELETE ONLY person:tobie"
            (format-delete {:delete-only :person:tobie}))))
-; -- Update all records which match the condition
-; DELETE city WHERE name = 'London';
-; -- Don't return any result (the default)
-; DELETE user WHERE age < 18 RETURN NONE;
+  (testing "delete all records which match the condition"
+    (is (= "DELETE city WHERE (name = 'London')"
+           (format-delete {:delete :city
+                           :where  '(= :name "London")}))))
+  (testing "don't return any result (the default)"
+    (is (= "DELETE user WHERE (age < 18) RETURN NONE"
+           (format-delete {:delete :user
+                           :where  '(< :age 18)
+                           :return :none}))))
 ;
 ; -- Return the changeset diff
 ; DELETE user WHERE interests CONTAINS 'reading' RETURN DIFF;
