@@ -101,18 +101,10 @@
     (is (= "UPDATE $tobie SET skills += 'breathing'"
            (format-update {:update :$tobie
                            :set    ['(+= :skills "breathing")]}))))
-; CREATE person SET name = 'Jaime';
-; // An entire record also works:
-; // $jaime will look something like { id: person:y5o8pf1hkerlhdzf7jyb, name: 'Jaime' }
-; LET $jaime = SELECT * FROM ONLY person WHERE name = 'Jaime' LIMIT 1;
-; UPDATE $jaime SET skills += 'breathing';
-;
-; CREATE person SET name = 'Uther';
-; // But a record without an id field will not work
-; LET $uther = SELECT name FROM ONLY person WHERE name = 'Uther' LIMIT 1;
-; // Error: "Can not execute UPDATE statement using value '{ name: 'Uther' }'"
-; UPDATE $uther SET skills += 'breathing';
-;
-; UPDATE person SET important = true WHERE ->knows->person->(knows WHERE influencer = true) TIMEOUT 5s;
-  )
+  (testing "update with timeout"
+    (is (= "UPDATE person SET important = true WHERE ->knows->person->(knows WHERE (influencer = true)) TIMEOUT 5s"
+           (format-update {:update :person
+                           :set    [{:important true}]
+                           :where  '(-> :knows :person [:knows [:where (= :influencer true)]])
+                           :timeout 5})))))
 

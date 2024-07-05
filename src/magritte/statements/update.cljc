@@ -1,7 +1,8 @@
 (ns magritte.statements.update
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-where]]
+   [magritte.statements.common :refer [handle-parallel handle-timeout
+                                       handle-where]]
    [magritte.utils :as utils]))
 
 (defn- handle-update [update]
@@ -76,7 +77,7 @@
   ;
   ```
   "
-  [{:keys [update update-only content merge patch set unset where return]}]
+  [{:keys [update update-only content merge patch set unset where return timeout parallel]}]
   (->> [(handle-update update)
         (handle-update-only update-only)
         (handle-content content)
@@ -85,6 +86,8 @@
         (handle-set set)
         (handle-unset unset)
         (handle-where where)
-        (handle-return return)]
+        (handle-return return)
+        (handle-timeout timeout)
+        (handle-parallel parallel)]
        (filter identity)
        (str/join " ")))
