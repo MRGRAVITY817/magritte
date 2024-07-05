@@ -49,9 +49,14 @@
 
 (defn- handle-return [return]
   (when return
-    (let [return-str (if (keyword? return)
+    (let [return-str (cond
+                       (keyword? return)
                        (str/upper-case (name return))
-                       (utils/->query-str return))]
+
+                       (vector? return)
+                       (str/join ", " (map utils/->query-str return))
+
+                       :else (utils/->query-str return))]
       (str "RETURN " return-str))))
 
 (defn format-update

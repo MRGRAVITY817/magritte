@@ -92,10 +92,11 @@
            (format-update {:update :person
                            :set    ['(+= :interests "reading")]
                            :return :after}))))
-;
-; -- Return a specific field only from the updated records
-; UPDATE person:tobie SET interests = ['skiing', 'music'] RETURN name, interests;
-;
+  (testing "update and return specific field(s)"
+    (is (= "UPDATE person:tobie SET interests = ['skiing', 'music'] RETURN name, interests"
+           (format-update {:update :person:tobie
+                           :set    [{:interests ["skiing" "music"]}]
+                           :return [:name :interests]}))))
 ; CREATE person SET name = 'Tobie';
 ; // A single id works: $tobie will now look something like person:qz8mnqmuzs2w6emdn08q
 ; LET $tobie = SELECT VALUE id FROM ONLY person WHERE name = 'Tobie' LIMIT 1;
