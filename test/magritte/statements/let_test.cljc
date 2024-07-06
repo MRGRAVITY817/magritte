@@ -4,14 +4,14 @@
    [magritte.statements.let :refer [format-let]]))
 
 (deftest format-let-test
-; -- Define the parameter
-; LET $name = "tobie";
   (testing "define the parameter"
     (is (= "LET $name = 'tobie';"
            (format-let '(let [name "tobie"])))))
-
-; -- Use the parameter
-; CREATE person SET name = $name;
+  (testing "define and use the parameter"
+    (is (= "LET $name = 'tobie';\nCREATE person SET name = $name;"
+           (format-let '(let [name "tobie"]
+                          {:create :person
+                           :set    {:name name}})))))
 
 ; -- Define the parameter
 ; LET $adults = (SELECT * FROM person WHERE age > 18);

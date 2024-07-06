@@ -35,3 +35,14 @@
 
                        :else (utils/->query-str return))]
       (str "RETURN " return-str))))
+
+(defn replace-symbol [x match]
+  (cond
+    (symbol? x) (if (= x match) (symbol (str "$" match)) x)
+    (list? x) (->> x
+                   (map #(replace-symbol % match))
+                   (into '())
+                   (reverse))
+    (map? x) (into {} (map (fn [[k v]] [k (replace-symbol v match)])) x)
+    (vector? x) (vec (map #(replace-symbol % match) x))
+    :else x))
