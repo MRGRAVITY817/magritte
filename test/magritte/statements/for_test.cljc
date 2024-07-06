@@ -16,5 +16,20 @@
                                       :from         [:person]
                                       :where        (>= :age 18)}]
                           {:update person
-                           :set    [{:can_vote true}]}))))))
+                           :set    [{:can_vote true}]})))))
+  (testing "nested for loop"
+    (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num)}; }; };"
+           (format-for '(for [odd-num  [1 3 5 7 9]
+                              even-num [2 4 6 8 10]]
+                          {:create  (type/thing "number" odd-num)
+                           :content {:value (* odd-num even-num)}})))))
+  (testing "nested for loop with multiple statements"
+    (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num)};\nUPDATE person SET age = $odd-num WHERE (name = 'Tobie'); }; };"
+           (format-for '(for [odd-num  [1 3 5 7 9]
+                              even-num [2 4 6 8 10]]
+                          {:create  (type/thing "number" odd-num)
+                           :content {:value (* odd-num even-num)}}
+                          {:update :person
+                           :set    [{:age odd-num}]
+                           :where  (= :name "Tobie")}))))))
 

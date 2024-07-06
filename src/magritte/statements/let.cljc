@@ -1,16 +1,8 @@
 (ns magritte.statements.let
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [replace-symbol]]
+   [magritte.statements.common :refer [replace-symbols]]
    [magritte.statements.format :refer [format-statement]]))
-
-(defn- replace-symbols
-  "Replace symbols in a statement."
-  [statement params]
-  (if (empty? params)
-    statement
-    (let [[param & rest] params]
-      (replace-symbols (replace-symbol statement param) rest))))
 
 (defn format-let
   "Format let statement."

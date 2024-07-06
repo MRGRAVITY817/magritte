@@ -46,3 +46,11 @@
     (map? x) (into {} (map (fn [[k v]] [k (replace-symbol v match)])) x)
     (vector? x) (vec (map #(replace-symbol % match) x))
     :else x))
+
+(defn replace-symbols
+  "Replace symbols in a statement."
+  [statement params]
+  (if (empty? params)
+    statement
+    (let [[param & rest] params]
+      (replace-symbols (replace-symbol statement param) rest))))
