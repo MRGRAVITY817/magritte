@@ -44,4 +44,10 @@
                            :return :none}
                           {:update :person
                            :set    [{:age age}]
-                           :where  (= :name name)}))))))
+                           :where  (= :name name)})))))
+  (testing "shadowing the binding"
+    (is (= "LET $name = 'tobio';\nLET $name = 'annie';\nCREATE person SET name = $name;"
+           (format-let '(let [name "tobio"
+                              name "annie"]
+                          {:create :person
+                           :set    {:name name}}))))))
