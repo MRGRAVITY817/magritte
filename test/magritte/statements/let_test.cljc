@@ -18,4 +18,15 @@
                                       :from   [:person]
                                       :where  (> :age 18)}]
                           {:update adults
-                           :set    [{:adult true}]}))))))
+                           :set    [{:adult true}]})))))
+  (testing "define several parameters"
+    (is (= "LET $name = 'tobie';\nLET $age = (SELECT age FROM person WHERE (name = 'tobie'));\nLET $adult = true;\nCREATE person SET name = $name, age = $age, adult = $adult;"
+           (format-let '(let [name  "tobie"
+                              age   {:select [:age]
+                                     :from   [:person]
+                                     :where  (= :name "tobie")}
+                              adult true]
+                          {:create :person
+                           :set    {:name name
+                                    :age  age
+                                    :adult adult}}))))))
