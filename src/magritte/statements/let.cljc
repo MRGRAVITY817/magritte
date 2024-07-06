@@ -6,7 +6,29 @@
    [magritte.statements.format :refer [format-statement]]))
 
 (defn format-let
-  "Format let statement."
+  "Format let statement.
+   
+   Given a let statement, format it as a string.
+   Additionally you can provide a set of parameters from the outer scope.
+   ```
+   (format-let '(let [name \"tobie\"]))
+
+   (format-let '(let [name \"tobie\"]
+                  {:create :person
+                   :set    {:name name}}))
+
+   ;; with outer scope parameters
+   (format-let '(let [age   {:select [:age]
+                             :from   [:person]
+                             :where  (= :name name)}
+                      adult true]
+                  {:create :person
+                   :set    {:name name
+                            :age  age
+                            :adult adult}}) 
+               #{'name 'age})
+   ```
+  "
   ([statement]
    (format-let statement #{}))
   ([statement params]
