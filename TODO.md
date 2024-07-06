@@ -20,12 +20,16 @@
     - [ ] DEFINE TOKEN
     - [ ] DEFINE USER
 - [x] DELETE
-- [ ] FOR
+- [x] FOR
+  - [x] Nested FOR loops
+  - [x] `:let` bindings in FOR
+  - [ ] `:where` condition in FOR
+  - [ ] `:while` condition in FOR
 - [ ] IF ELSE
 - [ ] INFO
 - [x] INSERT
 - [ ] KILL
-- [ ] LET
+- [x] LET
 - [ ] LIVE
 - [ ] RELATE
 - [ ] REBUILD
