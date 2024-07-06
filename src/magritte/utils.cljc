@@ -111,6 +111,7 @@
 
 (comment
   (symbol->db-fn-name 'time/now)
+
   (list->db-fn '(time/now))
   (list->db-fn '(time/floor "2021-11-01T08:30:17+00:00" :1w))
   (list->db-fn '(array/append [1 2 3] 4))

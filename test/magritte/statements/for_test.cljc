@@ -7,14 +7,14 @@
   (testing "create a person for everyone in the array"
     (is (= "FOR $name IN ['Tobie', 'Jaime'] { CREATE type::thing('person', $name) CONTENT {name: $name}; };"
            (format-for '(for [name ["Tobie" "Jaime"]]
-                          {:create  (type/thing "person" :$name)
-                           :content {:name :$name}})))))
+                          {:create  (type/thing "person" name)
+                           :content {:name name}})))))
 
   (testing "create a person for everyone from select result"
     (is (= "FOR $person IN (SELECT VALUE id FROM person WHERE (age >= 18)) { UPDATE $person SET can_vote = true; };"
            (format-for '(for [person {:select-value :id
                                       :from         [:person]
                                       :where        (>= :age 18)}]
-                          {:update $person
+                          {:update person
                            :set    [{:can_vote true}]}))))))
 

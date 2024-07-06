@@ -10,7 +10,6 @@
 (defn format-statement [expr]
   (let [statement (cond
                     (map? expr)  (let [expr-keys (-> expr keys set)]
-                                   (prn expr-keys)
                                    (condp #(contains? %2 %1) expr-keys
                                      :select (format-select expr)
                                      :select-value (format-select expr)
@@ -19,6 +18,5 @@
                                      :update (format-update expr)
                                      :delete (format-delete expr)
                                      (throw (ex-info "Unknown statement" {:expr expr}))))
-
                     :else (utils/->query-str expr))]
     (str statement ";")))
