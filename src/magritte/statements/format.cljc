@@ -128,7 +128,7 @@
                         (->> blocks
                              (map #(-> %
                                        (replace-symbols params)
-                                       (format-statement {:add-semicolon?        true
+                                       (format-statement {:add-semicolon?        (not (list? %))
                                                           :surround-with-parens? false})))
                              (str/join "\n"))
                         "")
