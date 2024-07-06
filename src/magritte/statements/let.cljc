@@ -15,7 +15,7 @@
 (defn format-let
   "Format let statement."
   [statement]
-  (let [[_ binding-list block] statement
+  (let [[_ binding-list & blocks] statement
         bindings (->> binding-list
                       (partition 2))
         params   (->> bindings (map first) (set))
@@ -25,13 +25,15 @@
                                   (format-statement v {:add-semicolon?        true
                                                        :surround-with-parens? true}))))
                       (str/join "\n"))
-        block    (if block
-                   (-> block
-                       (replace-symbols params)
-                       (format-statement {:add-semicolon?        true
-                                          :surround-with-parens? false}))
-                   nil)]
-    (str bindings (if block (str "\n" block) ""))))
+        blocks    (if blocks
+                    (->> blocks
+                         (map #(-> %
+                                   (replace-symbols params)
+                                   (format-statement {:add-semicolon?        true
+                                                      :surround-with-parens? false})))
+                         (str/join "\n"))
+                    nil)]
+    (str bindings (if blocks (str "\n" blocks) ""))))
 
 (comment
 
