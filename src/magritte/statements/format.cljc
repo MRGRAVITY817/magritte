@@ -13,7 +13,9 @@
 (declare format-let)
 (declare format-for)
 
-(defn format-statement [expr {:keys [add-semicolon? surround-with-parens?]}]
+(defn format-statement
+  "Format a statement"
+  [expr {:keys [add-semicolon? surround-with-parens?]}]
   (let [statement (cond
                     (map? expr)  (let [expr-keys (-> expr keys set)
                                        statement (condp #(contains? %2 %1) expr-keys
@@ -29,10 +31,9 @@
                                      statement))
                     (list? expr)  (let [statement (condp = (first expr)
                                                     'let (format-let expr)
-                                                    'for (format-for expr))]
-                                    (if surround-with-parens?
-                                      (str "(" statement ")")
-                                      statement))
+                                                    'for (format-for expr)
+                                                    (utils/->query-str expr))]
+                                    statement)
                     :else (utils/->query-str expr))
         statement (if add-semicolon? (str statement ";") statement)]
     statement))
