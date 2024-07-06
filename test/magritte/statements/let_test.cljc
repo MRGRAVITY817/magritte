@@ -12,10 +12,10 @@
            (format-let '(let [name "tobie"]
                           {:create :person
                            :set    {:name name}})))))
-
-; -- Define the parameter
-; LET $adults = (SELECT * FROM person WHERE age > 18);
-
-; -- Use the parameter
-; UPDATE $adults SET adult = true;
-  )
+  (testing "define with subquery and use it"
+    (is (= "LET $adults = (SELECT * FROM person WHERE (age > 18));\nUPDATE $adults SET adult = true;"
+           (format-let '(let [adults {:select [:*]
+                                      :from   [:person]
+                                      :where  (> :age 18)}]
+                          {:update adults
+                           :set    [{:adult true}]}))))))

@@ -1,6 +1,5 @@
 (ns magritte.statements.for
   (:require
-   [clojure.string :as str]
    [magritte.statements.common :refer [replace-symbol]]
    [magritte.statements.format :refer [format-statement]]
    [magritte.utils :as utils]))
@@ -16,13 +15,16 @@
   [for-statement]
   (when (list? for-statement)
     (let [[item iterable] (second for-statement)
-          block (-> for-statement
-                    (last)
-                    (replace-symbol item))
           iterable (cond
                      (vector? iterable) (utils/->query-str iterable)
-                     :else (str "(" (str/replace (format-statement iterable) #";" "") ")"))]
-      (str "FOR $" item " IN " iterable " { " (format-statement block) " };"))))
+                     :else (format-statement iterable {:surround-with-parens? true
+                                                       :add-semicolon?       false}))
+          block (-> for-statement
+                    (last)
+                    (replace-symbol item)
+                    (format-statement {:surround-with-parens? false
+                                       :add-semicolon?      true}))]
+      (str "FOR $" item " IN " iterable " { " block " };"))))
 
 "FOR $person IN (SELECT VALUE id FROM person WHERE age >= 18) { UPDATE $person SET can_vote = true; };"
 
@@ -31,9 +33,6 @@
 (comment
   (def my-map '{:create  (type/thing "person" name)
                 :content {:name name}})
-
-  (-> (replace-symbol my-map 'name)
-      (format-statement))
 
   (replace-symbol '(for [name ["Tobie" "Jaime"]]
                      {:create  (type/thing "person" name)
