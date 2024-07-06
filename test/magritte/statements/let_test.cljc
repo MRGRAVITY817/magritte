@@ -50,4 +50,15 @@
            (format-let '(let [name "tobio"
                               name "annie"]
                           {:create :person
-                           :set    {:name name}}))))))
+                           :set    {:name name}})))))
+  (testing "use bound value in binding"
+    (is (= "LET $name = 'tobie';\nLET $age = (SELECT age FROM person WHERE (name = $name));\nCREATE person SET name = $name, age = $age;"
+           (format-let '(let [name  "tobie"
+                              age   {:select [:age]
+                                     :from   [:person]
+                                     :where  (= :name name)}]
+                          {:create :person
+                           :set    {:name name
+                                    :age  age}})))))
+  ;;
+  )

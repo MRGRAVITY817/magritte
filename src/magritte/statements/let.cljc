@@ -22,8 +22,9 @@
         bindings (->> bindings
                       (map (fn [[k v]]
                              (str "LET $" k " = "
-                                  (format-statement v {:add-semicolon?        true
-                                                       :surround-with-parens? true}))))
+                                  (format-statement (replace-symbols v params)
+                                                    {:add-semicolon?        true
+                                                     :surround-with-parens? true}))))
                       (str/join "\n"))
         blocks    (if blocks
                     (->> blocks
