@@ -1,7 +1,7 @@
 (ns magritte.statements.let-test
   (:require
    [clojure.test :refer [deftest is testing]]
-   [magritte.statements.let :refer [format-let]]))
+   [magritte.statements.format :refer [format-let]]))
 
 (deftest format-let-test
   (testing "define the parameter"
@@ -60,5 +60,19 @@
                           {:create :person
                            :set    {:name name
                                     :age  age}})))))
-  ;;
+
+  (testing "for loop inside let"
+    (is (= "LET $name = 'tobie';\nLET $age = (SELECT age FROM person WHERE (name = $name));\nFOR $person IN (SELECT * FROM person WHERE (age = $age)) { CREATE person SET name = $name, age = $age; };"
+           (format-let '(let [name  "tobie"
+                              age   {:select [:age]
+                                     :from   [:person]
+                                     :where  (= :name name)}]
+                          (for [person {:select [:*]
+                                        :from   [:person]
+                                        :where  (= :age age)}]
+                            {:create :person
+                             :set    {:name name
+                                      :age  age}}))))))
+
+;;
   )
