@@ -31,5 +31,22 @@
                            :content {:value (* odd-num even-num)}}
                           {:update :person
                            :set    [{:age odd-num}]
-                           :where  (= :name "Tobie")}))))))
+                           :where  (= :name "Tobie")})))))
+  #_(testing "can bind let value"
+      (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { LET $age = ($odd-num * $even-num);\nLET $person = (SELECT * FROM person WHERE (age = $age));\nCREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num}; }; };"
+             (format-for '(for [odd-num  [1 3 5 7 9]
+                                even-num [2 4 6 8 10]
+                                :let     [age    (* odd-num even-num)
+                                          person {:select [:*]
+                                                  :from   [:person]
+                                                  :where  (= :age age)}]]
+
+                            {:create  (type/thing "number" odd-num)
+                             :content {:value    (* odd-num even-num)
+                                       :person   person
+                                       :odd-num  odd-num
+                                       :even-num even-num}})))))
+;
+  )
+
 
