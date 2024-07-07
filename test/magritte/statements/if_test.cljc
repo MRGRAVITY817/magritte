@@ -7,6 +7,11 @@
   (testing "simple if statement"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
            (format-if '(if (= 9 9) "Nine is indeed nine")))))
+  (testing "simple if-else"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE { 'Nine is not nine' };"
+           (format-if '(if (= 9 9)
+                         "Nine is indeed nine"
+                         "Nine is not nine")))))
 
 ; LET $badly_formatted_datetime = "2024-04TT08:08:08Z";
 ; IF !type::is::datetime($badly_formatted_datetime) {
