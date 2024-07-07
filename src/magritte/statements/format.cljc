@@ -12,6 +12,7 @@
 
 (declare format-let)
 (declare format-for)
+(declare format-if)
 
 (defn format-statement
   "Format a statement"
@@ -32,6 +33,7 @@
                     (list? expr)  (let [statement (condp = (first expr)
                                                     'let (format-let expr)
                                                     'for (format-for expr)
+                                                    'if  (format-if expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))
@@ -141,3 +143,13 @@
          let-statements
          statements
          closing-for-braces)))
+
+(defn format-if
+  "Format an if statement."
+  [[_ condition if-then else-then]]
+  (let [condition (format-statement condition {:surround-with-parens? true})
+        if-then   (format-statement if-then {:surround-with-parens? false})
+        else-then (when else-then (format-statement else-then {:surround-with-parens? false}))]
+    (str "IF " condition " { " if-then " }"
+         (if else-then (str " ELSE { " else-then " }") "")
+         ";")))
