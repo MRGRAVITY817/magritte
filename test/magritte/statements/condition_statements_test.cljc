@@ -21,4 +21,7 @@
 (deftest format-when-test
   (testing "if statement without else"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
-           (format-when '(when (= 9 9) "Nine is indeed nine"))))))
+           (format-when '(when (= 9 9) "Nine is indeed nine")))))
+  (testing "should ignore else"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
+           (format-when '(when (= 9 9) "Nine is indeed nine" "Nine is not nine"))))))

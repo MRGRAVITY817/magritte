@@ -154,5 +154,9 @@
          (if else-then (str " ELSE { " else-then " }") "")
          ";")))
 
-(defn format-when [statement]
-  (format-if statement))
+(defn format-when
+  "Map a `when` function to IF statement.
+   Like Clojure's `when` function, this function will only return the `then` part of the statement.
+   "
+  [statement]
+  (format-if (take 3 statement)))
