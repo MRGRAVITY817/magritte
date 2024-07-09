@@ -13,6 +13,8 @@
 (declare format-let)
 (declare format-for)
 (declare format-if)
+(declare format-when)
+(declare format-cond)
 
 (defn format-statement
   "Format a statement"
@@ -34,6 +36,8 @@
                                                     'let (format-let expr)
                                                     'for (format-for expr)
                                                     'if  (format-if expr)
+                                                    'when (format-when expr)
+                                                    'cond (format-cond expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))
