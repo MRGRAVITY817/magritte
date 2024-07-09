@@ -1,7 +1,8 @@
 (ns magritte.statements.condition-statements-test
   (:require
    [clojure.test :refer [deftest is testing]]
-   [magritte.statements.format :refer [format-if format-let format-when]]))
+   [magritte.statements.format :refer [format-cond format-if format-let
+                                       format-when]]))
 
 (deftest format-if-test
   (testing "simple if statement"
@@ -25,3 +26,11 @@
   (testing "should ignore else"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
            (format-when '(when (= 9 9) "Nine is indeed nine" "Nine is not nine"))))))
+
+(deftest formt-cond-test
+  (testing "simple cond statement"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (9 = 8) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
+           (format-cond '(cond
+                           (= 9 9) "Nine is indeed nine"
+                           (= 9 8) "Nine is not nine"
+                           :else "Nine is not nine"))))))

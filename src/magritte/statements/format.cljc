@@ -160,3 +160,34 @@
    "
   [statement]
   (format-if (take 3 statement)))
+
+(defn format-cond
+  "Map a `cond` function to IF statement.
+   Like Clojure's `cond` function, it contains a list of conditions and their corresponding statements.
+   
+   ```
+   (format-cond 
+     (cond
+       (= 9 9) \"Nine is indeed nine\"
+       (= 9 8) \"Nine is not nine\"
+       :else   \"Nine is not nine\"))
+
+   ;; => \"IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (9 = 8) { 'Nine is not nine' } ELSE { 'Nine is not nine' };\"
+   ```
+   "
+  [[fn-name & branches]]
+  (when (and (= fn-name 'cond)
+             (even? (count branches)))
+    (let [branches (->> (partition 2 branches)
+                        (map-indexed (fn [idx [condition statement]]
+                                       (str (cond
+                                              (= idx 0) "IF "
+                                              (= :else condition) " ELSE"
+                                              :else " ELSE IF ")
+                                            (when (not= :else condition)
+                                              (format-statement condition {:surround-with-parens? true}))
+                                            " { "
+                                            (format-statement statement {:surround-with-parens? false})
+                                            " }"))))]
+      (str (str/join "" branches) ";"))))
+
