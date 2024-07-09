@@ -1,4 +1,4 @@
-(ns magritte.statements.condition-statements-test
+(ns magritte.statements.control-flow-test
   (:require
    [clojure.test :refer [deftest is testing]]
    [magritte.statements.format :refer [format-cond format-if format-let
