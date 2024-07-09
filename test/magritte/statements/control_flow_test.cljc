@@ -1,10 +1,12 @@
 (ns magritte.statements.control-flow-test
   (:require
+   [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
    [magritte.statements.format :refer [format-cond format-if format-let
-                                       format-when]]))
+                                       format-statement format-when]]
+   [magritte.utils :as utils]))
 
-(deftest format-if-test
+(deftest test-format-if
   (testing "simple if statement"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
            (format-if '(if (= 9 9) "Nine is indeed nine")))))
@@ -27,7 +29,7 @@
                              (time/now))
                          "Nine is not nine"))))))
 
-(deftest format-when-test
+(deftest test-format-when
   (testing "if statement without else"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
            (format-when '(when (= 9 9) "Nine is indeed nine")))))
@@ -47,7 +49,7 @@
                                 :from   [:table]}
                                (time/now))))))))
 
-(deftest formt-cond-test
+(deftest test-format-cond
   (testing "simple cond statement"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (9 = 8) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
            (format-cond '(cond
@@ -78,3 +80,44 @@
                                         :from   [:table]}
                                        (time/now))
                            (= 9 8) "Nine is not nine"))))))
+
+(defn- format-condp [arg1]
+  (let [[fn-name operator operand & branches] arg1]
+    (when (and (= fn-name 'condp)
+               operator operand)
+      (let [else-branch (if (odd? (count branches))
+                          (str " ELSE { "
+                               (format-statement (last branches) {:surround-with-parens? false})
+                               " }")
+                          "")
+            branches (partition 2 branches)
+
+            branches (->> branches
+                          (map-indexed (fn [idx [condition statement]]
+                                         (str (cond
+                                                (= idx 0) "IF "
+                                                :else " ELSE IF ")
+                                              (when (not= :else condition)
+                                                (utils/list->str `(~operator ~condition ~operand)))
+                                              " { "
+                                              (format-statement statement {:surround-with-parens? false})
+                                              " }"))))]
+
+        (str (str/join "" branches) else-branch ";")))))
+
+(comment
+  ;; get elements except the first and last one
+  (rest (butlast [1 2 3 4 5])) ; => (2 3 4)
+  (condp = 6
+    9 "Nine is indeed nine"
+    8 "Nine is not nine"
+    "Nine is not nine")
+  (partition 2 [0 1 3 4 4]))
+
+(deftest test-format-condp
+  (testing "simple condp statement"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
+           (format-condp '(condp = 9
+                            9 "Nine is indeed nine"
+                            8 "Nine is not nine"
+                            "Nine is not nine"))))))
