@@ -38,7 +38,14 @@
     (is (= "LET $badly_formatted_datetime = '2024-04TT08:08:08Z';\nIF !type::is::datetime($badly_formatted_datetime) { THROW 'Whoops, that is not a real datetime' };"
            (format-let '(let [badly_formatted_datetime "2024-04TT08:08:08Z"]
                           (when (not (type/is-datetime badly_formatted_datetime))
-                            (throw "Whoops, that is not a real datetime"))))))))
+                            (throw "Whoops, that is not a real datetime")))))))
+  (testing "when statement with do block"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine';\nSELECT * FROM table;\ntime::now();\n };"
+           (format-when '(when (= 9 9)
+                           (do "Nine is indeed nine"
+                               {:select [:*]
+                                :from   [:table]}
+                               (time/now))))))))
 
 (deftest formt-cond-test
   (testing "simple cond statement"
@@ -62,4 +69,12 @@
                           (cond
                             (not (type/is-datetime badly_formatted_datetime)) "Nine is indeed nine"
                             (= 9 8) "Nine is not nine"
-                            :else "Nine is not nine")))))))
+                            :else "Nine is not nine"))))))
+  (testing "cond statement with do block"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine';\nSELECT * FROM table;\ntime::now();\n } ELSE IF (9 = 8) { 'Nine is not nine' };"
+           (format-cond '(cond
+                           (= 9 9) (do "Nine is indeed nine"
+                                       {:select [:*]
+                                        :from   [:table]}
+                                       (time/now))
+                           (= 9 8) "Nine is not nine"))))))
