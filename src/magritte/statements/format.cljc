@@ -15,6 +15,7 @@
 (declare format-if)
 (declare format-when)
 (declare format-cond)
+(declare format-do)
 
 (defn format-statement
   "Format a statement"
@@ -34,6 +35,7 @@
                                      statement))
                     (list? expr)  (let [statement (condp = (first expr)
                                                     'let (format-let expr)
+                                                    'do (format-do expr)
                                                     'for (format-for expr)
                                                     'if  (format-if expr)
                                                     'when (format-when expr)
