@@ -153,3 +153,6 @@
     (str "IF " condition " { " if-then " }"
          (if else-then (str " ELSE { " else-then " }") "")
          ";")))
+
+(defn format-when [statement]
+  (format-if statement))

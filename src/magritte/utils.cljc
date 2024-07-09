@@ -16,7 +16,7 @@
   "Converts an argument to a string representation suitable for use in a SurrealQL query."
   ([arg]
    (cond
-     (string? arg) (str "'" arg "'")
+     (string? arg) (str "'" (str/replace arg #"'" "\\'") "'")
      (vector? arg) (str "[" (str/join ", " (map ->query-str arg)) "]")
      (list? arg) (list->str arg)
      (map? arg) (map->str arg)
@@ -28,6 +28,9 @@
    (cond
      (string? arg) (str "\"" arg "\"")
      :else (->query-str arg))))
+
+(comment
+  (->query-str "I don't want that"))
 
 (defn kebab->snake_name
   "Converts kebab item to a snake_case string."

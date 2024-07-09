@@ -1,7 +1,7 @@
-(ns magritte.statements.if-test
+(ns magritte.statements.condition-statements-test
   (:require
    [clojure.test :refer [deftest is testing]]
-   [magritte.statements.format :refer [format-if format-let]]))
+   [magritte.statements.format :refer [format-if format-let format-when]]))
 
 (deftest format-if-test
   (testing "simple if statement"
@@ -18,3 +18,7 @@
                           (if (not (type/is-datetime badly_formatted_datetime))
                             (throw "Whoops, that is not a real datetime"))))))))
 
+(deftest format-when-test
+  (testing "if statement without else"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' };"
+           (format-when '(when (= 9 9) "Nine is indeed nine"))))))
