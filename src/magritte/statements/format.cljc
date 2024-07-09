@@ -44,6 +44,17 @@
         statement (if add-semicolon? (str statement ";") statement)]
     statement))
 
+;; Helper functions
+
+(defn format-do
+  "Format a do statement."
+  [[fn-name & statements]]
+  (when (and  (= fn-name 'do)
+              (seq? statements))
+    (str (->> statements
+              (map #(format-statement % {:add-semicolon? true}))
+              (str/join "\n")) "\n")))
+
 (defn format-let
   "Format let statement.
    
@@ -194,4 +205,6 @@
                                             (format-statement statement {:surround-with-parens? false})
                                             " }"))))]
       (str (str/join "" branches) ";"))))
+
+
 
