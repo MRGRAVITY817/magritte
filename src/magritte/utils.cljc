@@ -30,8 +30,10 @@
      :else (->query-str arg))))
 
 (comment
-  (->query-str "I don't want that"))
-
+  (str/replace "I don't want that" #"[']" "\\'")
+  (->query-str "I don't want that")
+  ;
+  )
 (defn kebab->snake_name
   "Converts kebab item to a snake_case string."
   [kw]

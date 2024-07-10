@@ -1,10 +1,8 @@
 (ns magritte.statements.control-flow-test
-  (:require
-   [clojure.string :as str]
-   [clojure.test :refer [deftest is testing]]
-   [magritte.statements.format :refer [format-cond format-if format-let
-                                       format-statement format-when]]
-   [magritte.utils :as utils]))
+  (:require [clojure.string :as str]
+            [clojure.test :refer [deftest is testing]]
+            [magritte.statements.format :refer [format-cond format-if format-let
+                                                format-condp format-when]]))
 
 (deftest test-format-if
   (testing "simple if statement"
@@ -81,37 +79,23 @@
                                        (time/now))
                            (= 9 8) "Nine is not nine"))))))
 
-(defn- format-condp [arg1]
-  (let [[fn-name operator operand & branches] arg1]
-    (when (and (= fn-name 'condp)
-               operator operand)
-      (let [else-branch (if (odd? (count branches))
-                          (str " ELSE { "
-                               (format-statement (last branches) {:surround-with-parens? false})
-                               " }")
-                          "")
-            branches (partition 2 branches)
-
-            branches (->> branches
-                          (map-indexed (fn [idx [condition statement]]
-                                         (str (cond
-                                                (= idx 0) "IF "
-                                                :else " ELSE IF ")
-                                              (when (not= :else condition)
-                                                (utils/list->str `(~operator ~condition ~operand)))
-                                              " { "
-                                              (format-statement statement {:surround-with-parens? false})
-                                              " }"))))]
-
-        (str (str/join "" branches) else-branch ";")))))
-
 (comment
   ;; get elements except the first and last one
   (rest (butlast [1 2 3 4 5])) ; => (2 3 4)
+  (case 9
+    9 "Nine is indeed nine"
+    8 "Nine is not nine"
+    "Nine is not nine")
   (condp = 6
     9 "Nine is indeed nine"
     8 "Nine is not nine"
     "Nine is not nine")
+
+  (condp clojure.string/includes? "a"
+    "abc" :>> #(str "a is in abc: " %)
+    "def" :>> "a is not in def"
+    #(str "alphabet: " %))
+
   (partition 2 [0 1 3 4 4]))
 
 (deftest test-format-condp
@@ -121,3 +105,11 @@
                             9 "Nine is indeed nine"
                             8 "Nine is not nine"
                             "Nine is not nine"))))))
+
+#_(deftest test-format-case
+    (testing "simple case statement"
+      (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
+             (format-case '(case 9
+                             9 "Nine is indeed nine"
+                             8 "Nine is not nine"
+                             "Nine is not nine"))))))

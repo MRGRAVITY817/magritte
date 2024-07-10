@@ -16,6 +16,7 @@
 (declare format-when)
 (declare format-cond)
 (declare format-do)
+(declare format-condp)
 
 (defn format-statement
   "Format a statement"
@@ -40,6 +41,7 @@
                                                     'if  (format-if expr)
                                                     'when (format-when expr)
                                                     'cond (format-cond expr)
+                                                    'condp (format-condp expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))
@@ -208,5 +210,25 @@
                                             " }"))))]
       (str (str/join "" branches) ";"))))
 
+(defn format-condp [[fn-name operator operand & branches]]
+  (when (and (= fn-name 'condp)
+             operator operand)
+    (let [else-branch (if (odd? (count branches))
+                        (str " ELSE { "
+                             (format-statement (last branches) {:surround-with-parens? false})
+                             " }")
+                        "")
+          branches (partition 2 branches)
 
+          branches (->> branches
+                        (map-indexed (fn [idx [condition statement]]
+                                       (str (cond
+                                              (= idx 0) "IF "
+                                              :else " ELSE IF ")
+                                            (when (not= :else condition)
+                                              (utils/list->str `(~operator ~condition ~operand)))
+                                            " { "
+                                            (format-statement statement {:surround-with-parens? false})
+                                            " }"))))]
 
+      (str (str/join "" branches) else-branch ";"))))
