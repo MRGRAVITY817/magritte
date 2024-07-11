@@ -5,3 +5,9 @@
   (when (or (= expr '(begin-transaction))
             (= expr '(begin)))
     "BEGIN TRANSACTION;"))
+
+(defn format-cancel
+  [expr]
+  (when (or (= expr '(cancel-transaction))
+            (= expr '(cancel)))
+    "CANCEL TRANSACTION;"))
