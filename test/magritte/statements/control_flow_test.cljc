@@ -106,10 +106,25 @@
                             8 "Nine is not nine"
                             "Nine is not nine"))))))
 
-#_(deftest test-format-case
-    (testing "simple case statement"
-      (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
-             (format-case '(case 9
-                             9 "Nine is indeed nine"
-                             8 "Nine is not nine"
-                             "Nine is not nine"))))))
+(defn- format-case [[fn-name expression & clauses]]
+  (when (= fn-name 'case)
+    (format-condp `(~'condp ~'= ~expression
+                            ~@clauses))))
+
+(deftest test-format-case
+  (testing "simple case statement"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
+           (format-case '(case 9
+                           9 "Nine is indeed nine"
+                           8 "Nine is not nine"
+                           "Nine is not nine"))))))
+
+(comment
+  (def expression 9)
+  (def clauses [9 "Nine is indeed nine"
+                8 "Nine is not nine"
+                "Nine is not nine"])
+
+   ; => (condp = 9 9 "Nine is indeed nine" 8 "Nine is not nine" "Nine is not nine"
+  )
+
