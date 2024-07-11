@@ -11,3 +11,9 @@
   (when (or (= expr '(cancel-transaction))
             (= expr '(cancel)))
     "CANCEL TRANSACTION;"))
+
+(defn format-commit
+  [expr]
+  (when (or (= expr '(commit-transaction))
+            (= expr '(commit)))
+    "COMMIT TRANSACTION;"))

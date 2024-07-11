@@ -7,6 +7,8 @@
    [magritte.statements.delete :refer [format-delete]]
    [magritte.statements.insert :refer [format-insert]]
    [magritte.statements.select :refer [format-select]]
+   [magritte.statements.transaction :refer [format-begin format-cancel
+                                            format-commit]]
    [magritte.statements.update :refer [format-update]]
    [magritte.utils :as utils]))
 
@@ -42,6 +44,12 @@
                                                     'when (format-when expr)
                                                     'cond (format-cond expr)
                                                     'condp (format-condp expr)
+                                                    'begin (format-begin expr)
+                                                    'begin-transaction (format-begin expr)
+                                                    'cancel (format-begin expr)
+                                                    'cancel-transaction (format-cancel expr)
+                                                    'commit (format-commit expr)
+                                                    'commit-transaction (format-commit expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))

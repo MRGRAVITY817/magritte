@@ -1,6 +1,6 @@
 (ns magritte.statements.transaction-test
   (:require [clojure.test :refer [deftest is testing]]
-            [magritte.statements.transaction :refer [format-begin format-cancel]]))
+            [magritte.statements.transaction :refer [format-begin format-cancel format-commit]]))
 
 (deftest test-format-transaction-fns
   (testing "begin-transaction"
@@ -15,5 +15,10 @@
   (testing "cancel"
     (is (= "CANCEL TRANSACTION;"
            (format-cancel '(cancel)))))
-  ;
-  )
+  (testing "commit-transaction"
+    (is (= "COMMIT TRANSACTION;"
+           (format-commit '(commit-transaction)))))
+  (testing "commit"
+    (is (= "COMMIT TRANSACTION;"
+           (format-commit '(commit))))))
+
