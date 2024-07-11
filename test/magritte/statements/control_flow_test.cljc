@@ -79,25 +79,6 @@
                                        (time/now))
                            (= 9 8) "Nine is not nine"))))))
 
-(comment
-  ;; get elements except the first and last one
-  (rest (butlast [1 2 3 4 5])) ; => (2 3 4)
-  (case 9
-    9 "Nine is indeed nine"
-    8 "Nine is not nine"
-    "Nine is not nine")
-  (condp = 6
-    9 "Nine is indeed nine"
-    8 "Nine is not nine"
-    "Nine is not nine")
-
-  (condp clojure.string/includes? "a"
-    "abc" :>> #(str "a is in abc: " %)
-    "def" :>> "a is not in def"
-    #(str "alphabet: " %))
-
-  (partition 2 [0 1 3 4 4]))
-
 (deftest test-format-condp
   (testing "simple condp statement"
     (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE { 'Nine is not nine' };"
@@ -117,6 +98,13 @@
            (format-case '(case 9
                            9 "Nine is indeed nine"
                            8 "Nine is not nine"
+                           "Nine is not nine")))))
+  (testing "more branches"
+    (is (= "IF (9 = 9) { 'Nine is indeed nine' } ELSE IF (8 = 9) { 'Nine is not nine' } ELSE IF ('Nine' = 9) { 'Nine is string' } ELSE { 'Nine is not nine' };"
+           (format-case '(case 9
+                           9 "Nine is indeed nine"
+                           8 "Nine is not nine"
+                           "Nine" "Nine is string"
                            "Nine is not nine"))))))
 
 (comment
@@ -125,6 +113,19 @@
                 8 "Nine is not nine"
                 "Nine is not nine"])
 
-   ; => (condp = 9 9 "Nine is indeed nine" 8 "Nine is not nine" "Nine is not nine"
-  )
+  (rest (butlast [1 2 3 4 5])) ; => (2 3 4)
+  (case 9
+    9 "Nine is indeed nine"
+    8 "Nine is not nine"
+    "Nine is not nine")
+  (condp = 6
+    9 "Nine is indeed nine"
+    8 "Nine is not nine"
+    "Nine is not nine")
 
+  (condp clojure.string/includes? "a"
+    "abc" :>> #(str "a is in abc: " %)
+    "def" :>> "a is not in def"
+    #(str "alphabet: " %))
+
+  (partition 2 [0 1 3 4 4]))
