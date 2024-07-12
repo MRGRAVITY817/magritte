@@ -19,6 +19,7 @@
 (declare format-cond)
 (declare format-do)
 (declare format-condp)
+(declare format-break)
 
 (defn format-statement
   "Format a statement"
@@ -36,6 +37,7 @@
                                    (if surround-with-parens?
                                      (str "(" statement ")")
                                      statement))
+                    ;; TODO: Refactor this to use a map or `or`
                     (list? expr)  (let [statement (condp = (first expr)
                                                     'let (format-let expr)
                                                     'do (format-do expr)
@@ -44,6 +46,7 @@
                                                     'when (format-when expr)
                                                     'cond (format-cond expr)
                                                     'condp (format-condp expr)
+                                                    'break (format-break expr)
                                                     'begin (format-begin expr)
                                                     'begin-transaction (format-begin expr)
                                                     'cancel (format-begin expr)
@@ -240,3 +243,7 @@
                                             " }"))))]
 
       (str (str/join "" branches) else-branch ";"))))
+
+(defn format-break [expr]
+  (when (= expr '(break))
+    "BREAK;"))
