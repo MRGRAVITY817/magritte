@@ -3,8 +3,8 @@
    [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
    [magritte.statements.format :refer [format-break format-cond format-condp
-                                       format-for format-if format-let
-                                       format-when]]))
+                                       format-continue format-for format-if
+                                       format-let format-when]]))
 
 (deftest test-format-if
   (testing "simple if statement"
@@ -165,8 +165,8 @@
                                        :person   person
                                        :odd-num  odd-num
                                        :even-num even-num}}))))))
-  (testing "use if, else if, and break"
-    (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { LET $age = ($odd-num * $even-num);\nLET $person = (SELECT * FROM person WHERE (age = $age));\nIF type::is::datetime($age) { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num} } ELSE { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num};\nBREAK;\n }; }; };"
+  (testing "use if, else if, continue and break"
+    (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { LET $age = ($odd-num * $even-num);\nLET $person = (SELECT * FROM person WHERE (age = $age));\nIF type::is::datetime($age) { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num};\nCONTINUE;\n } ELSE { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num};\nBREAK;\n }; }; };"
            (format-for '(for [odd-num  [1 3 5 7 9]
                               even-num [2 4 6 8 10]
                               :let     [age (* odd-num even-num)]]
@@ -174,11 +174,13 @@
                                         :from   [:person]
                                         :where  (= :age age)}]
                             (if (type/is-datetime age)
-                              {:create  (type/thing "number" odd-num)
-                               :content {:value    (* odd-num even-num)
-                                         :person   person
-                                         :odd-num  odd-num
-                                         :even-num even-num}}
+                              (do
+                                {:create  (type/thing "number" odd-num)
+                                 :content {:value    (* odd-num even-num)
+                                           :person   person
+                                           :odd-num  odd-num
+                                           :even-num even-num}}
+                                (continue))
                               (do
                                 {:create  (type/thing "number" odd-num)
                                  :content {:value    (* odd-num even-num)
@@ -194,6 +196,11 @@
   (testing "simple break statement"
     (is (= "BREAK"
            (format-break '(break))))))
+
+(deftest test-format-continue
+  (testing "simple continue statement"
+    (is (= "CONTINUE"
+           (format-continue '(continue))))))
 
 (comment
   (def expression 9)

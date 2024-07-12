@@ -20,6 +20,7 @@
 (declare format-do)
 (declare format-condp)
 (declare format-break)
+(declare format-continue)
 
 (defn format-statement
   "Format a statement"
@@ -47,6 +48,7 @@
                                                     'cond (format-cond expr)
                                                     'condp (format-condp expr)
                                                     'break (format-break expr)
+                                                    'continue (format-continue expr)
                                                     'begin (format-begin expr)
                                                     'begin-transaction (format-begin expr)
                                                     'cancel (format-begin expr)
@@ -247,3 +249,7 @@
 (defn format-break [expr]
   (when (= expr '(break))
     "BREAK"))
+
+(defn format-continue [expr]
+  (when (= expr '(continue))
+    "CONTINUE"))
