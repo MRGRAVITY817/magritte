@@ -1,10 +1,10 @@
 ## Statements
 
-- [ ] BEGIN
-- [ ] BREAK
-- [ ] CANCEL
-- [ ] COMMIT
-- [ ] CONTINUE
+- [x] BEGIN
+- [x] BREAK
+- [x] CANCEL
+- [x] COMMIT
+- [x] CONTINUE
 - [x] CREATE
 - [ ] DEFINE
     - [ ] DEFINE ANALYZER
@@ -25,7 +25,12 @@
   - [x] `:let` bindings in FOR
   - [ ] `:where` condition in FOR
   - [ ] `:while` condition in FOR
-- [ ] IF ELSE
+- [x] IF ELSE
+  - [x] Using Clojure `if`
+  - [x] Using Clojure `when`
+  - [x] Using Clojure `cond`
+  - [x] Using Clojure `condp` (`:>>` unsupported yet)
+  - [x] Using Clojure `case`
 - [ ] INFO
 - [x] INSERT
 - [ ] KILL
@@ -34,11 +39,11 @@
 - [ ] RELATE
 - [ ] REBUILD
 - [ ] REMOVE
-- [ ] RETURN
+- [x] RETURN
 - [x] SELECT
 - [ ] SHOW
 - [ ] SLEEP
-- [ ] THROW
+- [x] THROW
 - [x] UPDATE
 - [ ] USE
 
