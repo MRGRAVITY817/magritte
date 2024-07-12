@@ -246,4 +246,4 @@
 
 (defn format-break [expr]
   (when (= expr '(break))
-    "BREAK;"))
+    "BREAK"))

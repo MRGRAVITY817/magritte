@@ -4,7 +4,7 @@
 
 (deftest test-format-break
   (testing "simple break statement"
-    (is (= "BREAK;"
+    (is (= "BREAK"
            (format-break '(break))))))
 
 

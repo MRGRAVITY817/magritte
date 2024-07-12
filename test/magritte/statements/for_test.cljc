@@ -59,6 +59,27 @@
                                        :person   person
                                        :odd-num  odd-num
                                        :even-num even-num}}))))))
+  (testing "use if, else if, and break"
+    (is (= "FOR $odd-num IN [1, 3, 5, 7, 9] { FOR $even-num IN [2, 4, 6, 8, 10] { LET $age = ($odd-num * $even-num);\nLET $person = (SELECT * FROM person WHERE (age = $age));\nIF type::is::datetime($age) { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num} } ELSE { CREATE type::thing('number', $odd-num) CONTENT {value: ($odd-num * $even-num), person: $person, odd-num: $odd-num, even-num: $even-num};\nBREAK;\n }; }; };"
+           (format-for '(for [odd-num  [1 3 5 7 9]
+                              even-num [2 4 6 8 10]
+                              :let     [age (* odd-num even-num)]]
+                          (let [person {:select [:*]
+                                        :from   [:person]
+                                        :where  (= :age age)}]
+                            (if (type/is-datetime age)
+                              {:create  (type/thing "number" odd-num)
+                               :content {:value    (* odd-num even-num)
+                                         :person   person
+                                         :odd-num  odd-num
+                                         :even-num even-num}}
+                              (do
+                                {:create  (type/thing "number" odd-num)
+                                 :content {:value    (* odd-num even-num)
+                                           :person   person
+                                           :odd-num  odd-num
+                                           :even-num even-num}}
+                                (break)))))))))
 
 ;
   )
