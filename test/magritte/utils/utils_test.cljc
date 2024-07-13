@@ -13,7 +13,10 @@
            (utils/list->str '(-> :person [:user [:where (= name "charlie")]] :address)))))
   (testing "db functions"
     (is (= "time::now()"
-           (utils/list->str '(time/now))))))
+           (utils/list->str '(time/now)))))
+  (testing "property access"
+    (is (= "user.name"
+           (utils/list->str '(:name user))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"

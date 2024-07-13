@@ -68,22 +68,22 @@
 
 (defn list->str
   "Converts a list to a string representation suitable for use in a SurrealQL query."
-  ([expr]
-   (let [[operator _] expr]
-     (cond
-       (= operator '->) (graph->str expr)
+  ([[operator value :as expr]]
+   (cond
+     (keyword? operator) (str (->query-str value) "." (name operator))
+     (= operator '->) (graph->str expr)
 
-       (and (= operator 'not)
-            (= 2 (count expr))) (str "!" (->query-str (second expr)))
+     (and (= operator 'not)
+          (= 2 (count expr))) (str "!" (->query-str (second expr)))
 
-       (and (= operator 'throw)
-            (= 2 (count expr))) (str "THROW " (->query-str (second expr)))
+     (and (= operator 'throw)
+          (= 2 (count expr))) (str "THROW " (->query-str (second expr)))
 
-       (is-range? expr) (list->range expr)
+     (is-range? expr) (list->range expr)
 
-       (db-fn? operator) (list->db-fn expr)
+     (db-fn? operator) (list->db-fn expr)
 
-       :else (list->infix expr))))
+     :else (list->infix expr)))
   ([expr _]
    (->> (list->str expr)
         (re-seq #"^\((.*)\)$")

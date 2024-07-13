@@ -73,4 +73,30 @@
                                        :set    {:user   :$value.id
                                                 :time   (time/now)
                                                 :value  :$after.email
-                                                :action "email_changed"}}})))))
+                                                :action "email_changed"}}}))))
+  #_(testing "create a relation between a customer and a product whenever a purchase is made"
+      (is (= (str
+              "DEFINE EVENT purchase ON TABLE purchase WHEN $before == NONE THEN {"
+              "LET $from = (SELECT * FROM customer WHERE id == $after.customer);"
+              "LET $to = (SELECT * FROM product WHERE id == $after.product);"
+
+              "RELATE $from->purchases->$to CONTENT {"
+              "quantity: $after.quantity,"
+              "total: $after.total,"
+              "status: 'Pending',"
+              "};"
+              "}")
+             (format-define '{:define   :event
+                              :name     :purchase
+                              :on-table :purchase
+                              :when     (== :$before :none)
+                            ; :then     (let [from {:select  [*]
+                            ;                       :from    :customer
+                            ;                       :where   (== :id (:customer after))}
+                            ;                 to   {:select [*]
+                            ;                       :from   :product
+                            ;                       :where  (== :id (:product after))}]
+                            ;             (relate (-> from :purchases to) :content {:quantity (:quantity after)
+                            ;                                                         :total    (:total after)
+                            ;                                                         :status   "Pending"}))
+                              })))))
