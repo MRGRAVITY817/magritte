@@ -25,13 +25,8 @@
   (when changefeed
     (str "CHANGEFEED " (name changefeed))))
 
-(def Tokenizers
-  "Tokenizers available for use in `DEFINE ANALYZER`."
-  #{:blank :camel :class :punct})
-
 (defn- handle-tokenizers [tokenizers]
-  (when (and (vector? tokenizers)
-             (set/subset? tokenizers Tokenizers))
+  (when (vector? tokenizers)
     (let [tokenizers (->> tokenizers
                           (map name)
                           (str/join ","))]

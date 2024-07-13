@@ -14,11 +14,6 @@
            (format-define {:define     :analyzer
                            :name       :example_blank
                            :tokenizers [:blank :camel]}))))
-  (testing "fail when invalid tokenizers"
-    (is (= "DEFINE ANALYZER example_blank"
-           (format-define {:define     :analyzer
-                           :name       :example_blank
-                           :tokenizers [:invalid-tokenizer]}))))
   (testing "with a filter"
     (is (= "DEFINE ANALYZER example_ascii TOKENIZERS class FILTERS ascii"
            (format-define {:define     :analyzer
