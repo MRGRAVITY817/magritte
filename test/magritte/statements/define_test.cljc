@@ -118,7 +118,15 @@
   (is (= "DEFINE FIELD email ON TABLE user"
          (format-define '{:define :field
                           :name   :email
-                          :on     [:table :user]}))))
+                          :on     [:table :user]})))
+  (is (= "DEFINE FIELD email ON TABLE user TYPE string"
+         (format-define '{:define :field
+                          :name   :email
+                          :on     [:table :user]
+                          :type   :string})))
+
+  ;
+  )
 
 (comment
   (test/run-tests)

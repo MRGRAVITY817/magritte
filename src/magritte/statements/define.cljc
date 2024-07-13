@@ -69,9 +69,13 @@
           closing (if is-single-statement ")" "}")]
       (str "THEN " opening then-str closing))))
 
+(defn- handle-type [type]
+  (when type
+    (str "TYPE " (name type))))
+
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers filters]}]
+  [{:keys [define name on when then changefeed tokenizers filters type]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
@@ -80,7 +84,8 @@
         (handle-then then)
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
-        (handle-filters filters)]
+        (handle-filters filters)
+        (handle-type type)]
        (filter identity)
        (str/join " ")
        (str/trim)))
