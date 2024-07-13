@@ -14,9 +14,12 @@
   (testing "db functions"
     (is (= "time::now()"
            (utils/list->str '(time/now)))))
-  (testing "property access"
+  (testing "property access with keyword fn"
     (is (= "user.name"
-           (utils/list->str '(:name user))))))
+           (utils/list->str '(:name user)))))
+  (testing "property access with `get`"
+    (is (= "user.name"
+           (utils/list->str '(get user :name))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"

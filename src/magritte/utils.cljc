@@ -68,9 +68,14 @@
 
 (defn list->str
   "Converts a list to a string representation suitable for use in a SurrealQL query."
-  ([[operator value :as expr]]
+  ([[operator & rest' :as expr]]
    (cond
-     (keyword? operator) (str (->query-str value) "." (name operator))
+     (and (keyword? operator)
+          (= 1 (count rest'))) (str (->query-str (first rest')) "." (name operator))
+
+     (and (= operator 'get)
+          (= 2 (count rest'))) (str (-> rest' first ->query-str) "." (-> rest' second name))
+
      (= operator '->) (graph->str expr)
 
      (and (= operator 'not)
