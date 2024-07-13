@@ -18,7 +18,16 @@
     (is (= "DEFINE ANALYZER example_blank"
            (format-define {:define     :analyzer
                            :name       :example_blank
-                           :tokenizers [:invalid-tokenizer]})))))
+                           :tokenizers [:invalid-tokenizer]}))))
+  (testing "with a filter"
+    (is (= "DEFINE ANALYZER example_ascii TOKENIZERS class FILTERS ascii"
+           (format-define {:define     :analyzer
+                           :name       :example_ascii
+                           :tokenizers [:class]
+                           :filters    [:ascii]}))))
+
+  ;;
+  )
 
 (deftest test-format-define-database
   (testing "define database"

@@ -1,7 +1,8 @@
 (ns magritte.statements.define
   (:require
    [clojure.set :as set]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [magritte.utils :as utils]))
 
 (def ^:private define-types
   {:database "DATABASE"
@@ -36,14 +37,22 @@
                           (str/join ","))]
       (str "TOKENIZERS " tokenizers))))
 
+(defn- handle-filters [filters]
+  (when filters
+    (let [filters (->> filters
+                       (map utils/->query-str)
+                       (str/join ","))]
+      (str "FILTERS " filters))))
+
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name changefeed tokenizers]}]
+  [{:keys [define name changefeed tokenizers filters]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
         (handle-changefeed changefeed)
-        (handle-tokenizers tokenizers)]
+        (handle-tokenizers tokenizers)
+        (handle-filters filters)]
        (filter identity)
        (str/join " ")
        (str/trim)))
