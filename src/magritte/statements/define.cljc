@@ -18,12 +18,17 @@
   (when name'
     (name name')))
 
+(defn- handle-changefeed [changefeed]
+  (when changefeed
+    (str "CHANGEFEED " (name changefeed))))
+
 (defn format-define-database
   "Formats a define database expression."
-  [{:keys [define name]}]
+  [{:keys [define name changefeed]}]
   (->> ["DEFINE"
         (handle-define define)
-        (handle-name name)]
+        (handle-name name)
+        (handle-changefeed changefeed)]
        (filter identity)
        (str/join " ")
        (str/trim)))
