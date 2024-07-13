@@ -1,5 +1,7 @@
 (ns magritte.statements.define
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.set :as set]
+   [clojure.string :as str]))
 
 (def ^:private define-types
   {:database "DATABASE"
@@ -22,8 +24,13 @@
   (when changefeed
     (str "CHANGEFEED " (name changefeed))))
 
+(def Tokenizers
+  "Tokenizers available for use in `DEFINE ANALYZER`."
+  #{:blank :camel :class :punct})
+
 (defn- handle-tokenizers [tokenizers]
-  (when (vector? tokenizers)
+  (when (and (vector? tokenizers)
+             (set/subset? tokenizers Tokenizers))
     (let [tokenizers (->> tokenizers
                           (map name)
                           (str/join ","))]

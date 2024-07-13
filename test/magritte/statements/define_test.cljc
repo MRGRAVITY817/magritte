@@ -4,11 +4,21 @@
    [magritte.statements.define :refer [format-define]]))
 
 (deftest test-format-define-analyzer
-  (testing "define analyzer"
+  (testing "with one tokenizer"
     (is (= "DEFINE ANALYZER example_blank TOKENIZERS blank"
            (format-define {:define     :analyzer
                            :name       :example_blank
-                           :tokenizers [:blank]})))))
+                           :tokenizers [:blank]}))))
+  (testing "with multiple tokenizers"
+    (is (= "DEFINE ANALYZER example_blank TOKENIZERS blank,camel"
+           (format-define {:define     :analyzer
+                           :name       :example_blank
+                           :tokenizers [:blank :camel]}))))
+  (testing "fail when invalid tokenizers"
+    (is (= "DEFINE ANALYZER example_blank"
+           (format-define {:define     :analyzer
+                           :name       :example_blank
+                           :tokenizers [:invalid-tokenizer]})))))
 
 (deftest test-format-define-database
   (testing "define database"
