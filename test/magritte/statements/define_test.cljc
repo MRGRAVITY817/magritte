@@ -53,15 +53,15 @@
     (is (= (str "DEFINE EVENT email ON TABLE user WHEN ($before.email != $after.email) THEN ("
                 "CREATE event SET user = $value.id, time = time::now(), value = $after.email, action = 'email_changed'"
                 ")")
-           (format-define '{:define   :event
-                            :name     :email
-                            :on-table :user
-                            :when     (!= (:email $before) (:email $after))
-                            :then     {:create :event
-                                       :set    {:user   (:id $value)
-                                                :time   (time/now)
-                                                :value  (:email $after)
-                                                :action "email_changed"}}}))))
+           (format-define '{:define :event
+                            :name   :email
+                            :on     [:table :user]
+                            :when   (!= (:email $before) (:email $after))
+                            :then   {:create :event
+                                     :set    {:user   (:id $value)
+                                              :time   (time/now)
+                                              :value  (:email $after)
+                                              :action "email_changed"}}}))))
   (testing "create a relation between a customer and a product whenever a purchase is made"
     (is (= (str
             "DEFINE EVENT purchase ON TABLE purchase WHEN ($before == NONE) THEN {"
@@ -74,20 +74,20 @@
             "status: 'Pending'"
             "};"
             "}")
-           (format-define '{:define   :event
-                            :name     :purchase
-                            :on-table :purchase
-                            :when     (== $before :none)
-                            :then     (let [from {:select  [*]
-                                                  :from    [:customer]
-                                                  :where   (== :id (:customer $after))}
-                                            to   {:select [*]
-                                                  :from   [:product]
-                                                  :where  (== :id (:product $after))}]
-                                        {:relate  (>-> from :purchases to)
-                                         :content {:quantity (:quantity $after)
-                                                   :total    (:total $after)
-                                                   :status   "Pending"}})}))))
+           (format-define '{:define :event
+                            :name   :purchase
+                            :on     [:table :purchase]
+                            :when   (== $before :none)
+                            :then   (let [from {:select  [*]
+                                                :from    [:customer]
+                                                :where   (== :id (:customer $after))}
+                                          to   {:select [*]
+                                                :from   [:product]
+                                                :where  (== :id (:product $after))}]
+                                      {:relate  (>-> from :purchases to)
+                                       :content {:quantity (:quantity $after)
+                                                 :total    (:total $after)
+                                                 :status   "Pending"}})}))))
   (testing "combine multiple events"
     (is (= (str
             "DEFINE EVENT user_event ON TABLE user "
@@ -97,16 +97,23 @@
             "event = $event, "
             "happened_at = time::now()"
             ")")
-           (format-define '{:define   :event
-                            :name     :user_event
-                            :on-table :user
-                            :when     (or (= $event "CREATE")
-                                          (= $event "UPDATE")
-                                          (= $event "DELETE"))
-                            :then     {:create :log
-                                       :set    {:table       "user"
-                                                :event       $event
-                                                :happened_at (time/now)}}})))))
+           (format-define '{:define :event
+                            :name   :user_event
+                            :on     [:table :user]
+                            :when   (or (= $event "CREATE")
+                                        (= $event "UPDATE")
+                                        (= $event "DELETE"))
+                            :then   {:create :log
+                                     :set    {:table       "user"
+                                              :event       $event
+                                              :happened_at (time/now)}}}))))
+  (testing "if not exists"
+    (is (= "DEFINE EVENT IF NOT EXISTS email ON user WHEN ($before.email != $after.email)"
+           (format-define '{:define [:event :if-not-exists]
+                            :name   :email
+                            :on     :user
+                            :when   (!= (:email $before) (:email $after))})))))
+
 (comment
   (test/run-tests)
   :rcf)

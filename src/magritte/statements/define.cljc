@@ -40,9 +40,12 @@
                        (str/join ","))]
       (str "FILTERS " filters))))
 
-(defn- handle-on-table [on-table]
-  (when on-table
-    (str "ON TABLE " (name on-table))))
+(defn- handle-on [on]
+  (when on
+    (if (and (vector? on) (= (first on) :table))
+      (let [[_ table] on]
+        (str "ON TABLE " (name table)))
+      (str "ON " (name on)))))
 
 (defn- handle-when [when']
   (when when'
@@ -67,11 +70,11 @@
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on-table when then changefeed tokenizers filters]}]
+  [{:keys [define name on when then changefeed tokenizers filters]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
-        (handle-on-table on-table)
+        (handle-on on)
         (handle-when when)
         (handle-then then)
         (handle-changefeed changefeed)
