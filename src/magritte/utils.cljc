@@ -88,6 +88,11 @@
           (str/join ".")
           (str (-> rest' first ->query-str) "."))
 
+     (and (= operator '->)
+          (symbol? (first rest'))
+          (every? keyword? (rest rest')))
+     (->> rest' (map name) (str/join "."))
+
      (= operator '|->) (graph->str expr)
 
      (and (= operator 'not)

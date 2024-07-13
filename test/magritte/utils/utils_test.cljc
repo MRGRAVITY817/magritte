@@ -23,9 +23,9 @@
   (testing "property access with `get-in`"
     (is (= "user.company.address"
            (utils/list->str '(get-in user [:company :address])))))
-  #_(testing "property access with `->`"
-      (is (= "user.company.address"
-             (utils/list->str '(-> user :company :address))))))
+  (testing "property access with `->`"
+    (is (= "user.company.address"
+           (utils/list->str '(-> user :company :address))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"
