@@ -25,7 +25,10 @@
            (utils/list->str '(get-in user [:company :address])))))
   (testing "property access with `->`"
     (is (= "user.company.address"
-           (utils/list->str '(-> user :company :address))))))
+           (utils/list->str '(-> user :company :address)))))
+  (testing "relate with >->"
+    (is (= "$from->purchases->$to"
+           (utils/list->str '(>-> $from :purchases $to))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"
@@ -98,14 +101,17 @@
            (utils/map->str {:rating '(+ :rating 2) :name "world"})))))
 
 (deftest graph->str-test
-  (testing "unnested simple graph"
+  (testing "simle graph"
+    (is (= "person->user->name"
+           (utils/list->graph '(>-> :person :user :name)))))
+  (testing "arror starts first"
     (is (= "->person->user->name"
-           (utils/graph->str '(-> :person :user :name)))))
-  (testing "simple graph, with nested elements"
+           (utils/list->graph '(|-> :person :user :name)))))
+  (testing "arror first, with nested elements"
     (is (= "->person->(user WHERE (name = 'charlie'))->address"
-           (utils/graph->str '(-> :person
-                                  [:user [:where (= name "charlie")]]
-                                  :address))))))
+           (utils/list->graph '(|-> :person
+                                    [:user [:where (= name "charlie")]]
+                                    :address))))))
 
 (deftest range-map->str-test
   (testing "greater than 2, less than 5"

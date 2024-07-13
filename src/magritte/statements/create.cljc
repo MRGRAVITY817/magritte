@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [set])
   (:require
    [clojure.string :as str]
-   [magritte.statements.common :refer [handle-parallel handle-timeout]]
+   [magritte.statements.common :refer [handle-parallel handle-timeout handle-set handle-content]]
    [magritte.utils :refer [->query-str]]))
 
 (defn- handle-create [create]
@@ -15,21 +15,6 @@
 (defn- handle-create-only [create-only]
   (when create-only
     (str "CREATE ONLY " (name create-only))))
-
-(defn- handle-set [set]
-  (when set
-    (let [setters (for [[k v] set]
-                    (str (name k) " = " (->query-str v)))]
-      (str "SET "
-           (str/join ", " setters)))))
-
-(defn- handle-content [content]
-  (when content
-    (str "CONTENT {"
-         (str/join ", "
-                   (for [[k v] content]
-                     (str (name k) ": " (->query-str v))))
-         "}")))
 
 (defn- handle-return [return]
   (when return

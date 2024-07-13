@@ -36,6 +36,21 @@
                        :else (utils/->query-str return))]
       (str "RETURN " return-str))))
 
+(defn handle-set [set]
+  (when set
+    (let [setters (for [[k v] set]
+                    (str (name k) " = " (utils/->query-str v)))]
+      (str "SET "
+           (str/join ", " setters)))))
+
+(defn handle-content [content]
+  (when content
+    (str "CONTENT {"
+         (str/join ", "
+                   (for [[k v] content]
+                     (str (name k) ": " (utils/->query-str v))))
+         "}")))
+
 (defn replace-symbol [x match]
   (cond
     (symbol? x) (if (= x match) (symbol (str "$" match)) x)

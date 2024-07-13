@@ -1,6 +1,6 @@
 (ns magritte.statements.define-test
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing] :as test]
    [magritte.statements.define :refer [format-define]]))
 
 (deftest test-format-define-analyzer
@@ -47,19 +47,7 @@
            (format-define {:define     :database
                            :name       :users
                            :changefeed :3d})))))
-; -- Create a relation between a customer and a product whenever a purchase is made
-; -- Notice the subtle difference when we use multiple statements inside an event: 
-; -- we have to use {curly brackets} instead of (parenthesis)
-; DEFINE EVENT purchase ON TABLE purchase WHEN $before == NONE THEN {
-;     LET $from = (SELECT * FROM customer WHERE id == $after.customer);
-;     LET $to = (SELECT * FROM product WHERE id == $after.product);
-;
-;     RELATE $from->purchases->$to CONTENT {
-;         quantity: $after.quantity,
-;         total: $after.total,
-;         status: 'Pending',
-;     };
-; };
+
 (deftest test-format-define-event
   (testing "define event when user email changed"
     (is (= (str "DEFINE EVENT email ON TABLE user WHEN ($before.email != $after.email) THEN ("
@@ -74,29 +62,34 @@
                                                 :time   (time/now)
                                                 :value  (:email $after)
                                                 :action "email_changed"}}}))))
-  #_(testing "create a relation between a customer and a product whenever a purchase is made"
-      (is (= (str
-              "DEFINE EVENT purchase ON TABLE purchase WHEN $before == NONE THEN {"
-              "LET $from = (SELECT * FROM customer WHERE id == $after.customer);"
-              "LET $to = (SELECT * FROM product WHERE id == $after.product);"
+  (testing "create a relation between a customer and a product whenever a purchase is made"
+    (is (= (str
+            "DEFINE EVENT purchase ON TABLE purchase WHEN ($before == NONE) THEN {"
+            "LET $from = (SELECT * FROM customer WHERE (id == $after.customer));\n"
+            "LET $to = (SELECT * FROM product WHERE (id == $after.product));\n"
 
-              "RELATE $from->purchases->$to CONTENT {"
-              "quantity: $after.quantity,"
-              "total: $after.total,"
-              "status: 'Pending',"
-              "};"
-              "}")
-             (format-define '{:define   :event
-                              :name     :purchase
-                              :on-table :purchase
-                              :when     (== :$before :none)
-                            ; :then     (let [from {:select  [*]
-                            ;                       :from    :customer
-                            ;                       :where   (== :id (:customer after))}
-                            ;                 to   {:select [*]
-                            ;                       :from   :product
-                            ;                       :where  (== :id (:product after))}]
-                            ;             (relate (-> from :purchases to) :content {:quantity (:quantity after)
-                            ;                                                         :total    (:total after)
-                            ;                                                         :status   "Pending"}))
-                              })))))
+            "RELATE $from->purchases->$to CONTENT {"
+            "quantity: $after.quantity, "
+            "total: $after.total, "
+            "status: 'Pending'"
+            "};"
+            "}")
+           (format-define '{:define   :event
+                            :name     :purchase
+                            :on-table :purchase
+                            :when     (== $before :none)
+                            :then     (let [from {:select  [*]
+                                                  :from    [:customer]
+                                                  :where   (== :id (:customer $after))}
+                                            to   {:select [*]
+                                                  :from   [:product]
+                                                  :where  (== :id (:product $after))}]
+                                        {:relate  (>-> from :purchases to)
+                                         :content {:quantity (:quantity $after)
+                                                   :total    (:total $after)
+                                                   :status   "Pending"}})})))))
+
+(comment
+  (test/run-tests)
+  :rcf)
+

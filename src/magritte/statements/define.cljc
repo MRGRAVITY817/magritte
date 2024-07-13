@@ -59,8 +59,11 @@
 
 (defn- handle-then [then]
   (when then
-    (let [then-str (format-statement then {})]
-      (str "THEN (" then-str ")"))))
+    (let [then-str (format-statement then {})
+          is-single-statement (map? then)
+          opening (if is-single-statement "(" "{")
+          closing (if is-single-statement ")" "}")]
+      (str "THEN " opening then-str closing))))
 
 (defn format-define
   "Formats a define database expression."

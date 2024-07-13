@@ -6,6 +6,7 @@
    [magritte.statements.create :refer [format-create]]
    [magritte.statements.delete :refer [format-delete]]
    [magritte.statements.insert :refer [format-insert]]
+   [magritte.statements.relate :refer [format-relate]]
    [magritte.statements.select :refer [format-select]]
    [magritte.statements.transaction :refer [format-begin format-cancel
                                             format-commit]]
@@ -34,6 +35,7 @@
                                                    :insert (format-insert expr)
                                                    :update (format-update expr)
                                                    :delete (format-delete expr)
+                                                   :relate (format-relate expr)
                                                    (utils/->query-str expr))]
                                    (if surround-with-parens?
                                      (str "(" statement ")")

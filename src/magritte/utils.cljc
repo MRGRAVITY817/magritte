@@ -4,7 +4,7 @@
             [clojure.repl :as repl]))
 
 (declare map->str)
-(declare graph->str)
+(declare list->graph)
 (declare list->str)
 (declare list->infix)
 (declare is-range?)
@@ -92,10 +92,6 @@
          (every? keyword? (rest rest')))
     (->> rest' (map name) (str/join "."))
     :else nil))
-
-(defn list->graph [expr]
-  (when (= '|-> (first expr))
-    (graph->str expr)))
 
 (defn list->inverse [expr]
   (when (and (= (first expr) 'not)
@@ -214,11 +210,12 @@
     (keyword? graph) (name graph)
     :else (str graph)))
 
-(defn graph->str
+(defn list->graph
   "Converts a graph to a string."
-  [graph]
-  (str "->"
-       (str/join "->" (map graph-item->str (rest graph)))))
+  [[operator & graph]]
+  (when  (set/subset? #{operator} #{'>-> '|->})
+    (str (if (= operator '|->) "->" "")
+         (str/join "->" (map graph-item->str graph)))))
 
 (defn range-map->str
   "Converts a range map to a string.
@@ -264,7 +261,7 @@
   (range-map->str {:< 5})
   (range-map->str {:>= 2 :<= 5})
   (range-map->str {:> 2 :<= 5})
-  (graph->str '(-> :person :user :name))
+  (list->graph '(-> :person :user :name))
   (map kebab->snake_name
        [:camelCase :snake-case :kebab-case :snake_case :kebab_case :camel_case])
   (def new-map {:id "hello"})
