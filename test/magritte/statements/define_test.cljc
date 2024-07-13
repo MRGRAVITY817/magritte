@@ -26,9 +26,12 @@
                             :name       :example_ascii
                             :tokenizers [:class]
                             :filters    [:ascii (ngram 1 3)]}))))
-
-  ;;
-  )
+  (testing "if not exists"
+    (is (= "DEFINE ANALYZER IF NOT EXISTS example_ascii TOKENIZERS class FILTERS ascii,ngram(1, 3)"
+           (format-define '{:define     [:analyzer :if-not-exists]
+                            :name       :example_ascii
+                            :tokenizers [:class]
+                            :filters    [:ascii (ngram 1 3)]})))))
 
 (deftest test-format-define-database
   (testing "define database"
