@@ -114,6 +114,12 @@
                             :on     :user
                             :when   (!= (:email $before) (:email $after))})))))
 
+(deftest test-format-define-field
+  (is (= "DEFINE FIELD email ON TABLE user"
+         (format-define '{:define :field
+                          :name   :email
+                          :on     [:table :user]}))))
+
 (comment
   (test/run-tests)
   :rcf)

@@ -9,7 +9,7 @@
 - [ ] DEFINE
     - [x] DEFINE ANALYZER
     - [x] DEFINE DATABASE
-    - [ ] DEFINE EVENT
+    - [x] DEFINE EVENT
     - [ ] DEFINE FIELD
     - [ ] DEFINE FUNCTION
     - [ ] DEFINE INDEX

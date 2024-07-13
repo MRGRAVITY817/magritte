@@ -7,7 +7,8 @@
 (def ^:private define-types
   {:database "DATABASE"
    :analyzer "ANALYZER"
-   :event    "EVENT"})
+   :event    "EVENT"
+   :field    "FIELD"})
 
 (defn- handle-define [define]
   (when define
