@@ -1,9 +1,9 @@
 (ns magritte.statements.define
-  (:require
-   [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (def ^:private define-types
-  {:database "DATABASE"})
+  {:database "DATABASE"
+   :analyzer "ANALYZER"})
 
 (defn- handle-define [define]
   (when define
@@ -22,13 +22,21 @@
   (when changefeed
     (str "CHANGEFEED " (name changefeed))))
 
-(defn format-define-database
+(defn- handle-tokenizers [tokenizers]
+  (when (vector? tokenizers)
+    (let [tokenizers (->> tokenizers
+                          (map name)
+                          (str/join ","))]
+      (str "TOKENIZERS " tokenizers))))
+
+(defn format-define
   "Formats a define database expression."
-  [{:keys [define name changefeed]}]
+  [{:keys [define name changefeed tokenizers]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
-        (handle-changefeed changefeed)]
+        (handle-changefeed changefeed)
+        (handle-tokenizers tokenizers)]
        (filter identity)
        (str/join " ")
        (str/trim)))
