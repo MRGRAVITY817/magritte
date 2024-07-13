@@ -8,9 +8,9 @@
            (utils/list->str '(+ 1 2)))))
   (testing "graph expression"
     (is (= "->person->user->name"
-           (utils/list->str '(-> :person :user :name))))
+           (utils/list->str '(|-> :person :user :name))))
     (is (= "->person->(user WHERE (name = 'charlie'))->address"
-           (utils/list->str '(-> :person [:user [:where (= name "charlie")]] :address)))))
+           (utils/list->str '(|-> :person [:user [:where (= name "charlie")]] :address)))))
   (testing "db functions"
     (is (= "time::now()"
            (utils/list->str '(time/now)))))
@@ -22,7 +22,10 @@
            (utils/list->str '(get user :name)))))
   (testing "property access with `get-in`"
     (is (= "user.company.address"
-           (utils/list->str '(get-in user [:company :address]))))))
+           (utils/list->str '(get-in user [:company :address])))))
+  #_(testing "property access with `->`"
+      (is (= "user.company.address"
+             (utils/list->str '(-> user :company :address))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"
@@ -36,7 +39,7 @@
     (is (= "((rating + 2) * (3 - 4))" (utils/list->infix '(* (+ :rating 2) (- 3 4))))))
   (testing "complex"
     (is (= "(count(->experience->organisation) > 3)"
-           (utils/list->infix '(> (count (-> :experience :organisation)) 3)))))
+           (utils/list->infix '(> (count (|-> :experience :organisation)) 3)))))
   (testing "OR"
     (is (= "((rating > 3) OR (rating < 5))"
            (utils/list->infix '(or (> :rating 3) (< :rating 5))))))
@@ -66,7 +69,7 @@
            (utils/list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))))
   (testing "count(->person->user->name)"
     (is (= "count(->person->user->name)"
-           (utils/list->db-fn '(count (-> :person :user :name))))))
+           (utils/list->db-fn '(count (|-> :person :user :name))))))
   (testing "converts 'rand to rand()"
     (is (= "rand()" (utils/list->db-fn '(rand))))))
 

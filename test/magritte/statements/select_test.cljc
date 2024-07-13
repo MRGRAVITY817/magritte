@@ -81,11 +81,11 @@
     (is (= "SELECT * FROM person WHERE ->(reacted_to WHERE (type = 'celebrate'))->post"
            (format-select {:select [:*]
                            :from   [:person]
-                           :where  '(-> [:reacted_to [:where (= :type "celebrate")]]
-                                        :post)}))))
+                           :where  '(|-> [:reacted_to [:where (= :type "celebrate")]]
+                                         :post)}))))
   (testing "select a remote field from connected out graph edges"
     (is (= "SELECT ->likes->friend.name AS friends FROM person:tobie"
-           (format-select {:select [['(-> :likes :friend.name) :friends]]
+           (format-select {:select [['(|-> :likes :friend.name) :friends]]
                            :from   [:person:tobie]})))
     (is (= "SELECT ->likes->friend.name AS friends FROM person:tobie"
            (format-select {:select [[:->likes->friend.name :friends]] ;; equivalent to the above
@@ -168,13 +168,13 @@
     (is (= "SELECT * FROM profile WHERE (count(->experience->organisation) > 3)"
            (format-select {:select [:*]
                            :from   [:profile]
-                           :where  '(> (count (-> :experience :organisation)) 3)}))))
+                           :where  '(> (count (|-> :experience :organisation)) 3)}))))
   (testing "conditional filtering based on graph edge properties"
     (is (= "SELECT * FROM person WHERE ->(reaction WHERE (type = 'celebrate'))->post"
            (format-select {:select [:*]
                            :from   [:person]
-                           :where  '(-> [:reaction [:where (= :type "celebrate")]]
-                                        :post)}))))
+                           :where  '(|-> [:reaction [:where (= :type "celebrate")]]
+                                         :post)}))))
   (testing "conditional filtering with boolean logic"
     (is (= "SELECT * FROM user WHERE ((admin AND active) OR (owner = true))"
            (format-select {:select [:*]
@@ -301,7 +301,7 @@
     (is (= "SELECT * FROM person WHERE ->knows->person->(knows WHERE (influencer = true)) TIMEOUT 5s"
            (format-select {:select [:*]
                            :from   [:person]
-                           :where  '(-> :knows :person [:knows [:where (= :influencer true)]])
+                           :where  '(|-> :knows :person [:knows [:where (= :influencer true)]])
                            :timeout "5s"}))))
   (testing "simple timeout"
     (is (= "SELECT * FROM person TIMEOUT 5s"

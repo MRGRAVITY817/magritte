@@ -88,7 +88,7 @@
           (str/join ".")
           (str (-> rest' first ->query-str) "."))
 
-     (= operator '->) (graph->str expr)
+     (= operator '|->) (graph->str expr)
 
      (and (= operator 'not)
           (= 2 (count expr))) (str "!" (->query-str (second expr)))

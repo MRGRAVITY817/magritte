@@ -105,6 +105,6 @@
     (is (= "UPDATE person SET important = true WHERE ->knows->person->(knows WHERE (influencer = true)) TIMEOUT 5s"
            (format-update {:update :person
                            :set    [{:important true}]
-                           :where  '(-> :knows :person [:knows [:where (= :influencer true)]])
+                           :where  '(|-> :knows :person [:knows [:where (= :influencer true)]])
                            :timeout 5})))))
 
