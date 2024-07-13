@@ -47,5 +47,30 @@
            (format-define {:define     :database
                            :name       :users
                            :changefeed :3d})))))
-
-
+; -- Create a relation between a customer and a product whenever a purchase is made
+; -- Notice the subtle difference when we use multiple statements inside an event: 
+; -- we have to use {curly brackets} instead of (parenthesis)
+; DEFINE EVENT purchase ON TABLE purchase WHEN $before == NONE THEN {
+;     LET $from = (SELECT * FROM customer WHERE id == $after.customer);
+;     LET $to = (SELECT * FROM product WHERE id == $after.product);
+;
+;     RELATE $from->purchases->$to CONTENT {
+;         quantity: $after.quantity,
+;         total: $after.total,
+;         status: 'Pending',
+;     };
+; };
+(deftest test-format-define-event
+  (testing "define event when user email changed"
+    (is (= (str "DEFINE EVENT email ON TABLE user WHEN ($before.email != $after.email) THEN ("
+                "CREATE event SET user = $value.id, time = time::now(), value = $after.email, action = 'email_changed'"
+                ")")
+           (format-define '{:define   :event
+                            :name     :email
+                            :on-table :user
+                            :when     (!= :$before.email :$after.email)
+                            :then     {:create :event
+                                       :set    {:user   :$value.id
+                                                :time   (time/now)
+                                                :value  :$after.email
+                                                :action "email_changed"}}})))))

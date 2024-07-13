@@ -7,8 +7,8 @@
 - [x] CONTINUE
 - [x] CREATE
 - [ ] DEFINE
-    - [ ] DEFINE ANALYZER
-    - [ ] DEFINE DATABASE
+    - [x] DEFINE ANALYZER
+    - [x] DEFINE DATABASE
     - [ ] DEFINE EVENT
     - [ ] DEFINE FIELD
     - [ ] DEFINE FUNCTION
