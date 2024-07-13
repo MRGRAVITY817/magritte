@@ -124,6 +124,11 @@
                           :name   :email
                           :on     [:table :user]
                           :type   :string})))
+  (is (= "DEFINE FIELD email ON TABLE user FLEXIBLE TYPE string"
+         (format-define '{:define :field
+                          :name   :email
+                          :on     [:table :user]
+                          :type   [:flexible :string]})))
 
   ;
   )

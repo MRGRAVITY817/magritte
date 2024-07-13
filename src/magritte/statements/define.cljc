@@ -69,9 +69,12 @@
           closing (if is-single-statement ")" "}")]
       (str "THEN " opening then-str closing))))
 
-(defn- handle-type [type]
-  (when type
-    (str "TYPE " (name type))))
+(defn- handle-type [type']
+  (when type'
+    (if (and (vector? type') (= (first type') :flexible))
+      (let [[_ type'] type']
+        (str "FLEXIBLE TYPE " (name type')))
+      (str "TYPE " (name type')))))
 
 (defn format-define
   "Formats a define database expression."
