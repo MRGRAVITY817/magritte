@@ -68,11 +68,11 @@
            (format-define '{:define   :event
                             :name     :email
                             :on-table :user
-                            :when     (!= :$before.email :$after.email)
+                            :when     (!= (:email $before) (:email $after))
                             :then     {:create :event
-                                       :set    {:user   :$value.id
+                                       :set    {:user   (:id $value)
                                                 :time   (time/now)
-                                                :value  :$after.email
+                                                :value  (:email $after)
                                                 :action "email_changed"}}}))))
   #_(testing "create a relation between a customer and a product whenever a purchase is made"
       (is (= (str
