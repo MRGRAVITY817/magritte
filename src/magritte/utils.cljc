@@ -71,10 +71,22 @@
   ([[operator & rest' :as expr]]
    (cond
      (and (keyword? operator)
-          (= 1 (count rest'))) (str (->query-str (first rest')) "." (name operator))
+          (= 1 (count rest')))
+     (str (->query-str (first rest')) "." (name operator))
 
      (and (= operator 'get)
-          (= 2 (count rest'))) (str (-> rest' first ->query-str) "." (-> rest' second name))
+          (= 2 (count rest')))
+     (str (-> rest' first ->query-str) "." (-> rest' second name))
+
+     (let [nested-props (second rest')]
+       (and (= operator 'get-in)
+            (= 2 (count rest'))
+            (vector? nested-props)
+            (every? keyword? nested-props)))
+     (->> (second rest')
+          (map name)
+          (str/join ".")
+          (str (-> rest' first ->query-str) "."))
 
      (= operator '->) (graph->str expr)
 

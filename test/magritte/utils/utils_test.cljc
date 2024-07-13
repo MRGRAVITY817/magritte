@@ -19,7 +19,10 @@
            (utils/list->str '(:name user)))))
   (testing "property access with `get`"
     (is (= "user.name"
-           (utils/list->str '(get user :name))))))
+           (utils/list->str '(get user :name)))))
+  (testing "property access with `get-in`"
+    (is (= "user.company.address"
+           (utils/list->str '(get-in user [:company :address]))))))
 
 (deftest list->infix-test
   (testing "converts '(+ 1 2) to '(1 + 2)'"
