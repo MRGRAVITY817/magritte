@@ -25,6 +25,12 @@
                            :name       :example_ascii
                            :tokenizers [:class]
                            :filters    [:ascii]}))))
+  (testing "with multiple filters"
+    (is (= "DEFINE ANALYZER example_ascii TOKENIZERS class FILTERS ascii,ngram(1, 3)"
+           (format-define '{:define     :analyzer
+                            :name       :example_ascii
+                            :tokenizers [:class]
+                            :filters    [:ascii (ngram 1 3)]}))))
 
   ;;
   )

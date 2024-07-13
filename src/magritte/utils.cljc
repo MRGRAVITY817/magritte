@@ -63,7 +63,7 @@
 
 (defn- db-fn? [operator]
   (and (symbol? operator)
-       (or (set/subset? #{operator} #{'count 'rand}) ;; The only db function without namespace
+       (or (set/subset? #{operator} #{'count 'rand 'ngram 'edgengram 'snowball}) ;; The only db function without namespace
            (namespace operator))))
 
 (defn list->str
