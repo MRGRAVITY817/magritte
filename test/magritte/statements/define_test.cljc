@@ -124,13 +124,19 @@
                           :name   :email
                           :on     [:table :user]
                           :type   :string})))
-  (is (= "DEFINE FIELD email ON TABLE user FLEXIBLE TYPE string"
+  (is (= "DEFINE FIELD email ON TABLE user FLEXIBLE TYPE array<string>"
          (format-define '{:define :field
                           :name   :email
                           :on     [:table :user]
-                          :type   [:flexible :string]})))
+                          :type   [:flexible :array<string>]})))
+  (is (= "DEFINE FIELD locked ON TABLE user TYPE option<array<string>> DEFAULT NONE"
+         (format-define '{:define :field
+                          :name   :locked
+                          :on     [:table :user]
+                          :type   :option<array<string>>
+                          :default :none})))
 
-  ;
+;
   )
 
 (comment

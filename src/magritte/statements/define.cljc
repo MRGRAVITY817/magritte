@@ -76,9 +76,13 @@
         (str "FLEXIBLE TYPE " (name type')))
       (str "TYPE " (name type')))))
 
+(defn- handle-default [default]
+  (when default
+    (str "DEFAULT " (utils/->query-str default))))
+
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers filters type]}]
+  [{:keys [define name on when then changefeed tokenizers filters type default]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
@@ -88,7 +92,9 @@
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
         (handle-filters filters)
-        (handle-type type)]
+        (handle-type type)
+        (handle-default default)]
+
        (filter identity)
        (str/join " ")
        (str/trim)))
