@@ -66,46 +66,58 @@
        (or (set/subset? #{operator} #{'count 'rand 'ngram 'edgengram 'snowball}) ;; The only db function without namespace
            (namespace operator))))
 
+(defn- list->props
+  [[operator & rest']]
+  (cond
+    (and (keyword? operator)
+         (= 1 (count rest')))
+    (str (->query-str (first rest')) "." (name operator))
+
+    (and (= operator 'get)
+         (= 2 (count rest')))
+    (str (-> rest' first ->query-str) "." (-> rest' second name))
+
+    (let [nested-props (second rest')]
+      (and (= operator 'get-in)
+           (= 2 (count rest'))
+           (vector? nested-props)
+           (every? keyword? nested-props)))
+    (->> (second rest')
+         (map name)
+         (str/join ".")
+         (str (-> rest' first ->query-str) "."))
+
+    (and (= operator '->)
+         (symbol? (first rest'))
+         (every? keyword? (rest rest')))
+    (->> rest' (map name) (str/join "."))
+    :else nil))
+
+(defn list->graph [expr]
+  (when (= '|-> (first expr))
+    (graph->str expr)))
+
+(defn list->inverse [expr]
+  (when (and (= (first expr) 'not)
+             (= 2 (count expr)))
+    (str "!" (->query-str (second expr)))))
+
+(defn list->throw [expr]
+  (when (and (= (first expr) 'throw)
+             (= 2 (count expr)))
+    (str "THROW " (->query-str (second expr)))))
+
 (defn list->str
   "Converts a list to a string representation suitable for use in a SurrealQL query."
-  ([[operator & rest' :as expr]]
-   (cond
-     (and (keyword? operator)
-          (= 1 (count rest')))
-     (str (->query-str (first rest')) "." (name operator))
-
-     (and (= operator 'get)
-          (= 2 (count rest')))
-     (str (-> rest' first ->query-str) "." (-> rest' second name))
-
-     (let [nested-props (second rest')]
-       (and (= operator 'get-in)
-            (= 2 (count rest'))
-            (vector? nested-props)
-            (every? keyword? nested-props)))
-     (->> (second rest')
-          (map name)
-          (str/join ".")
-          (str (-> rest' first ->query-str) "."))
-
-     (and (= operator '->)
-          (symbol? (first rest'))
-          (every? keyword? (rest rest')))
-     (->> rest' (map name) (str/join "."))
-
-     (= operator '|->) (graph->str expr)
-
-     (and (= operator 'not)
-          (= 2 (count expr))) (str "!" (->query-str (second expr)))
-
-     (and (= operator 'throw)
-          (= 2 (count expr))) (str "THROW " (->query-str (second expr)))
-
-     (is-range? expr) (list->range expr)
-
-     (db-fn? operator) (list->db-fn expr)
-
-     :else (list->infix expr)))
+  ([expr]
+   (or
+    (list->props expr)
+    (list->graph expr)
+    (list->inverse expr)
+    (list->throw expr)
+    (list->range expr)
+    (list->db-fn expr)
+    (list->infix expr)))
   ([expr _]
    (->> (list->str expr)
         (re-seq #"^\((.*)\)$")
@@ -141,9 +153,10 @@
    ;; => \"time::now()\"
    ```
   "
-  [expr]
-  (str (->> expr first symbol->db-fn-name)
-       "(" (str/join ", " (map ->query-str (rest expr))) ")"))
+  [[operator & rest']]
+  (when (db-fn? operator)
+    (str (symbol->db-fn-name operator)
+         "(" (str/join ", " (map ->query-str rest')) ")")))
 
 (comment
   (symbol->db-fn-name 'time/now)
@@ -184,10 +197,11 @@
 
    (list->range '(..= [\"London\" :none] [\"London\" (time/now)]))
    ;; => \"['London', NONE]..=['London', time::now()]\""
-  [[operator start end]]
-  (str (when start (->query-str start))
-       (str operator)
-       (when end (->query-str end))))
+  [[operator start end :as expr]]
+  (when (is-range? expr)
+    (str (when start (->query-str start))
+         (str operator)
+         (when end (->query-str end)))))
 
 (defn graph-item->str
   "Converts a graph item to a string."
