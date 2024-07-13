@@ -87,9 +87,26 @@
                                         {:relate  (>-> from :purchases to)
                                          :content {:quantity (:quantity $after)
                                                    :total    (:total $after)
-                                                   :status   "Pending"}})})))))
-
+                                                   :status   "Pending"}})}))))
+  (testing "combine multiple events"
+    (is (= (str
+            "DEFINE EVENT user_event ON TABLE user "
+            "WHEN (($event = 'CREATE') OR ($event = 'UPDATE') OR ($event = 'DELETE')) THEN ("
+            "CREATE log SET "
+            "table = 'user', "
+            "event = $event, "
+            "happened_at = time::now()"
+            ")")
+           (format-define '{:define   :event
+                            :name     :user_event
+                            :on-table :user
+                            :when     (or (= $event "CREATE")
+                                          (= $event "UPDATE")
+                                          (= $event "DELETE"))
+                            :then     {:create :log
+                                       :set    {:table       "user"
+                                                :event       $event
+                                                :happened_at (time/now)}}})))))
 (comment
   (test/run-tests)
   :rcf)
-
