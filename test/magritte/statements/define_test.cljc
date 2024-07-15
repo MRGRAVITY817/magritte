@@ -168,6 +168,11 @@
                           :on      :resource
                           :value   (time/now)
                           :readonly true})))
+  (is (= "DEFINE FIELD IF NOT EXISTS email ON TABLE user TYPE string"
+         (format-define '{:define [:field :if-not-exists]
+                          :name   :email
+                          :on     [:table :user]
+                          :type   :string})))
 
 ;
   )
