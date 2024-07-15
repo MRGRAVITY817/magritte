@@ -77,12 +77,16 @@
       (str "TYPE " (name type')))))
 
 (defn- handle-default [default]
-  (when default
+  (when-not (nil? default)
     (str "DEFAULT " (utils/->query-str default))))
+
+(defn- handle-value [value]
+  (when-not (nil? value)
+    (str "VALUE " (utils/->query-str value))))
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers filters type default]}]
+  [{:keys [define name on when then changefeed tokenizers filters type default value]}]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
@@ -93,8 +97,8 @@
         (handle-tokenizers tokenizers)
         (handle-filters filters)
         (handle-type type)
-        (handle-default default)]
-
+        (handle-default default)
+        (handle-value value)]
        (filter identity)
        (str/join " ")
        (str/trim)))

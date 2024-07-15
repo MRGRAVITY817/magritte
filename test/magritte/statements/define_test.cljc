@@ -129,12 +129,17 @@
                           :name   :email
                           :on     [:table :user]
                           :type   [:flexible :array<string>]})))
-  (is (= "DEFINE FIELD locked ON TABLE user TYPE option<array<string>> DEFAULT NONE"
+  (is (= "DEFINE FIELD locked ON TABLE user TYPE option<array<string>> DEFAULT false"
+         (format-define '{:define  :field
+                          :name    :locked
+                          :on      [:table :user]
+                          :type    :option<array<string>>
+                          :default false})))
+  (is (= "DEFINE FIELD updated ON resource VALUE time::now()"
          (format-define '{:define :field
-                          :name   :locked
-                          :on     [:table :user]
-                          :type   :option<array<string>>
-                          :default :none})))
+                          :name   :updated
+                          :on     :resource
+                          :value  (time/now)})))
 
 ;
   )
