@@ -91,8 +91,11 @@
   (when readonly
     "READONLY"))
 
-(defn- handle-permission [{:keys [for where]}]
-  (let [for-clause (if (vector? for)
+(defn- handle-permission [{:keys [for where] :as permission-map}]
+  (let [permission (first permission-map)
+        for (or for (first permission))
+        where (or where (second permission))
+        for-clause (if (vector? for)
                      (->> for (map name) (str/join ","))
                      (name for))
         where-clause (utils/->query-str where)]
