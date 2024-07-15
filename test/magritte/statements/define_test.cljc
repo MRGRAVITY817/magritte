@@ -150,12 +150,19 @@
          (format-let '(let [after (make/user)
                             value {:select [*]
                                    :from   [:user]
-                                   :where  (== :id (:user $after))}]
+                                   :where  (== :id (:user after))}]
                         {:define :field
                          :name   :email
                          :on     [:table :user]
                          :type   :string
                          :value  (string/lowercase value)}))))
+  (is (= "DEFINE FIELD email ON TABLE user TYPE string ASSERT string::is::email($value)"
+         (format-define '{:define :field
+                          :name   :email
+                          :on     [:table :user]
+                          :type   :string
+                          :assert (string/is-email $value)})))
+
 ;
   )
 

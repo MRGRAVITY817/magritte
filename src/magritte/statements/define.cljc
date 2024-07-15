@@ -83,9 +83,15 @@
   (when-not (nil? value)
     (str "VALUE " (utils/->query-str value))))
 
+(defn- handle-assert [assert]
+  (when assert
+    (str "ASSERT " (utils/->query-str assert))))
+
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers filters type default value]} format-statement]
+  [{:keys [define name on when then changefeed
+           tokenizers filters type default value assert]}
+   format-statement]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
@@ -97,7 +103,8 @@
         (handle-filters filters)
         (handle-type type)
         (handle-default default)
-        (handle-value value)]
+        (handle-value value)
+        (handle-assert assert)]
        (filter identity)
        (str/join " ")
        (str/trim)))
