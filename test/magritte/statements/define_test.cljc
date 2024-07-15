@@ -1,7 +1,11 @@
 (ns magritte.statements.define-test
   (:require
    [clojure.test :refer [deftest is testing] :as test]
-   [magritte.statements.define :refer [format-define]]))
+   [magritte.statements.define :as sut]
+   [magritte.statements.format :refer [format-let format-statement]]))
+
+(defn- format-define [expr]
+  (sut/format-define expr format-statement))
 
 (deftest test-format-define-analyzer
   (testing "with one tokenizer"
@@ -140,7 +144,18 @@
                           :name   :updated
                           :on     :resource
                           :value  (time/now)})))
-
+  (is (= (str "LET $after = make::user();\n"
+              "LET $value = (SELECT * FROM user WHERE (id == $after.user));\n"
+              "DEFINE FIELD email ON TABLE user TYPE string VALUE string::lowercase($value);")
+         (format-let '(let [after (make/user)
+                            value {:select [*]
+                                   :from   [:user]
+                                   :where  (== :id (:user $after))}]
+                        {:define :field
+                         :name   :email
+                         :on     [:table :user]
+                         :type   :string
+                         :value  (string/lowercase value)}))))
 ;
   )
 

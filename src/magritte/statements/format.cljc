@@ -4,6 +4,7 @@
    [clojure.string :as str]
    [magritte.statements.common :refer [replace-symbols]]
    [magritte.statements.create :refer [format-create]]
+   [magritte.statements.define :refer [format-define]]
    [magritte.statements.delete :refer [format-delete]]
    [magritte.statements.insert :refer [format-insert]]
    [magritte.statements.relate :refer [format-relate]]
@@ -36,6 +37,7 @@
                                                    :update (format-update expr)
                                                    :delete (format-delete expr)
                                                    :relate (format-relate expr)
+                                                   :define (format-define expr format-statement)
                                                    (utils/->query-str expr))]
                                    (if surround-with-parens?
                                      (str "(" statement ")")

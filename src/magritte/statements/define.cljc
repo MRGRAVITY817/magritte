@@ -1,7 +1,6 @@
 (ns magritte.statements.define
   (:require
    [clojure.string :as str]
-   [magritte.statements.format :refer [format-statement]]
    [magritte.utils :as utils]))
 
 (def ^:private define-types
@@ -61,7 +60,7 @@
                            :else (name when'))]
       (str "WHEN " when-condition))))
 
-(defn- handle-then [then]
+(defn- handle-then [then format-statement]
   (when then
     (let [then-str (format-statement then {})
           is-single-statement (map? then)
@@ -86,13 +85,13 @@
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers filters type default value]}]
+  [{:keys [define name on when then changefeed tokenizers filters type default value]} format-statement]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
         (handle-on on)
         (handle-when when)
-        (handle-then then)
+        (handle-then then format-statement)
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
         (handle-filters filters)
