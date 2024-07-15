@@ -173,6 +173,21 @@
                           :name   :email
                           :on     [:table :user]
                           :type   :string})))
+  (is (= (str "DEFINE FIELD email ON TABLE user PERMISSIONS "
+              "FOR select WHERE ((published = true) OR (user = $auth.id)) "
+              "FOR update WHERE (user = $auth.id) "
+              "FOR delete WHERE ((user = $auth.id) OR ($auth.role = 'admin'))")
+         (format-define '{:define      :field
+                          :name        :email
+                          :on          [:table :user]
+                          :permissions [{:for     :select
+                                         :where   (or (= :published true)
+                                                      (= :user (:id $auth)))}
+                                        {:for     :update
+                                         :where   (= :user (:id $auth))}
+                                        {:for     :delete
+                                         :where   (or (= :user (:id $auth))
+                                                      (= (:role $auth) "admin"))}]})))
 
 ;
   )

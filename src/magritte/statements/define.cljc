@@ -91,10 +91,20 @@
   (when readonly
     "READONLY"))
 
+(defn- handle-permission [{:keys [for where]}]
+  (str "FOR " (name for) " WHERE " (utils/->query-str where)))
+
+(defn- handle-permissions [permissions]
+  (when (seq permissions)
+    (let [permissions (->> permissions
+                           (map handle-permission)
+                           (str/join " "))]
+      (str "PERMISSIONS " permissions))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
-           filters type default value assert readonly]}
+           filters type default value assert readonly permissions]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -109,7 +119,8 @@
         (handle-default default)
         (handle-value value)
         (handle-assert assert)
-        (handle-readonly readonly)]
+        (handle-readonly readonly)
+        (handle-permissions permissions)]
        (filter identity)
        (str/join " ")
        (str/trim)))
