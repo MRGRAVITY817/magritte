@@ -162,6 +162,12 @@
                           :on     [:table :user]
                           :type   :string
                           :assert (string/is-email $value)})))
+  (is (= "DEFINE FIELD created ON resource VALUE time::now() READONLY"
+         (format-define '{:define  :field
+                          :name    :created
+                          :on      :resource
+                          :value   (time/now)
+                          :readonly true})))
 
 ;
   )

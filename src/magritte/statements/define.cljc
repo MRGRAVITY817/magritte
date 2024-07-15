@@ -87,10 +87,14 @@
   (when assert
     (str "ASSERT " (utils/->query-str assert))))
 
+(defn- handle-readonly [readonly]
+  (when readonly
+    "READONLY"))
+
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed
-           tokenizers filters type default value assert]}
+  [{:keys [define name on when then changefeed tokenizers
+           filters type default value assert readonly]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -104,7 +108,8 @@
         (handle-type type)
         (handle-default default)
         (handle-value value)
-        (handle-assert assert)]
+        (handle-assert assert)
+        (handle-readonly readonly)]
        (filter identity)
        (str/join " ")
        (str/trim)))
