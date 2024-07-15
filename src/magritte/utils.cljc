@@ -163,7 +163,7 @@
   (list->db-fn '(array/boolean-and ["true" "false" 1 1] ["true" "true" 0 "true"])))
 
 (defn get-operator [expr]
-  (if (set/subset? #{expr} #{'or 'and})
+  (if (set/subset? #{expr} #{'or 'and 'allinside})
     (-> expr name str/upper-case)
     (-> expr name)))
 

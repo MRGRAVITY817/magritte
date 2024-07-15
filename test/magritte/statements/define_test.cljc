@@ -211,6 +211,15 @@
                                         {[:update :delete] (or (= :user (:id $auth))
                                                                (= (:role $auth) "admin"))}]})))
 
+  (is (= (str "DEFINE FIELD permissions ON TABLE acl TYPE array "
+              "ASSERT ((array::len($value) > 0) AND ($value ALLINSIDE ['create', 'read', 'write', 'delete']))")
+         (format-define '{:define    :field
+                          :name      :permissions
+                          :on        [:table :acl]
+                          :type      :array
+                          :assert    (and (> (array/len $value) 0)
+                                          (allinside $value ["create" "read" "write" "delete"]))})))
+
 ;
   )
 
