@@ -219,7 +219,16 @@
                           :type      :array
                           :assert    (and (> (array/len $value) 0)
                                           (allinside $value ["create" "read" "write" "delete"]))})))
-
+  (is (= (str
+          "DEFINE FIELD countrycode ON user TYPE string "
+          "ASSERT ($value = /[A-Z]{3}/) "
+          "VALUE ($value OR $before OR 'GBR')")
+         (format-define '{:define   :field
+                          :name     :countrycode
+                          :on       :user
+                          :type     :string
+                          :assert   (= $value #"[A-Z]{3}")
+                          :value    (or $value $before "GBR")})))
 ;
   )
 

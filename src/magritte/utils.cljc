@@ -1,7 +1,10 @@
 (ns magritte.utils
-  (:require [clojure.string :as str]
-            [clojure.set :as set]
-            [clojure.repl :as repl]))
+  (:require
+   [clojure.repl :as repl]
+   [clojure.set :as set]
+   [clojure.string :as str])
+  (:import
+   [java.util.regex Pattern]))
 
 (declare map->str)
 (declare list->graph)
@@ -17,6 +20,7 @@
   ([arg]
    (cond
      (string? arg) (str "'" (str/replace arg #"'" "\\'") "'")
+     (instance? Pattern arg) (str "/" (.pattern arg) "/")
      (vector? arg) (str "[" (str/join ", " (map ->query-str arg)) "]")
      (list? arg) (list->str arg)
      (map? arg) (map->str arg)

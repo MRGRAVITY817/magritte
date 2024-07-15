@@ -124,8 +124,8 @@
         (handle-filters filters)
         (handle-type type)
         (handle-default default)
-        (handle-value value)
         (handle-assert assert)
+        (handle-value value)
         (handle-readonly readonly)
         (handle-permissions permissions)]
        (filter identity)
