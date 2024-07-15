@@ -92,7 +92,11 @@
     "READONLY"))
 
 (defn- handle-permission [{:keys [for where]}]
-  (str "FOR " (name for) " WHERE " (utils/->query-str where)))
+  (let [for-clause (if (vector? for)
+                     (->> for (map name) (str/join ","))
+                     (name for))
+        where-clause (utils/->query-str where)]
+    (str "FOR " for-clause " WHERE " where-clause)))
 
 (defn- handle-permissions [permissions]
   (when (seq permissions)
