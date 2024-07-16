@@ -5,8 +5,21 @@
 
 (deftest test-defn?
   (testing "is defn"
-    (is (defn? '(defn fn/greet [^:string name]
-                  (+ "Hello, " name "!"))))))
+    (is (defn? '(defn fn/greet [name :string]
+                  (+ "Hello, " name "!"))))
+    (is (defn? '(defn fn/greet [name :string]
+                  (+ "Hello, " name "!") 1 2 3))))
+  (testing "is not defn"
+    (is (not (defn? '(defn fn/greet [name] ;; missing type hint
+                       (+ "Hello, " name "!")))))
+    (is (not (defn? '(defn fn/greet (^:string name) ;; arglist is not a vector
+                       (+ "Hello, " name "!")))))
+    (is (not (defn? '(def fn/greet [^:string name] ;; missing 'n'
+                       (+ "Hello, " name "!")))))
+    (is (not (defn? '(def "fn/greet" [^:string name] ;; symbol is a string
+                       (+ "Hello, " name "!")))))
+    (is (not (defn? "I am defn"))) ;; not a list
+    (is (not (defn? '()))))) ;; empty list
 
 #_(deftest test-format-define-function
     (testing "Example usage"
