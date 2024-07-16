@@ -23,6 +23,7 @@
 (declare format-condp)
 (declare format-break)
 (declare format-continue)
+(declare format-defn)
 
 (defn format-statement
   "Format a statement"
@@ -38,6 +39,7 @@
                                                    :delete (format-delete expr)
                                                    :relate (format-relate expr)
                                                    :define (format-define expr format-statement)
+                                                   :defn   (format-defn expr)
                                                    (utils/->query-str expr))]
                                    (if surround-with-parens?
                                      (str "(" statement ")")
@@ -257,3 +259,51 @@
 (defn format-continue [expr]
   (when (= expr '(continue))
     "CONTINUE"))
+
+(defn defn?
+  "Returns true if the given expression is a defn form.
+   The defn form must have the following structure:
+
+   ```
+   (defn name [arg1 :type1 arg2 :type2 ...]
+     body)
+   ```
+   "
+  [[first' second' third' :as expr]]
+  (and (list? expr)
+       (= first' 'defn)
+       (symbol? second')
+       (vector? third')
+       (even? (count third'))
+       (every? (fn [[arg type]] (and (symbol? arg) (keyword? type)))
+               (partition 2 third'))))
+
+(comment
+  (defn? '(defn greet [name :string]
+            (+ "Hello, " name "!"))))
+
+(defn format-defn [expr]
+  (when (defn? expr)
+    (let [[_ fn-name args body] expr
+          arg-str  (->> args
+                        (partition 2)
+                        (map (fn [[arg type]]
+                               (str "$" arg ": " (name type))))
+                        (str/join ", "))
+          params   (->> args
+                        (partition 2)
+                        (map first)
+                        (set))
+          lines    (-> body
+                       (replace-symbols params)
+                       (format-statement {:surround-with-parens? false
+                                          :add-semicolon? true})
+                       (str/split #"\n"))
+          body-str (->> lines
+                        (map-indexed (fn [idx x]
+                                       (if (= idx (- (count lines) 1))
+                                         (str "RETURN " x)
+                                         x)))
+                        (str/join "\n"))]
+      (str "DEFINE FUNCTION fn::" (name fn-name) "(" arg-str ") {" body-str "}"))))
+

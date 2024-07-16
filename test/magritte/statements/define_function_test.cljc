@@ -1,7 +1,7 @@
 (ns magritte.statements.define-function-test
   (:require
    [clojure.test :refer [deftest is testing]]
-   [magritte.statements.define-function :refer [defn? format-defn]]))
+   [magritte.statements.format :refer [defn? format-defn]]))
 
 (deftest test-defn?
   (testing "is defn"
@@ -23,13 +23,23 @@
 
 (deftest test-format-defn
   (testing "Example usage"
-
     (is (= (str
             "DEFINE FUNCTION fn::greet($name: string) {"
             "RETURN ('Hello, ' + $name + '!');"
             "}")
            (format-defn '(defn fn/greet [name :string]
-                           (+ "Hello, " name "!")))))))
+                           (+ "Hello, " name "!"))))))
+  (testing "With let"
+    (is (= (str
+            "DEFINE FUNCTION fn::relation_exists($in: record, $tb: string, $out: record) {"
+            "LET $results = (SELECT VALUE id FROM type::table($tb) WHERE ((in = $in) AND (out = $out)));\n"
+            "RETURN (array::len($results) > 0);"
+            "}")
+           (format-defn '(defn fn/relation_exists [in :record tb :string out :record]
+                           (let [results {:select-value :id
+                                          :from         [(type/table tb)]
+                                          :where        (and (= :in in) (= :out out))}]
+                             (> (array/len results) 0))))))))
 
 
 
