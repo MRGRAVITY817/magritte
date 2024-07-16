@@ -21,15 +21,15 @@
     (is (not (defn? "I am defn"))) ;; not a list
     (is (not (defn? '()))))) ;; empty list
 
-#_(deftest test-format-define-function
-    (testing "Example usage"
+(deftest test-format-defn
+  (testing "Example usage"
 
-      (is (= (str
-              "DEFINE FUNCTION fn::greet($name: string) {"
-              "RETURN 'Hello, ' + $name + '!';"
-              "}")
-             (format-defn '(defn fn/greet [^:string name]
-                             (+ "Hello, " name "!")))))))
+    (is (= (str
+            "DEFINE FUNCTION fn::greet($name: string) {"
+            "RETURN ('Hello, ' + $name + '!');"
+            "}")
+           (format-defn '(defn fn/greet [name :string]
+                           (+ "Hello, " name "!")))))))
 
 
 

@@ -1,4 +1,8 @@
-(ns magritte.statements.define-function)
+(ns magritte.statements.define-function
+  (:require
+   [clojure.string :as str]
+   [magritte.statements.common :as common]
+   [magritte.utils :as utils]))
 
 (defn defn?
   "Returns true if the given expression is a defn form.
@@ -15,7 +19,7 @@
        (symbol? second')
        (vector? third')
        (even? (count third'))
-       (every? (fn [[value type]] (and (symbol? value) (keyword? type)))
+       (every? (fn [[arg type]] (and (symbol? arg) (keyword? type)))
                (partition 2 third'))))
 
 (comment
@@ -23,4 +27,19 @@
             (+ "Hello, " name "!"))))
 
 (defn format-defn [expr]
-  (when (defn? expr)))
+  (when (defn? expr)
+    (let [[_ fn-name args body] expr
+          arg-str (->> args
+                       (partition 2)
+                       (map (fn [[arg type]]
+                              (str "$" arg ": " (name type))))
+                       (str/join ", "))
+          params  (->> args
+                       (partition 2)
+                       (map first)
+                       (set))
+          body-str (utils/->query-str (common/replace-symbols body params))]
+      (str "DEFINE FUNCTION fn::" (name fn-name) "(" arg-str ") {"
+           "RETURN " body-str ";"
+           "}"))))
+
