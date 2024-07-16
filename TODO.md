@@ -10,7 +10,7 @@
     - [x] DEFINE ANALYZER
     - [x] DEFINE DATABASE
     - [x] DEFINE EVENT
-    - [ ] DEFINE FIELD
+    - [x] DEFINE FIELD
     - [ ] DEFINE FUNCTION
     - [ ] DEFINE INDEX
     - [ ] DEFINE NAMESPACE
