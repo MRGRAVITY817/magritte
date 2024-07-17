@@ -284,7 +284,7 @@
 
 (defn format-defn [expr]
   (when (defn? expr)
-    (let [[_ fn-name args body] expr
+    (let [[_ fn-name args & statements] expr
           arg-str  (->> args
                         (partition 2)
                         (map (fn [[arg type]]
@@ -294,11 +294,13 @@
                         (partition 2)
                         (map first)
                         (set))
-          lines    (-> body
-                       (replace-symbols params)
-                       (format-statement {:surround-with-parens? false
-                                          :add-semicolon? true})
-                       (str/split #"\n"))
+          lines    (->> statements
+                        (map (fn [statement]
+                               (-> statement (replace-symbols params)
+                                   (format-statement {:surround-with-parens? false
+                                                      :add-semicolon? true}))))
+                        (str/join "\n"))
+          lines    (str/split lines #"\n")
           body-str (->> lines
                         (map-indexed (fn [idx x]
                                        (if (= idx (- (count lines) 1))

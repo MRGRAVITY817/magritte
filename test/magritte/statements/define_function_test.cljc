@@ -35,11 +35,29 @@
             "LET $results = (SELECT VALUE id FROM type::table($tb) WHERE ((in = $in) AND (out = $out)));\n"
             "RETURN (array::len($results) > 0);"
             "}")
-           (format-defn '(defn fn/relation_exists [in :record tb :string out :record]
+           (format-defn '(defn fn/relation_exists [in :record
+                                                   tb :string
+                                                   out :record]
                            (let [results {:select-value :id
                                           :from         [(type/table tb)]
                                           :where        (and (= :in in) (= :out out))}]
-                             (> (array/len results) 0))))))))
+                             (> (array/len results) 0)))))))
+  (testing "Multiple statements"
+    (is (= (str
+            "DEFINE FUNCTION fn::greet($name: string) {"
+            "SELECT name, age FROM users WHERE (name = $name);\n"
+            "CREATE person:100 CONTENT {name: 'Tobie', company: 'SurrealDB', skills: ['Rust', 'Go', 'JavaScript']};\n"
+            "RETURN ('Hello, ' + $name + '!');"
+            "}")
+           (format-defn '(defn fn/greet [name :string]
+                           {:select [:name :age]
+                            :from   [:users]
+                            :where  (= :name name)}
+                           {:create :person:100
+                            :content {:name    "Tobie"
+                                      :company "SurrealDB"
+                                      :skills  ["Rust" "Go" "JavaScript"]}}
+                           (+ "Hello, " name "!")))))))
 
 
 
