@@ -57,6 +57,13 @@
                             :content {:name    "Tobie"
                                       :company "SurrealDB"
                                       :skills  ["Rust" "Go" "JavaScript"]}}
+                           (+ "Hello, " name "!"))))))
+  (testing  "If not exists"
+    (is (= (str
+            "DEFINE FUNCTION IF NOT EXISTS fn::greet($name: string) {"
+            "RETURN ('Hello, ' + $name + '!');"
+            "}")
+           (format-defn '(defn? fn/greet [name :string]
                            (+ "Hello, " name "!")))))))
 
 

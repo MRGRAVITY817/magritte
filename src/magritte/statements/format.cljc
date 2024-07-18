@@ -271,7 +271,7 @@
    "
   [[first' second' third' :as expr]]
   (and (list? expr)
-       (= first' 'defn)
+       (or (= first' 'defn) (= first' 'defn?))
        (symbol? second')
        (vector? third')
        (even? (count third'))
@@ -284,7 +284,8 @@
 
 (defn format-defn [expr]
   (when (defn? expr)
-    (let [[_ fn-name args & statements] expr
+    (let [[first' fn-name args & statements] expr
+          header   (if (= first' 'defn) "DEFINE FUNCTION" "DEFINE FUNCTION IF NOT EXISTS")
           arg-str  (->> args
                         (partition 2)
                         (map (fn [[arg type]]
@@ -307,5 +308,5 @@
                                          (str "RETURN " x)
                                          x)))
                         (str/join "\n"))]
-      (str "DEFINE FUNCTION fn::" (name fn-name) "(" arg-str ") {" body-str "}"))))
+      (str header " fn::" (name fn-name) "(" arg-str ") {" body-str "}"))))
 
