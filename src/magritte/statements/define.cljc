@@ -7,7 +7,8 @@
   {:database "DATABASE"
    :analyzer "ANALYZER"
    :event    "EVENT"
-   :field    "FIELD"})
+   :field    "FIELD"
+   :index    "INDEX"})
 
 (defn- handle-define [define]
   (when define
@@ -108,15 +109,26 @@
                            (str/join " "))]
       (str "PERMISSIONS " permissions))))
 
+(defn- handle-columns [columns]
+  (when (vector? columns)
+    (let [columns (->> columns
+                       (map name)
+                       (str/join ", "))]
+      (str "COLUMNS " columns))))
+
+(defn- handle-unique [unique]
+  (when unique "UNIQUE"))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
-           filters type default value assert readonly permissions]}
+           filters type default value assert readonly permissions columns unique]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
         (handle-on on)
+        (handle-columns columns)
         (handle-when when)
         (handle-then then format-statement)
         (handle-changefeed changefeed)
@@ -127,7 +139,8 @@
         (handle-assert assert)
         (handle-value value)
         (handle-readonly readonly)
-        (handle-permissions permissions)]
+        (handle-permissions permissions)
+        (handle-unique unique)]
        (filter identity)
        (str/join " ")
        (str/trim)))

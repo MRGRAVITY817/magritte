@@ -232,6 +232,17 @@
 ;
   )
 
+(deftest test-format-index
+  (testing "unique index"
+    (is (= "DEFINE INDEX userEmailIndex ON TABLE user COLUMNS email UNIQUE"
+           (format-define '{:define  :index
+                            :name    :userEmailIndex
+                            :on      [:table :user]
+                            :columns [:email]
+                            :unique  true}))))
+  ;; add more tests
+  )
+
 (comment
   (test/run-tests)
   :rcf)
