@@ -268,6 +268,23 @@
                             :fields  [(:embedding items)]
                             :mtree   {:dimension 4
                                       :type      :i64}}))))
+  (testing "mtree manhattan distance"
+    (is (= "DEFINE INDEX idx_mtree_embedding_manhattan ON Document FIELDS items.embedding MTREE DIMENSION 4 DIST MANHATTAN"
+           (format-define '{:define  :index
+                            :name    :idx_mtree_embedding_manhattan
+                            :on      :Document
+                            :fields  [(:embedding items)]
+                            :mtree   {:dimension 4
+                                      :distance  :manhattan}}))))
+  (testing "mtree consine distance"
+    (is (= "DEFINE INDEX idx_mtree_embedding_cosine ON Document FIELDS items.embedding MTREE DIMENSION 4 DIST COSINE"
+           (format-define '{:define  :index
+                            :name    :idx_mtree_embedding_cosine
+                            :on      :Document
+                            :fields  [(:embedding items)]
+                            :mtree   {:dimension 4
+                                      :distance  :cosine}}))))
+
 ;; add more tests
   )
 

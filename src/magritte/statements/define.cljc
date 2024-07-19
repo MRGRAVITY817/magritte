@@ -139,11 +139,13 @@
 (defn- handle-mtree [mtree]
   (when mtree
     (let [{:keys [dimension type distance capacity]} mtree
-          dimension (if dimension (str "DIMENSION " dimension) "")
-          type      (if type (str "TYPE " (str/upper-case (name type))) "")
-          distance  (if distance (str "DISTANCE " distance) "")
-          capacity  (if capacity (str "CAPACITY " capacity) "")]
-      (str/join " " ["MTREE" dimension type distance capacity]))))
+          dimension (when dimension (str "DIMENSION " dimension))
+          type      (when type (str "TYPE " (str/upper-case (name type))))
+          distance  (when distance (str "DIST " (str/upper-case (name distance))))
+          capacity  (when capacity (str "CAPACITY " capacity))]
+      (->> ["MTREE" dimension type distance capacity]
+           (keep identity)
+           (str/join " ")))))
 
 (defn format-define
   "Formats a define database expression."
