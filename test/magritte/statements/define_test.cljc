@@ -240,7 +240,20 @@
                             :on      [:table :user]
                             :columns [:email]
                             :unique  true}))))
-  ;; add more tests
+  (testing "non-unique index"
+    (is (= "DEFINE INDEX userAgeIndex ON TABLE user COLUMNS age"
+           (format-define '{:define  :index
+                            :name    :userAgeIndex
+                            :on      [:table :user]
+                            :columns [:age]}))))
+  (testing "composite index"
+    (is (= "DEFINE INDEX test ON user FIELDS account, email"
+           (format-define '{:define  :index
+                            :name    :test
+                            :on      :user
+                            :fields  [:account :email]}))))
+
+;; add more tests
   )
 
 (comment

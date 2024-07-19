@@ -119,16 +119,24 @@
 (defn- handle-unique [unique]
   (when unique "UNIQUE"))
 
+(defn- handle-fields [fields]
+  (when (vector? fields)
+    (let [fields (->> fields
+                      (map name)
+                      (str/join ", "))]
+      (str "FIELDS " fields))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
-           filters type default value assert readonly permissions columns unique]}
+           filters type default value assert readonly permissions columns unique fields]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
         (handle-name name)
         (handle-on on)
         (handle-columns columns)
+        (handle-fields fields)
         (handle-when when)
         (handle-then then format-statement)
         (handle-changefeed changefeed)
