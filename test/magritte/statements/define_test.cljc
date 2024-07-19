@@ -252,6 +252,13 @@
                             :name    :test
                             :on      :user
                             :fields  [:account :email]}))))
+  (testing "full-text search index"
+    (is (= "DEFINE INDEX userNameIndex ON TABLE user COLUMNS name SEARCH ANALYZER ascii BM25 HIGHLIGHTS"
+           (format-define '{:define           :index
+                            :name             :userNameIndex
+                            :on               [:table :user]
+                            :columns          [:name]
+                            :search-analyzer  [:ascii :bm25 :highlights]}))))
 
 ;; add more tests
   )

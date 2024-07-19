@@ -126,10 +126,21 @@
                       (str/join ", "))]
       (str "FIELDS " fields))))
 
+(defn- handle-search-analyzer [search-analyzer]
+  (when search-analyzer
+    (if (vector? search-analyzer)
+      (let [[analyzer bm25 highlights] search-analyzer
+            analyzer (name analyzer)
+            bm25 (if bm25 "BM25" "")
+            highlights (if highlights "HIGHLIGHTS" "")]
+        (str/join " " ["SEARCH ANALYZER" analyzer bm25 highlights]))
+      (str "SEARCH ANALYZER " (name search-analyzer)))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
-           filters type default value assert readonly permissions columns unique fields]}
+           filters type default value assert readonly
+           permissions columns unique fields search-analyzer]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -137,6 +148,7 @@
         (handle-on on)
         (handle-columns columns)
         (handle-fields fields)
+        (handle-search-analyzer search-analyzer)
         (handle-when when)
         (handle-then then format-statement)
         (handle-changefeed changefeed)
