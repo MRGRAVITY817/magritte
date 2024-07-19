@@ -122,7 +122,7 @@
 (defn- handle-fields [fields]
   (when (vector? fields)
     (let [fields (->> fields
-                      (map name)
+                      (map utils/->query-str)
                       (str/join ", "))]
       (str "FIELDS " fields))))
 
@@ -136,11 +136,20 @@
         (str/join " " ["SEARCH ANALYZER" analyzer bm25 highlights]))
       (str "SEARCH ANALYZER " (name search-analyzer)))))
 
+(defn- handle-mtree [mtree]
+  (when mtree
+    (let [{:keys [dimension type distance capacity]} mtree
+          dimension (if dimension (str "DIMENSION " dimension) "")
+          type      (if type (str "TYPE " (str/upper-case (name type))) "")
+          distance  (if distance (str "DISTANCE " distance) "")
+          capacity  (if capacity (str "CAPACITY " capacity) "")]
+      (str/join " " ["MTREE" dimension type distance capacity]))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
            filters type default value assert readonly
-           permissions columns unique fields search-analyzer]}
+           permissions columns unique fields search-analyzer mtree]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -149,6 +158,7 @@
         (handle-columns columns)
         (handle-fields fields)
         (handle-search-analyzer search-analyzer)
+        (handle-mtree mtree)
         (handle-when when)
         (handle-then then format-statement)
         (handle-changefeed changefeed)

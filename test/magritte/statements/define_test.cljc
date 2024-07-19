@@ -260,6 +260,14 @@
                             :columns          [:name]
                             :search-analyzer  [:ascii :bm25 :highlights]}))))
 
+  (testing "vector index with 64-bit signed integers"
+    (is (= "DEFINE INDEX idx_mtree_embedding ON Document FIELDS items.embedding MTREE DIMENSION 4 TYPE I64"
+           (format-define '{:define  :index
+                            :name    :idx_mtree_embedding
+                            :on      :Document
+                            :fields  [(:embedding items)]
+                            :mtree   {:dimension 4
+                                      :type      :i64}}))))
 ;; add more tests
   )
 
