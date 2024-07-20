@@ -276,14 +276,26 @@
                             :fields  [(:embedding items)]
                             :mtree   {:dimension 4
                                       :distance  :manhattan}}))))
-  (testing "mtree consine distance"
-    (is (= "DEFINE INDEX idx_mtree_embedding_cosine ON Document FIELDS items.embedding MTREE DIMENSION 4 DIST COSINE"
+  (testing "mtree consine distance and capacity"
+    (is (= "DEFINE INDEX idx_mtree_embedding_cosine ON Document FIELDS items.embedding MTREE DIMENSION 4 DIST COSINE CAPACITY 100"
            (format-define '{:define  :index
                             :name    :idx_mtree_embedding_cosine
                             :on      :Document
                             :fields  [(:embedding items)]
                             :mtree   {:dimension 4
-                                      :distance  :cosine}}))))
+                                      :distance  :cosine
+                                      :capacity  100}}))))
+
+  (testing "HNSW index"
+    (is (= "DEFINE INDEX mt_pts ON pts FIELDS point HNSW DIMENSION 4 DIST EUCLIDEAN EFC 150 M 12"
+           (format-define '{:define  :index
+                            :name    :mt_pts
+                            :on      :pts
+                            :fields  [:point]
+                            :hnsw    {:dimension 4
+                                      :distance  :euclidean
+                                      :efc       150
+                                      :m         12}}))))
 
 ;; add more tests
   )

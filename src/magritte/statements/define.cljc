@@ -147,11 +147,23 @@
            (keep identity)
            (str/join " ")))))
 
+(defn- handle-hnsw [hnsw]
+  (when hnsw
+    (let [{:keys [dimension type distance efc m]} hnsw
+          dimension (when dimension (str "DIMENSION " dimension))
+          type      (when type (str "TYPE " (str/upper-case (name type))))
+          distance  (when distance (str "DIST " (str/upper-case (name distance))))
+          efc       (when efc (str "EFC " efc))
+          m         (when m (str "M " m))]
+      (->> ["HNSW" dimension type distance efc m]
+           (keep identity)
+           (str/join " ")))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define name on when then changefeed tokenizers
            filters type default value assert readonly
-           permissions columns unique fields search-analyzer mtree]}
+           permissions columns unique fields search-analyzer mtree hnsw]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -161,6 +173,7 @@
         (handle-fields fields)
         (handle-search-analyzer search-analyzer)
         (handle-mtree mtree)
+        (handle-hnsw hnsw)
         (handle-when when)
         (handle-then then format-statement)
         (handle-changefeed changefeed)
