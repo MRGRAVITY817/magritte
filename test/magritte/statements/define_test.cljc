@@ -44,7 +44,7 @@
                            :name   :users}))))
   (testing "define database if not exists"
     (is (= "DEFINE DATABASE IF NOT EXISTS users"
-           (format-define {:define [:database :if-not-exists]
+           (format-define {:define? [:database]
                            :name   :users}))))
   (testing "changefeed 3d"
     (is (= "DEFINE DATABASE users CHANGEFEED 3d"
@@ -296,6 +296,13 @@
                                       :distance  :euclidean
                                       :efc       150
                                       :m         12}}))))
+  (testing "create index if not exists"
+    (is (= "DEFINE INDEX IF NOT EXISTS example ON TABLE user COLUMNS email UNIQUE"
+           (format-define '{:define?  :index
+                            :name     :example
+                            :on       [:table :user]
+                            :columns  [:email]
+                            :unique   true}))))
 
 ;; add more tests
   )

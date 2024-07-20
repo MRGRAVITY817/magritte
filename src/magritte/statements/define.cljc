@@ -15,9 +15,15 @@
     (if (vector? define)
       (let [[def-type if-not-exists] define
             def-type (get define-types def-type)
-            if-not-exists (if if-not-exists "IF NOT EXISTS" "")]
-        (str def-type " " if-not-exists))
+            if-not-exists (when if-not-exists "IF NOT EXISTS")]
+        (->> [def-type if-not-exists]
+             (keep identity)
+             (str/join " ")))
       (get define-types define))))
+
+(defn- handle-define? [define?]
+  (when define?
+    (str (handle-define define?) " IF NOT EXISTS")))
 
 (defn- handle-name [name']
   (when name'
@@ -161,12 +167,13 @@
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define name on when then changefeed tokenizers
+  [{:keys [define define? name on when then changefeed tokenizers
            filters type default value assert readonly
            permissions columns unique fields search-analyzer mtree hnsw]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
+        (handle-define? define?)
         (handle-name name)
         (handle-on on)
         (handle-columns columns)
