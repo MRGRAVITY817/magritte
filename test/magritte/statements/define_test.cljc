@@ -370,6 +370,11 @@
            (format-define '{:define     :table
                             :name       :user
                             :schemafull true}))))
+  (testing "define schemaless table"
+    (is (= "DEFINE TABLE user SCHEMALESS"
+           (format-define '{:define     :table
+                            :name       :user
+                            :schemafull false}))))
   ;; add more tests
   )
 

@@ -182,8 +182,8 @@
     (str "SIGNIN " (format-statement signin {:surround-with-parens? true}))))
 
 (defn- handle-schemafull [schemafull]
-  (when schemafull
-    "SCHEMAFULL"))
+  (when-not (nil? schemafull)
+    (if schemafull "SCHEMAFULL" "SCHEMALESS")))
 
 (defn format-define
   "Formats a define database expression."
