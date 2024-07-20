@@ -4,11 +4,12 @@
    [magritte.utils :as utils]))
 
 (def ^:private define-types
-  {:database "DATABASE"
-   :analyzer "ANALYZER"
-   :event    "EVENT"
-   :field    "FIELD"
-   :index    "INDEX"})
+  {:database  "DATABASE"
+   :analyzer  "ANALYZER"
+   :event     "EVENT"
+   :field     "FIELD"
+   :index     "INDEX"
+   :namespace "NAMESPACE"})
 
 (defn- handle-define [define]
   (when define

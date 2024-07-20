@@ -307,6 +307,16 @@
 ;; add more tests
   )
 
+(deftest test-format-define-namespace
+  (testing "define namespace"
+    (is (= "DEFINE NAMESPACE users"
+           (format-define '{:define :namespace
+                            :name   :users}))))
+  (testing "define namespace if not exists"
+    (is (= "DEFINE NAMESPACE IF NOT EXISTS users"
+           (format-define '{:define? :namespace
+                            :name    :users})))))
+
 (comment
   (test/run-tests)
   :rcf)
