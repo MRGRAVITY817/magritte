@@ -10,7 +10,8 @@
    :field     "FIELD"
    :index     "INDEX"
    :namespace "NAMESPACE"
-   :param     "PARAM"})
+   :param     "PARAM"
+   :scope     "SCOPE"})
 
 (defn- handle-define [define]
   (when define
@@ -167,16 +168,31 @@
            (keep identity)
            (str/join " ")))))
 
+(defn- handle-session [session]
+  (when session
+    (str "SESSION " (name session))))
+
+(defn- handle-signup [signup format-statement]
+  (when signup
+    (str "SIGNUP " (format-statement signup {:surround-with-parens? true}))))
+
+(defn- handle-signin [signin format-statement]
+  (when signin
+    (str "SIGNIN " (format-statement signin {:surround-with-parens? true}))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define define? name on when then changefeed tokenizers
-           filters type default value assert readonly
+           filters type default value assert readonly session signup signin
            permissions columns unique fields search-analyzer mtree hnsw]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
         (handle-define? define?)
         (handle-name name)
+        (handle-session session)
+        (handle-signup signup format-statement)
+        (handle-signin signin format-statement)
         (handle-on on)
         (handle-columns columns)
         (handle-fields fields)

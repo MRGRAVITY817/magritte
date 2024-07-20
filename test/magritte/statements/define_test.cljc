@@ -329,6 +329,22 @@
                             :name   :$endpointBase
                             :value  "https://api.example.com"})))))
 
+(deftest test-format-define-scope
+  (testing "define scope auth"
+    (is (= (str "DEFINE SCOPE auth SESSION 24h"
+                " SIGNUP (CREATE user SET email = $email, pass = crypto::argon2::generate($pass))"
+                " SIGNIN (SELECT * FROM user WHERE ((email = $email) AND crypto::argon2::compare(pass, $pass)))")
+           (format-define '{:define  :scope
+                            :name    :auth
+                            :session "24h"
+                            :signup  {:create :user
+                                      :set    {:email $email
+                                               :pass  (crypto/argon2-generate $pass)}}
+                            :signin  {:select [*]
+                                      :from   [:user]
+                                      :where  (and (= :email $email)
+                                                   (crypto/argon2-compare :pass $pass))}})))))
+
 (comment
   (test/run-tests)
   :rcf)
