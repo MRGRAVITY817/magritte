@@ -411,7 +411,13 @@
                                           {:delete   (or (= :user (:id $auth))
                                                          (= (:admin $auth) true))}]}))))
 
-  ;; add more tests
+  (testing "defining relation type table"
+    (is (= "DEFINE TABLE likes TYPE RELATION"
+           (format-define '{:define :table
+                            :name   :likes
+                            :type   :relation}))))
+
+;; add more tests
   )
 
 (comment

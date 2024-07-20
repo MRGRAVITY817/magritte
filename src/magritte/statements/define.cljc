@@ -74,8 +74,9 @@
 
 (defn- table-type [type']
   (case type'
-    :any    "ANY"
-    :normal "NORMAL"
+    :any       "ANY"
+    :normal    "NORMAL"
+    :relation "RELATION"
     ;; TODO: add cases for RELATION
     ))
 
