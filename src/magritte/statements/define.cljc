@@ -181,11 +181,15 @@
   (when signin
     (str "SIGNIN " (format-statement signin {:surround-with-parens? true}))))
 
+(defn- handle-schemafull [schemafull]
+  (when schemafull
+    "SCHEMAFULL"))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define define? name on when then changefeed tokenizers
            filters type default value assert readonly session signup signin
-           permissions columns unique fields search-analyzer mtree hnsw]}
+           permissions columns unique fields search-analyzer mtree hnsw schemafull]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -211,7 +215,8 @@
         (handle-value value)
         (handle-readonly readonly)
         (handle-permissions permissions)
-        (handle-unique unique)]
+        (handle-unique unique)
+        (handle-schemafull schemafull)]
        (filter identity)
        (str/join " ")
        (str/trim)))

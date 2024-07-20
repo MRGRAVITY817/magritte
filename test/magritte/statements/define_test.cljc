@@ -365,6 +365,11 @@
            (format-define '{:define?     :table
                             :name        :reading
                             :changefeed  :3d}))))
+  (testing "define schemafull table"
+    (is (= "DEFINE TABLE user SCHEMAFULL"
+           (format-define '{:define     :table
+                            :name       :user
+                            :schemafull true}))))
   ;; add more tests
   )
 
