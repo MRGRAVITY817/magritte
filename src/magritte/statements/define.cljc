@@ -212,6 +212,7 @@
         (handle-define define)
         (handle-define? define?)
         (handle-name name)
+        (handle-schemafull schemafull)
         (handle-session session)
         (handle-signup signup format-statement)
         (handle-signin signin format-statement)
@@ -233,7 +234,6 @@
         (handle-value value)
         (handle-as as format-statement)
         (handle-readonly readonly)
-        (handle-schemafull schemafull)
         (handle-permissions permissions)
         (handle-unique unique)]
        (filter identity)
