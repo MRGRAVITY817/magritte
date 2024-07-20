@@ -350,6 +350,11 @@
     (is (= "DEFINE TABLE reading"
            (format-define '{:define :table
                             :name   :reading}))))
+  (testing "define table with drop"
+    (is (= "DEFINE TABLE reading"
+           (format-define '{:define :table
+                            :name   :reading
+                            :drop   true}))))
   ;; add more tests
   )
 
