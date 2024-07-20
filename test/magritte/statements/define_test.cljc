@@ -317,6 +317,18 @@
            (format-define '{:define? :namespace
                             :name    :users})))))
 
+(deftest test-format-define-param
+  (testing "define param"
+    (is (= "DEFINE PARAM $endpointBase VALUE 'https://api.example.com'"
+           (format-define '{:define :param
+                            :name   :$endpointBase
+                            :value  "https://api.example.com"}))))
+  (testing "define param if not exists"
+    (is (= "DEFINE PARAM IF NOT EXISTS $endpointBase VALUE 'https://api.example.com'"
+           (format-define '{:define? :param
+                            :name   :$endpointBase
+                            :value  "https://api.example.com"})))))
+
 (comment
   (test/run-tests)
   :rcf)

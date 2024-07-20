@@ -9,7 +9,8 @@
    :event     "EVENT"
    :field     "FIELD"
    :index     "INDEX"
-   :namespace "NAMESPACE"})
+   :namespace "NAMESPACE"
+   :param     "PARAM"})
 
 (defn- handle-define [define]
   (when define
