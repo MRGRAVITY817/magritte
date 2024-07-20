@@ -355,6 +355,11 @@
            (format-define '{:define :table
                             :name   :reading
                             :drop   true}))))
+  (testing "define table with changefeed"
+    (is (= "DEFINE TABLE reading CHANGEFEED 3d"
+           (format-define '{:define     :table
+                            :name       :reading
+                            :changefeed :3d}))))
   ;; add more tests
   )
 
