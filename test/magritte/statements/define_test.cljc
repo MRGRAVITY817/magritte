@@ -360,6 +360,11 @@
            (format-define '{:define     :table
                             :name       :reading
                             :changefeed :3d}))))
+  (testing "define table if not exists"
+    (is (= "DEFINE TABLE IF NOT EXISTS reading CHANGEFEED 3d"
+           (format-define '{:define?     :table
+                            :name        :reading
+                            :changefeed  :3d}))))
   ;; add more tests
   )
 
