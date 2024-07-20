@@ -72,11 +72,22 @@
           closing (if is-single-statement ")" "}")]
       (str "THEN " opening then-str closing))))
 
+(defn- handle-relation [relation]
+  (when relation
+    (let [{:keys [from to in out]} relation
+          from (when from (str "FROM " (name from)))
+          to   (when to   (str "TO " (name to)))
+          in   (when in   (str "IN " (name in)))
+          out  (when out  (str "OUT " (name out)))]
+      (->> ["TYPE RELATION" from to in out]
+           (keep identity)
+           (str/join " ")))))
+
 (defn- table-type [type']
-  (case type'
-    :any       "ANY"
-    :normal    "NORMAL"
-    :relation "RELATION"
+  (cond
+    (= type' :any)      "ANY"
+    (= type' :normal)   "NORMAL"
+    (= type' :relation) "RELATION"
     ;; TODO: add cases for RELATION
     ))
 
@@ -193,7 +204,7 @@
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define define? name on when then changefeed tokenizers
+  [{:keys [define define? name on when then changefeed tokenizers relation
            filters type default value as assert readonly session signup signin
            permissions columns unique fields search-analyzer mtree hnsw schemafull]}
    format-statement]
@@ -215,6 +226,7 @@
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
         (handle-filters filters)
+        (handle-relation relation)
         (handle-type type define define?)
         (handle-default default)
         (handle-assert assert)
