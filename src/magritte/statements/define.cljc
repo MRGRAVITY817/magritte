@@ -220,9 +220,9 @@
         (handle-value value)
         (handle-as as format-statement)
         (handle-readonly readonly)
+        (handle-schemafull schemafull)
         (handle-permissions permissions)
-        (handle-unique unique)
-        (handle-schemafull schemafull)]
+        (handle-unique unique)]
        (filter identity)
        (str/join " ")
        (str/trim)))

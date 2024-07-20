@@ -394,6 +394,23 @@
                                               [(|-> (:name product)) :product_name]]
                                      :from   [:review]
                                      :group  [:product_id :product_name]}}))))
+
+  (testing "defining permissions"
+    (is (= (str "DEFINE TABLE post SCHEMALESS "
+                "PERMISSIONS "
+                "FOR select WHERE ((published = true) OR (user = $auth.id)) "
+                "FOR create,update WHERE (user = $auth.id) "
+                "FOR delete WHERE ((user = $auth.id) OR ($auth.admin = true))")
+           (format-define '{:define      :table
+                            :name        :post
+                            :schemafull  false
+                            :permissions [{:select   (or (= :published true)
+                                                         (= :user (:id $auth)))}
+                                          {[:create
+                                            :update] (= :user (:id $auth))}
+                                          {:delete   (or (= :user (:id $auth))
+                                                         (= (:admin $auth) true))}]}))))
+
   ;; add more tests
   )
 
