@@ -107,7 +107,7 @@
   (when fetch
     (str "FETCH " (name fetch))))
 
-(defn- handle-group [group]
+(defn handle-group [group]
   (when group
     (if (= group :all)
       "GROUP ALL"

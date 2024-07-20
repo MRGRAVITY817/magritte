@@ -10,7 +10,9 @@
     (is (= "->person->user->name"
            (utils/list->str '(|-> :person :user :name))))
     (is (= "->person->(user WHERE (name = 'charlie'))->address"
-           (utils/list->str '(|-> :person [:user [:where (= name "charlie")]] :address)))))
+           (utils/list->str '(|-> :person [:user [:where (= name "charlie")]] :address))))
+    (is (= "->person.name"
+           (utils/list->str '(|-> (:name person))))))
   (testing "db functions"
     (is (= "time::now()"
            (utils/list->str '(time/now)))))
@@ -74,7 +76,10 @@
     (is (= "count(->person->user->name)"
            (utils/list->db-fn '(count (|-> :person :user :name))))))
   (testing "converts 'rand to rand()"
-    (is (= "rand()" (utils/list->db-fn '(rand))))))
+    (is (= "rand()" (utils/list->db-fn '(rand)))))
+  (testing "with typed args"
+    (is (= "math::mean(<float> rating)"
+           (utils/list->db-fn '(math/mean :<float>rating))))))
 
 (deftest test-is-range
   (is (utils/is-range? '(.. 1 1000)))

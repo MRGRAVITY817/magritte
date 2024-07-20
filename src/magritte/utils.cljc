@@ -13,6 +13,7 @@
 (declare is-range?)
 (declare list->range)
 (declare list->db-fn)
+(declare keyword->str)
 (declare ->query-str)
 
 (defn ->query-str
@@ -26,18 +27,25 @@
      (map? arg) (map->str arg)
      (nil? arg) "null"
      (= :none arg) "NONE"
-     (keyword? arg) (name arg)
+     (keyword? arg) (keyword->str arg)
      :else arg))
   ([arg _]
    (cond
      (string? arg) (str "\"" arg "\"")
      :else (->query-str arg))))
 
+(defn keyword->str [arg]
+  (let [s (name arg)]
+    (if (or (str/includes? s "->") (str/includes? s "<-"))
+      s
+      (-> s
+          (clojure.string/replace #"<([^>]+)>" "<$1> ")
+          clojure.string/trim))))
+
 (comment
-  (str/replace "I don't want that" #"[']" "\\'")
-  (->query-str "I don't want that")
-  ;
-  )
+  (keyword->str :<-person->)
+  (keyword->str :->purchased->product<-purchased<-person->purchased->product))
+
 (defn kebab->snake_name
   "Converts kebab item to a snake_case string."
   [kw]
@@ -210,7 +218,7 @@
     (vector? graph) (if (= (first graph) :where)
                       (str "WHERE " (str/join " " (map graph-item->str (rest graph))))
                       (str "(" (str/join " " (map graph-item->str graph)) ")"))
-    (list? graph) (list->infix graph)
+    (list? graph) (list->str graph)
     (keyword? graph) (name graph)
     :else (str graph)))
 

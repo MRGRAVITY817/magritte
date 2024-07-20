@@ -32,7 +32,7 @@
                             :filters    [:ascii (ngram 1 3)]}))))
   (testing "if not exists"
     (is (= "DEFINE ANALYZER IF NOT EXISTS example_ascii TOKENIZERS class FILTERS ascii,ngram(1, 3)"
-           (format-define '{:define     [:analyzer :if-not-exists]
+           (format-define '{:define?    :analyzer
                             :name       :example_ascii
                             :tokenizers [:class]
                             :filters    [:ascii (ngram 1 3)]})))))
@@ -44,8 +44,8 @@
                            :name   :users}))))
   (testing "define database if not exists"
     (is (= "DEFINE DATABASE IF NOT EXISTS users"
-           (format-define {:define? [:database]
-                           :name   :users}))))
+           (format-define {:define? :database
+                           :name    :users}))))
   (testing "changefeed 3d"
     (is (= "DEFINE DATABASE users CHANGEFEED 3d"
            (format-define {:define     :database
@@ -113,10 +113,10 @@
                                               :happened_at (time/now)}}}))))
   (testing "if not exists"
     (is (= "DEFINE EVENT IF NOT EXISTS email ON user WHEN ($before.email != $after.email)"
-           (format-define '{:define [:event :if-not-exists]
-                            :name   :email
-                            :on     :user
-                            :when   (!= (:email $before) (:email $after))})))))
+           (format-define '{:define? :event
+                            :name    :email
+                            :on      :user
+                            :when    (!= (:email $before) (:email $after))})))))
 
 (deftest test-format-define-field
   (is (= "DEFINE FIELD email ON TABLE user"
@@ -169,10 +169,10 @@
                           :value   (time/now)
                           :readonly true})))
   (is (= "DEFINE FIELD IF NOT EXISTS email ON TABLE user TYPE string"
-         (format-define '{:define [:field :if-not-exists]
-                          :name   :email
-                          :on     [:table :user]
-                          :type   :string})))
+         (format-define '{:define? :field
+                          :name    :email
+                          :on      [:table :user]
+                          :type    :string})))
   (is (= (str "DEFINE FIELD email ON TABLE user PERMISSIONS "
               "FOR select WHERE ((published = true) OR (user = $auth.id)) "
               "FOR update WHERE (user = $auth.id) "
@@ -375,6 +375,25 @@
            (format-define '{:define     :table
                             :name       :user
                             :schemafull false}))))
+
+  (testing "pre-computed table views"
+    (is (= (str "DEFINE TABLE avg_product_review TYPE NORMAL AS "
+                "SELECT "
+                "count() AS number_of_reviews, "
+                "math::mean(<float> rating) AS avg_review, "
+                "->product.id AS product_id, "
+                "->product.name AS product_name "
+                "FROM review "
+                "GROUP BY product_id, product_name")
+           (format-define '{:define :table
+                            :name   :avg_product_review
+                            :type   :normal
+                            :as     {:select [[(count) :number_of_reviews]
+                                              [(math/mean :<float>rating) :avg_review]
+                                              [(|-> (:id product)) :product_id]
+                                              [(|-> (:name product)) :product_name]]
+                                     :from   [:review]
+                                     :group  [:product_id :product_name]}}))))
   ;; add more tests
   )
 

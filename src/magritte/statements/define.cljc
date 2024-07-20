@@ -15,18 +15,11 @@
    :table     "TABLE"})
 
 (defn- handle-define [define]
-  (when define
-    (if (vector? define)
-      (let [[def-type if-not-exists] define
-            def-type (get define-types def-type)
-            if-not-exists (when if-not-exists "IF NOT EXISTS")]
-        (->> [def-type if-not-exists]
-             (keep identity)
-             (str/join " ")))
-      (get define-types define))))
+  (when (keyword? define)
+    (get define-types define)))
 
 (defn- handle-define? [define?]
-  (when define?
+  (when (keyword? define?)
     (str (handle-define define?) " IF NOT EXISTS")))
 
 (defn- handle-name [name']
@@ -79,12 +72,20 @@
           closing (if is-single-statement ")" "}")]
       (str "THEN " opening then-str closing))))
 
-(defn- handle-type [type']
+(defn- table-type [type']
+  (case type'
+    :any    "ANY"
+    :normal "NORMAL"
+    ;; TODO: add cases for RELATION
+    ))
+
+(defn- handle-type [type' define define?]
   (when type'
-    (if (and (vector? type') (= (first type') :flexible))
-      (let [[_ type'] type']
-        (str "FLEXIBLE TYPE " (name type')))
-      (str "TYPE " (name type')))))
+    (let [is-table? (or (= define :table) (= define? :table))]
+      (if (and (vector? type') (= (first type') :flexible))
+        (let [[_ type'] type']
+          (str "FLEXIBLE TYPE " (if is-table? (table-type type') (name type'))))
+        (str "TYPE " (if is-table? (table-type type') (name type')))))))
 
 (defn- handle-default [default]
   (when-not (nil? default)
@@ -185,10 +186,14 @@
   (when-not (nil? schemafull)
     (if schemafull "SCHEMAFULL" "SCHEMALESS")))
 
+(defn- handle-as [as format-statement]
+  (when as
+    (str "AS " (format-statement as {:surround-with-parens? false}))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define define? name on when then changefeed tokenizers
-           filters type default value assert readonly session signup signin
+           filters type default value as assert readonly session signup signin
            permissions columns unique fields search-analyzer mtree hnsw schemafull]}
    format-statement]
   (->> ["DEFINE"
@@ -209,10 +214,11 @@
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
         (handle-filters filters)
-        (handle-type type)
+        (handle-type type define define?)
         (handle-default default)
         (handle-assert assert)
         (handle-value value)
+        (handle-as as format-statement)
         (handle-readonly readonly)
         (handle-permissions permissions)
         (handle-unique unique)
