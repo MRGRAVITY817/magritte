@@ -11,7 +11,8 @@
    :index     "INDEX"
    :namespace "NAMESPACE"
    :param     "PARAM"
-   :scope     "SCOPE"})
+   :scope     "SCOPE"
+   :table     "TABLE"})
 
 (defn- handle-define [define]
   (when define
