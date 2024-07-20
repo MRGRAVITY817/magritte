@@ -394,7 +394,6 @@
                                               [(|-> (:name product)) :product_name]]
                                      :from   [:review]
                                      :group  [:product_id :product_name]}}))))
-
   (testing "defining permissions"
     (is (= (str "DEFINE TABLE post SCHEMALESS "
                 "PERMISSIONS "
@@ -404,13 +403,16 @@
            (format-define '{:define      :table
                             :name        :post
                             :schemafull  false
-                            :permissions [{:select   (or (= :published true)
-                                                         (= :user (:id $auth)))}
-                                          {[:create
-                                            :update] (= :user (:id $auth))}
-                                          {:delete   (or (= :user (:id $auth))
-                                                         (= (:admin $auth) true))}]}))))
+                            :permissions [{:select
+                                           (or (= :published true)
+                                               (= :user (:id $auth)))}
 
+                                          {[:create :update]
+                                           (= :user (:id $auth))}
+
+                                          {:delete
+                                           (or (= :user (:id $auth))
+                                               (= (:admin $auth) true))}]}))))
   (testing "defining table with relation type, no constraints"
     (is (= "DEFINE TABLE likes TYPE RELATION"
            (format-define '{:define :table
@@ -426,14 +428,18 @@
 ;     PERMISSIONS
 ;         FOR create, select, update, delete 
 ;             WHERE in.owner == $auth.id AND out.author == $auth.id
-
   (testing "defining table with relation type, in out"
-    (is (= "DEFINE TABLE assigned_to SCHEMAFULL TYPE RELATION IN tag OUT sticky"
+    (is (= (str "DEFINE TABLE assigned_to SCHEMAFULL TYPE RELATION IN tag OUT sticky "
+                "PERMISSIONS "
+                "FOR create,select,update,delete WHERE ((in.owner = $auth.id) AND (out.author = $auth.id))")
            (format-define '{:define     :table
                             :name       :assigned_to
                             :schemafull  true
                             :relation   {:in  :tag
-                                         :out :sticky}}))))
+                                         :out :sticky}
+                            :permissions [{[:create :select :update :delete]
+                                           (and (= (:owner in) (:id $auth))
+                                                (= (:author out) (:id $auth)))}]}))))
 
 ;; add more tests
   )
