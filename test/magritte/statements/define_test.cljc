@@ -470,11 +470,8 @@
                               :name     :example
                               :on       :root
                               :password "example"
-                              :roles    :owner})))))
-  ;
-  )
+                              :roles    :owner}))))))
 
-;
 (comment
   (test/run-tests)
   :rcf)

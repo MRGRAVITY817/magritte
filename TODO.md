@@ -6,19 +6,19 @@
 - [x] COMMIT
 - [x] CONTINUE
 - [x] CREATE
-- [ ] DEFINE
+- [x] DEFINE
     - [x] DEFINE ANALYZER
     - [x] DEFINE DATABASE
     - [x] DEFINE EVENT
     - [x] DEFINE FIELD
-    - [x] DEFINE FUNCTION
+    - [x] DEFINE FUNCTION, using `(defn fn/name [] ...)`
     - [x] DEFINE INDEX
     - [x] DEFINE NAMESPACE
     - [x] DEFINE PARAM
     - [x] DEFINE SCOPE
     - [x] DEFINE TABLE
-    - [ ] DEFINE TOKEN
-    - [ ] DEFINE USER
+    - [x] DEFINE TOKEN
+    - [x] DEFINE USER
 - [x] DELETE
 - [x] FOR
   - [x] Nested FOR loops
