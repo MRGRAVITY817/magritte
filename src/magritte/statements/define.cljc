@@ -13,7 +13,8 @@
    :param     "PARAM"
    :scope     "SCOPE"
    :table     "TABLE"
-   :token     "TOKEN"})
+   :token     "TOKEN"
+   :user      "USER"})
 
 (defn- handle-define [define]
   (when (keyword? define)
@@ -51,15 +52,27 @@
     (= on :database)  "ON DATABASE"
     (and (map? on) (:scope on)) (str "ON SCOPE " (name (:scope on)))))
 
+(defn- handle-user-on [on]
+  (let [on (cond
+             (= on :root) "ROOT"
+             (= on :namespace) "NAMESPACE"
+             (= on :database)  "DATABASE")]
+    (str "ON " on)))
+
 (defn- handle-on [on define define?]
   (when on
-    (let [define-token? (or (= define :token) (= define? :token))]
-      (if define-token?
-        (handle-token-on on)
-        (if (and (vector? on) (= (first on) :table))
-          (let [[_ table] on]
-            (str "ON TABLE " (name table)))
-          (str "ON " (name on)))))))
+    (cond
+      (or (= define :token) (= define? :token))
+      (handle-token-on on)
+
+      (or (= define :user) (= define? :user))
+      (handle-user-on on)
+
+      :else
+      (if (and (vector? on) (= (first on) :table))
+        (let [[_ table] on]
+          (str "ON TABLE " (name table)))
+        (str "ON " (name on))))))
 
 (defn- handle-when [when']
   (when when'
@@ -210,11 +223,20 @@
   (when as
     (str "AS " (format-statement as {:surround-with-parens? false}))))
 
+(defn- handle-password [password]
+  (when password
+    (str "PASSWORD " (utils/->query-str password))))
+
+(defn- handle-roles [roles]
+  (when (keyword? roles)
+    (str "ROLES " (str/upper-case (name roles)))))
+
 (defn format-define
   "Formats a define database expression."
   [{:keys [define define? name on when then changefeed tokenizers filters
            type default value as assert readonly session signup signin
-           permissions columns unique fields search-analyzer mtree hnsw schemafull]}
+           permissions columns unique fields search-analyzer mtree hnsw schemafull
+           password roles]}
    format-statement]
   (->> ["DEFINE"
         (handle-define define)
@@ -242,7 +264,9 @@
         (handle-as as format-statement)
         (handle-readonly readonly)
         (handle-permissions permissions)
-        (handle-unique unique)]
+        (handle-unique unique)
+        (handle-password password)
+        (handle-roles roles)]
        (filter identity)
        (str/join " ")
        (str/trim)))

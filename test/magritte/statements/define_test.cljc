@@ -456,6 +456,18 @@
                             :type     :hs512
                             :value    "example"})))))
 
+(deftest test-format-define-user
+  (testing "define user"
+    (is (= "DEFINE USER username ON ROOT PASSWORD '123456' ROLES OWNER"
+           (format-define '{:define     :user
+                            :name       :username
+                            :on         :root
+                            :password   "123456"
+                            :roles      :owner}))))
+  ;
+  )
+
+;
 (comment
   (test/run-tests)
   :rcf)
