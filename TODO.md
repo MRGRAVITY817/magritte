@@ -11,12 +11,12 @@
     - [x] DEFINE DATABASE
     - [x] DEFINE EVENT
     - [x] DEFINE FIELD
-    - [ ] DEFINE FUNCTION
-    - [ ] DEFINE INDEX
-    - [ ] DEFINE NAMESPACE
-    - [ ] DEFINE PARAM
-    - [ ] DEFINE SCOPE
-    - [ ] DEFINE TABLE
+    - [x] DEFINE FUNCTION
+    - [x] DEFINE INDEX
+    - [x] DEFINE NAMESPACE
+    - [x] DEFINE PARAM
+    - [x] DEFINE SCOPE
+    - [x] DEFINE TABLE
     - [ ] DEFINE TOKEN
     - [ ] DEFINE USER
 - [x] DELETE

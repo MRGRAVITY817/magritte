@@ -12,7 +12,8 @@
    :namespace "NAMESPACE"
    :param     "PARAM"
    :scope     "SCOPE"
-   :table     "TABLE"})
+   :table     "TABLE"
+   :token     "TOKEN"})
 
 (defn- handle-define [define]
   (when (keyword? define)
@@ -44,12 +45,21 @@
                        (str/join ","))]
       (str "FILTERS " filters))))
 
-(defn- handle-on [on]
+(defn- handle-token-on [on]
+  (cond
+    (= on :namespace) "ON NAMESPACE"
+    (= on :database)  "ON DATABASE"
+    (and (map? on) (:scope on)) (str "ON SCOPE " (name (:scope on)))))
+
+(defn- handle-on [on define define?]
   (when on
-    (if (and (vector? on) (= (first on) :table))
-      (let [[_ table] on]
-        (str "ON TABLE " (name table)))
-      (str "ON " (name on)))))
+    (let [define-token? (or (= define :token) (= define? :token))]
+      (if define-token?
+        (handle-token-on on)
+        (if (and (vector? on) (= (first on) :table))
+          (let [[_ table] on]
+            (str "ON TABLE " (name table)))
+          (str "ON " (name on)))))))
 
 (defn- handle-when [when']
   (when when'
@@ -83,21 +93,17 @@
            (keep identity)
            (str/join " ")))))
 
-(defn- table-type [type']
-  (cond
-    (= type' :any)      "ANY"
-    (= type' :normal)   "NORMAL"
-    (= type' :relation) "RELATION"
-    ;; TODO: add cases for RELATION
-    ))
-
 (defn- handle-type [type' define define?]
   (when type'
-    (let [is-table? (or (= define :table) (= define? :table))]
-      (if (and (vector? type') (= (first type') :flexible))
-        (let [[_ type'] type']
-          (str "FLEXIBLE TYPE " (if is-table? (table-type type') (name type'))))
-        (str "TYPE " (if is-table? (table-type type') (name type')))))))
+    (let [define-table? (or (= define :table) (= define? :table))
+          define-token? (or (= define :token) (= define? :token))
+          flexible?     (and (vector? type') (= (first type') :flexible))
+          statement     (if flexible? "FLEXIBLE TYPE " "TYPE ")
+          type'         (if flexible? (second type') type')
+          type-name     (if (or define-table? define-token?)
+                          (str/upper-case (name type'))
+                          (name type'))]
+      (str statement type-name))))
 
 (defn- handle-default [default]
   (when-not (nil? default)
@@ -216,7 +222,7 @@
         (handle-session session)
         (handle-signup signup format-statement)
         (handle-signin signin format-statement)
-        (handle-on on)
+        (handle-on on define define?)
         (handle-columns columns)
         (handle-fields fields)
         (handle-search-analyzer search-analyzer)

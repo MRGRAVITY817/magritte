@@ -424,10 +424,6 @@
                             :name      :likes
                             :relation {:from :user
                                        :to   :post}}))))
-; DEFINE TABLE assigned_to SCHEMAFULL TYPE RELATION IN tag OUT sticky
-;     PERMISSIONS
-;         FOR create, select, update, delete 
-;             WHERE in.owner == $auth.id AND out.author == $auth.id
   (testing "defining table with relation type, in out"
     (is (= (str "DEFINE TABLE assigned_to SCHEMAFULL TYPE RELATION IN tag OUT sticky "
                 "PERMISSIONS "
@@ -439,10 +435,19 @@
                                          :out :sticky}
                             :permissions [{[:create :select :update :delete]
                                            (and (= (:owner in) (:id $auth))
-                                                (= (:author out) (:id $auth)))}]}))))
+                                                (= (:author out) (:id $auth)))}]})))))
 
-;; add more tests
-  )
+(deftest test-format-define-token
+  (testing "define token"
+    (is (= (str "DEFINE TOKEN token_name "
+                "ON DATABASE "
+                "TYPE HS512 "
+                "VALUE 'sNSYneezcr8kqphfOC6NwwraUHJCVAt0XjsRSNmssBaBRh3WyMa9TRfq8ST7fsU2H2kGiOpU4GbAF1bCiXmM1b3JGgleBzz7rsrz6VvYEM4q3CLkcO8CMBIlhwhzWmy8'")
+           (format-define '{:define :token
+                            :name   :token_name
+                            :on     :database
+                            :type   :hs512
+                            :value  "sNSYneezcr8kqphfOC6NwwraUHJCVAt0XjsRSNmssBaBRh3WyMa9TRfq8ST7fsU2H2kGiOpU4GbAF1bCiXmM1b3JGgleBzz7rsrz6VvYEM4q3CLkcO8CMBIlhwhzWmy8"})))))
 
 (comment
   (test/run-tests)
