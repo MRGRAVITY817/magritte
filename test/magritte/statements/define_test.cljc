@@ -463,7 +463,14 @@
                             :name       :username
                             :on         :root
                             :password   "123456"
-                            :roles      :owner}))))
+                            :roles      :owner})))
+    (testing "define user if not exists"
+      (is (= "DEFINE USER IF NOT EXISTS example ON ROOT PASSWORD 'example' ROLES OWNER"
+             (format-define '{:define?  :user
+                              :name     :example
+                              :on       :root
+                              :password "example"
+                              :roles    :owner})))))
   ;
   )
 
