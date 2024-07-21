@@ -447,7 +447,14 @@
                             :name   :token_name
                             :on     :database
                             :type   :hs512
-                            :value  "sNSYneezcr8kqphfOC6NwwraUHJCVAt0XjsRSNmssBaBRh3WyMa9TRfq8ST7fsU2H2kGiOpU4GbAF1bCiXmM1b3JGgleBzz7rsrz6VvYEM4q3CLkcO8CMBIlhwhzWmy8"})))))
+                            :value  "sNSYneezcr8kqphfOC6NwwraUHJCVAt0XjsRSNmssBaBRh3WyMa9TRfq8ST7fsU2H2kGiOpU4GbAF1bCiXmM1b3JGgleBzz7rsrz6VvYEM4q3CLkcO8CMBIlhwhzWmy8"}))))
+  (testing "if not exists, with scope"
+    (is (= "DEFINE TOKEN IF NOT EXISTS example ON SCOPE example TYPE HS512 VALUE 'example'"
+           (format-define '{:define?  :token
+                            :name     :example
+                            :on      {:scope :example}
+                            :type     :hs512
+                            :value    "example"})))))
 
 (comment
   (test/run-tests)
