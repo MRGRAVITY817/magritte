@@ -422,17 +422,17 @@
     (is (= "DEFINE TABLE likes TYPE RELATION FROM user TO post"
            (format-define '{:define    :table
                             :name      :likes
-                            :relation {:from :user
-                                       :to   :post}}))))
+                            :type     {:relation {:from :user
+                                                  :to   :post}}}))))
   (testing "defining table with relation type, in out"
     (is (= (str "DEFINE TABLE assigned_to SCHEMAFULL TYPE RELATION IN tag OUT sticky "
                 "PERMISSIONS "
                 "FOR create,select,update,delete WHERE ((in.owner = $auth.id) AND (out.author = $auth.id))")
-           (format-define '{:define     :table
-                            :name       :assigned_to
-                            :schemafull  true
-                            :relation   {:in  :tag
-                                         :out :sticky}
+           (format-define '{:define      :table
+                            :name        :assigned_to
+                            :schemafull   true
+                            :type       {:relation   {:in  :tag
+                                                      :out :sticky}}
                             :permissions [{[:create :select :update :delete]
                                            (and (= (:owner in) (:id $auth))
                                                 (= (:author out) (:id $auth)))}]})))))

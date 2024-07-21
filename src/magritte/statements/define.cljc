@@ -89,7 +89,7 @@
           to   (when to   (str "TO " (name to)))
           in   (when in   (str "IN " (name in)))
           out  (when out  (str "OUT " (name out)))]
-      (->> ["TYPE RELATION" from to in out]
+      (->> ["RELATION" from to in out]
            (keep identity)
            (str/join " ")))))
 
@@ -101,7 +101,9 @@
           statement     (if flexible? "FLEXIBLE TYPE " "TYPE ")
           type'         (if flexible? (second type') type')
           type-name     (if (or define-table? define-token?)
-                          (str/upper-case (name type'))
+                          (if (and (map? type') (get type' :relation))
+                            (handle-relation (get type' :relation))
+                            (str/upper-case (name type')))
                           (name type'))]
       (str statement type-name))))
 
@@ -210,8 +212,8 @@
 
 (defn format-define
   "Formats a define database expression."
-  [{:keys [define define? name on when then changefeed tokenizers relation
-           filters type default value as assert readonly session signup signin
+  [{:keys [define define? name on when then changefeed tokenizers filters
+           type default value as assert readonly session signup signin
            permissions columns unique fields search-analyzer mtree hnsw schemafull]}
    format-statement]
   (->> ["DEFINE"
@@ -233,7 +235,6 @@
         (handle-changefeed changefeed)
         (handle-tokenizers tokenizers)
         (handle-filters filters)
-        (handle-relation relation)
         (handle-type type define define?)
         (handle-default default)
         (handle-assert assert)
