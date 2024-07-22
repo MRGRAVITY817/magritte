@@ -24,6 +24,7 @@
 (declare format-break)
 (declare format-continue)
 (declare format-defn)
+(declare format-info-for)
 
 (defn format-statement
   "Format a statement"
@@ -61,6 +62,7 @@
                                                     'cancel-transaction (format-cancel expr)
                                                     'commit (format-commit expr)
                                                     'commit-transaction (format-commit expr)
+                                                    'info-for (format-info-for expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))
@@ -309,4 +311,15 @@
                                          x)))
                         (str/join "\n"))]
       (str header " fn::" (name fn-name) "(" arg-str ") {" body-str "}"))))
+
+(defn format-info-for [expr]
+  (when (= (first expr) 'info-for)
+    (let [[_ target & blocks] expr
+          info-target (case target
+                        :root "ROOT"
+                        :ns   "NS"
+                        :namespace "NAMESPACE"
+                        :db   "DB"
+                        :database "DATABASE")]
+      (str "INFO FOR " info-target))))
 
