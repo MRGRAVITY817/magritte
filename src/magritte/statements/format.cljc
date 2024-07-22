@@ -314,12 +314,13 @@
 
 (defn format-info-for [expr]
   (when (= (first expr) 'info-for)
-    (let [[_ target & blocks] expr
+    (let [[_ target & [target-value]] expr
           info-target (case target
-                        :root "ROOT"
-                        :ns   "NS"
+                        :root      "ROOT"
+                        :ns        "NS"
                         :namespace "NAMESPACE"
-                        :db   "DB"
-                        :database "DATABASE")]
+                        :db        "DB"
+                        :database  "DATABASE"
+                        :table     (str "TABLE " (name target-value)))]
       (str "INFO FOR " info-target))))
 

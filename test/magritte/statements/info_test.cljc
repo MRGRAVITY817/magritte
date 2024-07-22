@@ -14,6 +14,8 @@
          (format-info-for '(info-for :db))))
   (is (= "INFO FOR DATABASE"
          (format-info-for '(info-for :database))))
+  (is (= "INFO FOR TABLE user"
+         (format-info-for '(info-for :table :user))))
   ;
   )
 
