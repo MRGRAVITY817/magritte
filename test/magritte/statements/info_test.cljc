@@ -1,7 +1,7 @@
 (ns magritte.statements.info-test
   (:require
    [clojure.test :refer [deftest is]]
-   [magritte.statements.format :refer [format-info-for]]))
+   [magritte.statements.info-for :refer [format-info-for]]))
 
 (deftest format-info-test
   (is (= "INFO FOR ROOT"
