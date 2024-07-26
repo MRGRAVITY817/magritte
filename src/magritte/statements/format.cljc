@@ -6,6 +6,7 @@
    [magritte.statements.create :refer [format-create]]
    [magritte.statements.define :refer [format-define]]
    [magritte.statements.delete :refer [format-delete]]
+   [magritte.statements.info-for :refer [format-info-for]]
    [magritte.statements.insert :refer [format-insert]]
    [magritte.statements.relate :refer [format-relate]]
    [magritte.statements.select :refer [format-select]]
@@ -24,7 +25,6 @@
 (declare format-break)
 (declare format-continue)
 (declare format-defn)
-(declare format-info-for)
 
 (defn format-statement
   "Format a statement"
@@ -41,6 +41,7 @@
                                                    :relate (format-relate expr)
                                                    :define (format-define expr format-statement)
                                                    :defn   (format-defn expr)
+                                                   :info-for (format-info-for expr)
                                                    (utils/->query-str expr))]
                                    (if surround-with-parens?
                                      (str "(" statement ")")
@@ -62,7 +63,6 @@
                                                     'cancel-transaction (format-cancel expr)
                                                     'commit (format-commit expr)
                                                     'commit-transaction (format-commit expr)
-                                                    'info-for (format-info-for expr)
                                                     (utils/->query-str expr))]
                                     statement)
                     :else (utils/->query-str expr))
@@ -312,15 +312,5 @@
                         (str/join "\n"))]
       (str header " fn::" (name fn-name) "(" arg-str ") {" body-str "}"))))
 
-(defn format-info-for [expr]
-  (when (= (first expr) 'info-for)
-    (let [[_ target & [target-value]] expr
-          info-target (case target
-                        :root      "ROOT"
-                        :ns        "NS"
-                        :namespace "NAMESPACE"
-                        :db        "DB"
-                        :database  "DATABASE"
-                        :table     (str "TABLE " (name target-value)))]
-      (str "INFO FOR " info-target))))
-
+(comment
+  :rcf)

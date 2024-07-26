@@ -5,17 +5,21 @@
 
 (deftest format-info-test
   (is (= "INFO FOR ROOT"
-         (format-info-for '(info-for :root))))
+         (format-info-for '{:info-for :root})))
   (is (= "INFO FOR NS"
-         (format-info-for '(info-for :ns))))
+         (format-info-for '{:info-for :ns})))
   (is (= "INFO FOR NAMESPACE"
-         (format-info-for '(info-for :namespace))))
+         (format-info-for '{:info-for :namespace})))
   (is (= "INFO FOR DB"
-         (format-info-for '(info-for :db))))
+         (format-info-for '{:info-for :db})))
   (is (= "INFO FOR DATABASE"
-         (format-info-for '(info-for :database))))
+         (format-info-for '{:info-for :database})))
   (is (= "INFO FOR TABLE user"
-         (format-info-for '(info-for :table :user))))
-  ;
+         (format-info-for '{:info-for {:table :user}})))
+  (is (= "INFO FOR USER root ON ROOT"
+         (format-info-for '{:info-for {:user :root}
+                            :on       :root})))
+
+;
   )
 

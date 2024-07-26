@@ -138,3 +138,10 @@
       (is (= "['London', NONE]..=['London', time::now()]"
              (utils/range-map->str {:>  ["London" :none]
                                     :<= ["London" '(time/now)]})))))
+
+(comment
+  ; (require '[portal.api :as portal])
+  ; (def p (portal/open))
+
+  :rcf)
+
